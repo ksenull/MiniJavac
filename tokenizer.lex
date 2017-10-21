@@ -1,5 +1,11 @@
 %{
 #include <stdio.h>
+//#include "syntaxParser.tab.h"
+// нужно передавать самплы
+
+#define YYSTYPE
+
+extern YYSTYPE yylval;
 %}
 
 DIGIT       [0-9]
@@ -42,12 +48,9 @@ EXTENDS     extends
 PUBLIC      public
 RETURN      return
 
-FUNCTION    {ID}\(({TYPE}{SPACE}+{ID})*\)
-
 %%
 {LCURLY}    printf("LCURLY");
 {RCURLY}    printf("RCURLY");
-{FUNCTION}  printf("FUNCTION (%s)", yytext);
 {RETURN}    printf("RETURN");
 {PUBLIC}    printf("PUBLIC");
 {EXTENDS}   printf("EXTENDS");
@@ -64,10 +67,11 @@ FUNCTION    {ID}\(({TYPE}{SPACE}+{ID})*\)
 {BINOP}     printf("BINOP (%s)", yytext);
 {BOOL}      printf("BOOL(%s)", yytext);
 {INT}       printf("INT (%s)", yytext);
+{TYPE}      printf("TYPE (%s)", yytext);
 {LROUND}    printf("LROUND");
 {RROUND}    printf("RROUND");
 {LSQUARE}   printf("LSQUARE");
 {RSQUARE}   printf("RSQUARE");
-{TYPE}      printf("TYPE (%s)", yytext);
-{ID}        printf("ID (%s)", yytext);
+{ID}        printf("ID %s", yytext);//yylval=yytext; return ID;
+.           printf("lexer error"); abort();
 %%
