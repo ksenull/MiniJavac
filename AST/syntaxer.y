@@ -1,28 +1,32 @@
 %{
 #include <stdio.h>
+#include <unistd.h>
+//int yylex(void);
 
-int yylex(void);
-
-void yyerror(char* str) {
-    fprintf(stderr, "Error: %s\n", str);
-}
 %}
-
-%token LROUND RROUND LCURLY RCURLY LSQUARE RSQUARE INT_ARRAY INT BOOLEAN NEW LENGTH SEMICOLON DOT COMMA NOT AND LESS PLUS MINUS MULTIPLY ASSIGN THIS PRINT WHILE IF ELSE RETURN PUBLIC CLASS EXTENDS STRING_ARG MAIN
 
 %union {
     int number;
     char* string;
 }
+/*
+%token LROUND RROUND LCURLY RCURLY LSQUARE RSQUARE 
+%token INT_ARRAY INT BOOLEAN 
+%token NEW LENGTH THIS
+%token SEMICOLON DOT COMMA NOT AND LESS PLUS MINUS MULTIPLY ASSIGN 
+%token PRINT WHILE IF ELSE RETURN 
+%token PUBLIC CLASS EXTENDS STRING_ARG MAIN
 
-%token <string> BOOL_VALUE
+%token <number> BOOL_VALUE
 %token <number> INTEGER
 %token <string> ID
+*/
+//%token END 0
 
 %%
-
+/*
 goal:
-    mainClass (classDeclaration)* '\0'
+    mainClass zeroOrMoreClasses
     |
     ;
 
@@ -30,16 +34,46 @@ mainClass:
     CLASS identifier LCURLY MAIN LROUND STRING_ARG identifier RROUND LCURLY statement RCURLY RCURLY
     ;
 
-classDefinition:
-    CLASS identifier (EXTENDS idenifier)? LCURLY (varDeclaration)* (methodDeclaration)* RCURLY
+zeroOrMoreClasses:
+    classDeclaration zeroOrMoreClasses
+    | 
+    ;
+
+classDeclaration:
+    CLASS identifier anyExtends LCURLY zeroOrMoreVars zeroOrMoreMethods RCURLY
+    ;
+
+anyExtends:
+    EXTENDS identifier
+    |
+    ;
+
+zeroOrMoreVars:
+    varDeclaration zeroOrMoreVars
+    |
     ;
 
 varDeclaration:
     type identifier SEMICOLON
     ;
 
+zeroOrMoreMethods:
+    methodDeclaration zeroOrMoreMethods
+    |
+    ;
+
 methodDeclaration:
-    PUBLIC type identifier LROUND (type identifier (COMMA type identifier)*)? RROUND LCURLY (varDeclaration)* (statement)*  RETURN expression SEMICOLON
+    PUBLIC type identifier LROUND anyMethodArgs RROUND LCURLY zeroOrMoreVars zeroOrMoreStatements  RETURN expression SEMICOLON
+    ;
+
+anyMethodArgs:
+    type identifier zeroOrMoreMethodArgs
+    |
+    ;
+
+zeroOrMoreMethodArgs:
+    COMMA type identifier zeroOrMoreMethodArgs
+    |
     ;
 
 type:
@@ -48,30 +82,55 @@ type:
     | INT
     ;
 
+zeroOrMoreStatements:
+    statement zeroOrMoreStatements
+    |
+    ;
+
 statement:
-    LCURLY (statement)* RCURLY
-    | IF LROUND expression RROUND statement (ELSE statement)?
+    LCURLY zeroOrMoreStatements RCURLY
+    | IF LROUND expression RROUND statement anyElse
     | WHILE LROUND expression RROUND statement
     | identifier ASSIGN expression SEMICOLON
     | identifier LSQUARE expression RSQUARE ASSIGN expression SEMICOLON
     ;
 
+anyElse:
+    ELSE statement
+    |
+    ;
+
+anyExpressionSeq:
+    expression zeroOrMoreExpressionSeq
+    |
+    ;
+
+zeroOrMoreExpressionSeq:
+    COMMA expression zeroOrMoreExpressionSeq
+    |
+    ;
+
 expression:
-    expression (AND | LESS | PLUS | MINUS | MULTIPLY) expression
+    expression AND expression
+    | expression LESS expression
+    | expression PLUS expression
+    | expression MINUS expression
+    | expression MULTIPLY expression
     | expression LSQUARE expression RSQUARE
     | expression DOT LENGTH
-    | expression DOT identifier LROUND (exression (COMMA expression)* )? RROUND
+    | expression DOT identifier LROUND anyExpressionSeq RROUND
     | INTEGER
     | BOOL_VALUE
     | identifier
     | THIS
     | NEW INT LSQUARE expression RSQUARE
     | NEW identifier LROUND RROUND
-    | NOT (expression | (LROUND expression RROUND))
+    | NOT expression
+    | NOT LROUND expression RROUND
     ;
 
 identifier:
-    ID { $$ = $1; printf("ID %s\n", $1); }
+    ID { printf("ID %s\n", $1); }
     ;
 
 %%
@@ -80,4 +139,4 @@ int main(void) {
     yyparse();
     return 0;
 }
-
+*/
