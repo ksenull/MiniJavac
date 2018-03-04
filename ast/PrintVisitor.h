@@ -5,8 +5,9 @@
 namespace ast {
 
     class PrintVisitor : IVisitor {
-        void visit(const nodes::Program* program) const;
-        void visit(const nodes::MainClass* mainClass) const;
+        void visit(const nodes::Program* program) const override;
+        void visit(const nodes::MainClass* mainClass) const override;
+        void visit(const nodes::Identifier* id) const;
     };
 
  }
