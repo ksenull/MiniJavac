@@ -5,15 +5,17 @@
 
 namespace ast {
     namespace nodes {
-        class Node  {
+
+        class Node {
         public:
-            virtual void accept(IVisitor* visitor) const = 0;
+            virtual void accept(IVisitor<void>* visitor) const = 0;
         };
+
 
         class NodeList {
             std::vector<Node*> list;
         public:
-            void add(const Node* node) {
+            void add(Node* node) {
                 list.emplace_back(node);
             }
 
@@ -26,11 +28,12 @@ namespace ast {
             }
         };
 
-#define DECLARE_ACCEPT(ACCEPTOR) \
-        void ACCEPTOR::accept(IVisitor* visitor) const;
 
-#define DEFINE_ACCEPT(ACCEPTOR) \
-        void ACCEPTOR::accept(IVisitor* visitor) const{ \
+#define DECLARE_PRINT_ACCEPT(ACCEPTOR) \
+        void accept(IVisitor<void>* visitor) const;
+
+#define DEFINE_PRINT_ACCEPT(ACCEPTOR) \
+        void ACCEPTOR::accept(IVisitor<void>* visitor) const { \
             visitor->visit(this); \
         }
 

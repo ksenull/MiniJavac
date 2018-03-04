@@ -1,11 +1,14 @@
 #pragma once
 
 #include "Node.h"
-#include "Statement.h"
-#include "Identifier.h"
 
 namespace ast {
     namespace nodes {
+
+        class Identifier;
+        class Statement;
+
+
         class MainClass : Node {
             Identifier* className;
             Identifier* argsName;
@@ -13,7 +16,7 @@ namespace ast {
         public:
             MainClass(Identifier* id1, Identifier* id2, Statement* _st);
 
-            DECLARE_ACCEPT(MainClass)
+            DECLARE_PRINT_ACCEPT(MainClass)
         };
     }
 }

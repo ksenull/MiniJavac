@@ -9,6 +9,6 @@ namespace ast {
 
         Program::Program(MainClass* _mainClass) : mainClass(_mainClass) {}
 
-        DEFINE_ACCEPT(Program)
+        DEFINE_PRINT_ACCEPT(Program)
     }
 }

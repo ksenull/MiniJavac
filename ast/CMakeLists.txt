@@ -1,6 +1,6 @@
 project(AST)
 
-include_directories(nodes)
+#include_directories(nodes)
 
 set(NODES_CLASSES
         nodes/MainClass.cpp

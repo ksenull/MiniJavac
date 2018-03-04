@@ -1,17 +1,29 @@
 #pragma once
 
-#include <Statement.h>
-#include <Identifier.h>
-#include <MainClass.h>
-#include "Program.h"
-
 namespace ast {
 
-#define DECLARE_IVISIT(NODE) \
-    virtual void visit(const nodes::NODE* node) const = 0;
+    namespace nodes {
+        class Program;
+        class MainClass;
+        class Identifier;
+        class Assign;
+        class IfElse;
+        class While;
+        class Print;
+        class GetItem;
+        class And;
+        class Less;
+        class Plus;
+        class Minus;
+        class Mult;
+    }
 
+    template <typename T>
     class IVisitor {
     public:
+
+#define DECLARE_IVISIT(NODE) virtual T visit(const nodes::NODE* node) const = 0;
+
         DECLARE_IVISIT(Program)
         DECLARE_IVISIT(MainClass)
         DECLARE_IVISIT(Identifier)
@@ -20,7 +32,13 @@ namespace ast {
         DECLARE_IVISIT(While)
         DECLARE_IVISIT(Print)
         DECLARE_IVISIT(GetItem)
-    };
+
+        DECLARE_IVISIT(And)
+        DECLARE_IVISIT(Less)
+        DECLARE_IVISIT(Plus)
+        DECLARE_IVISIT(Minus)
+        DECLARE_IVISIT(Mult)
 
 #undef DECLARE_IVISIT
+    };
 }

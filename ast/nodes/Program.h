@@ -1,10 +1,11 @@
 #pragma once
 
 #include "Node.h"
-#include "MainClass.h"
 
 namespace ast {
     namespace nodes {
+
+        class MainClass;
 
         class Program : public Node {
             MainClass* mainClass;
@@ -12,7 +13,7 @@ namespace ast {
         public:
             Program(MainClass* _mainClass);
 
-            DECLARE_ACCEPT(Program)
+            DECLARE_PRINT_ACCEPT(Program)
         };
 
     }

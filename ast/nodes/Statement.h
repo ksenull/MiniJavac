@@ -1,12 +1,13 @@
 #pragma once
 
 #include "Node.h"
-#include "../IVisitor.h"
-#include "Identifier.h"
-#include "Expression.h"
 
 namespace ast {
     namespace nodes {
+
+        class Identifier;
+        class Expression;
+
 
         class Statement : public Node {
         };
@@ -20,9 +21,9 @@ namespace ast {
             Identifier* id;
             Expression* exp;
         public:
-            Assign::Assign(Identifier* _id, Expression* _exp) : id(_id), exp(_exp){}
+            Assign(Identifier* _id, Expression* _exp) : id(_id), exp(_exp){}
 
-            DECLARE_ACCEPT(Assign)
+            DECLARE_PRINT_ACCEPT(Assign)
         };
 
 
@@ -31,10 +32,10 @@ namespace ast {
             Statement* ifSt;
             Statement* elseSt;
         public:
-            IfElse::IfElse(Expression* _cond, Statement* _ifSt, Statement* _elseSt) :
+            IfElse(Expression* _cond, Statement* _ifSt, Statement* _elseSt) :
                     condition(_cond), ifSt(_ifSt), elseSt(_elseSt) {}
 
-            DEFINE_ACCEPT(IfElse)
+            DECLARE_PRINT_ACCEPT(IfElse)
         };
 
 
@@ -44,7 +45,7 @@ namespace ast {
         public:
             While(Expression* exp, Statement* _st) : condition(exp), st(_st) {}
 
-            DECLARE_ACCEPT(While)
+            DECLARE_PRINT_ACCEPT(While)
         };
 
 
@@ -53,7 +54,7 @@ namespace ast {
         public:
             Print(Expression* _exp) : exp(_exp) {}
 
-            DECLARE_ACCEPT(Print)
+            DECLARE_PRINT_ACCEPT(Print)
         };
 
 
@@ -65,7 +66,7 @@ namespace ast {
             GetItem(Identifier* _arr, Expression* _idx, Expression* _exp) :
                     arr(_arr), idx(_idx), exp(_exp) {}
 
-            DECLARE_ACCEPT(GetItem)
+            DECLARE_PRINT_ACCEPT(GetItem)
         };
     }
 }

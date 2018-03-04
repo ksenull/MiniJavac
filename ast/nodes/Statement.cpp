@@ -7,14 +7,14 @@
 namespace ast {
     namespace nodes {
 
-        DEFINE_ACCEPT(Assign)
+        DEFINE_PRINT_ACCEPT(Assign)
 
-        DEFINE_ACCEPT(IfElse)
+        DEFINE_PRINT_ACCEPT(IfElse)
 
-        DEFINE_ACCEPT(While)
+        DEFINE_PRINT_ACCEPT(While)
 
-        DEFINE_ACCEPT(Print)
+        DEFINE_PRINT_ACCEPT(Print)
 
-        DEFINE_ACCEPT(GetItem)
+        DEFINE_PRINT_ACCEPT(GetItem)
     }
 }

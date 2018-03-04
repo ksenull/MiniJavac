@@ -6,15 +6,15 @@
 namespace ast {
     namespace nodes {
 
-        class Identifier : public Node{
+        class Identifier : public Node {
             std::string name;
 
         public:
             Identifier(std::string _name);
 
-            DECLARE_ACCEPT(Identifier)
+            DECLARE_PRINT_ACCEPT(Identifier)
 
-            std::string& getName() const;
+            const std::string& getName() const;
         };
 
     }
