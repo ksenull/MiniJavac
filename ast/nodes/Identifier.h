@@ -1,8 +1,6 @@
 #pragma once
 
 #include <iostream>
-
-#include "../IVisitor.h"
 #include "Node.h"
 
 namespace ast {
@@ -13,7 +11,8 @@ namespace ast {
 
         public:
             Identifier(std::string _name);
-            void accept(IVisitor* visitor) const;
+
+            DECLARE_ACCEPT(Identifier)
 
             std::string& getName() const;
         };

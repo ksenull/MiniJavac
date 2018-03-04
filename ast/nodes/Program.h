@@ -7,12 +7,12 @@ namespace ast {
     namespace nodes {
 
         class Program : public Node {
-            MainClass mainClass;
+            MainClass* mainClass;
 
         public:
-            Program(const MainClass& _mainClass);
+            Program(MainClass* _mainClass);
 
-            void accept(IVisitor* visitor) const;
+            DECLARE_ACCEPT(Program)
         };
 
     }

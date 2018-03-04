@@ -4,14 +4,14 @@
 
 #include "Identifier.h"
 
+#include <utility>
+
 namespace ast {
     namespace nodes {
 
-        Identifier::Identifier(std::string _name) : name(_name){}
+        Identifier::Identifier(std::string _name) : name(std::move(_name)){}
 
-        void Identifier::accept(IVisitor* visitor) const {
-            visitor->visit(this);
-        }
+        DEFINE_ACCEPT(Identifier)
 
         std::string& Identifier::getName() const {
             return name;

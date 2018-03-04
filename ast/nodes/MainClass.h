@@ -2,16 +2,18 @@
 
 #include "Node.h"
 #include "Statement.h"
+#include "Identifier.h"
 
 namespace ast {
     namespace nodes {
         class MainClass : Node {
-            Identifier className;
-            Identifier argsName;
-            Statement st;
+            Identifier* className;
+            Identifier* argsName;
+            Statement* st;
         public:
-            MainClass(const Identifier& id1, const Identifier& id2, const Statement& _st);
-            void accept(IVisitor* visitor) const;
+            MainClass(Identifier* id1, Identifier* id2, Statement* _st);
+
+            DECLARE_ACCEPT(MainClass)
         };
     }
 }

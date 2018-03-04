@@ -7,10 +7,8 @@
 namespace ast {
     namespace nodes {
 
-        Program::Program(const MainClass &_mainClass) : mainClass(_mainClass) {}
+        Program::Program(MainClass* _mainClass) : mainClass(_mainClass) {}
 
-        void Program::accept(IVisitor *visitor) const {
-            visitor->visit(this);
-        }
+        DEFINE_ACCEPT(Program)
     }
 }
