@@ -15,6 +15,6 @@ namespace ast {
 
         DEFINE_PRINT_ACCEPT(Print)
 
-        DEFINE_PRINT_ACCEPT(GetItem)
+        DEFINE_PRINT_ACCEPT(SetItem)
     }
 }

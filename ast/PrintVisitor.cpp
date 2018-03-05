@@ -34,7 +34,7 @@ namespace ast {
 
     }
 
-    void PrintVisitor::visit(const nodes::GetItem* node) const {
+    void PrintVisitor::visit(const nodes::SetItem* node) const {
         
     }
 

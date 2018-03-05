@@ -58,15 +58,15 @@ namespace ast {
         };
 
 
-        class GetItem : public Statement {
+        class SetItem : public Statement {
             Identifier* arr;
             Expression* idx;
             Expression* exp;
         public:
-            GetItem(Identifier* _arr, Expression* _idx, Expression* _exp) :
+            (Identifier* _arr, Expression* _idx, Expression* _exp) :
                     arr(_arr), idx(_idx), exp(_exp) {}
 
-            DECLARE_PRINT_ACCEPT(GetItem)
+            DECLARE_PRINT_ACCEPT(SetItem)
         };
     }
 }

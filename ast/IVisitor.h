@@ -10,7 +10,8 @@ namespace ast {
         class IfElse;
         class While;
         class Print;
-        class GetItem;
+        class SetItem;
+
         class And;
         class Less;
         class Plus;
@@ -31,7 +32,7 @@ namespace ast {
         DECLARE_IVISIT(IfElse)
         DECLARE_IVISIT(While)
         DECLARE_IVISIT(Print)
-        DECLARE_IVISIT(GetItem)
+        DECLARE_IVISIT(SetItem)
 
         DECLARE_IVISIT(And)
         DECLARE_IVISIT(Less)

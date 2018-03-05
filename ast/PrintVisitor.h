@@ -16,7 +16,7 @@ namespace ast {
         DECLARE_PRINT_VISIT(IfElse)
         DECLARE_PRINT_VISIT(While)
         DECLARE_PRINT_VISIT(Print)
-        DECLARE_PRINT_VISIT(GetItem)
+        DECLARE_PRINT_VISIT(SetItem)
 
         DECLARE_PRINT_VISIT(And)
         DECLARE_PRINT_VISIT(Less)
