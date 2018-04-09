@@ -4,25 +4,50 @@
 
 namespace ast {
 
-    class PrintVisitor : IVisitor<void> {
+    class PrintVisitor :public  IVisitor<void> {
     public:
 
 #define DECLARE_PRINT_VISIT(NODE)  void visit(const nodes::NODE* node) const override;
 
+        DECLARE_PRINT_VISIT(Identifier)
+        
         DECLARE_PRINT_VISIT(Program)
         DECLARE_PRINT_VISIT(MainClass)
-        DECLARE_PRINT_VISIT(Identifier)
-        DECLARE_PRINT_VISIT(Assign)
-        DECLARE_PRINT_VISIT(IfElse)
-        DECLARE_PRINT_VISIT(While)
-        DECLARE_PRINT_VISIT(Print)
-        DECLARE_PRINT_VISIT(SetItem)
 
-        DECLARE_PRINT_VISIT(And)
-        DECLARE_PRINT_VISIT(Less)
-        DECLARE_PRINT_VISIT(Plus)
-        DECLARE_PRINT_VISIT(Minus)
-        DECLARE_PRINT_VISIT(Mult)
+        DECLARE_PRINT_VISIT(ClassDeclaration)
+        DECLARE_PRINT_VISIT(ClassDeclarationList)
+
+        DECLARE_PRINT_VISIT(VariableDeclarationStatementList)
+        DECLARE_PRINT_VISIT(VariableDeclarationStatement)
+        DECLARE_PRINT_VISIT(VariableDeclaration)
+
+        DECLARE_PRINT_VISIT(Type)
+
+        DECLARE_PRINT_VISIT(MethodDeclarationList)
+        DECLARE_PRINT_VISIT(MethodDeclaration)
+
+        DECLARE_PRINT_VISIT(ArgumentDeclarationList)
+
+        DECLARE_PRINT_VISIT(StatementList)
+        DECLARE_PRINT_VISIT(NestedStatement)
+        DECLARE_PRINT_VISIT(IfStatement)
+        DECLARE_PRINT_VISIT(WhileStatement)
+        DECLARE_PRINT_VISIT(PrintStatement)
+        DECLARE_PRINT_VISIT(AssignStatement)
+        DECLARE_PRINT_VISIT(ArrayAssignStatement)
+
+        DECLARE_PRINT_VISIT(ArgumentsList)
+
+        DECLARE_PRINT_VISIT(BinopExpression)
+        DECLARE_PRINT_VISIT(ArrayItemExpression)
+        DECLARE_PRINT_VISIT(ArrayLengthExpression)
+        DECLARE_PRINT_VISIT(CallExpression)
+        DECLARE_PRINT_VISIT(ConstExpression)
+        DECLARE_PRINT_VISIT(BoolExpression)
+        DECLARE_PRINT_VISIT(IdExpression)
+        DECLARE_PRINT_VISIT(NewArrayExpression)
+        DECLARE_PRINT_VISIT(NewObjectExpression)
+        DECLARE_PRINT_VISIT(NotExpression)
 
 
 #undef DECLARE_PRINT_VISIT

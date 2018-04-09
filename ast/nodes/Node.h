@@ -12,19 +12,11 @@ namespace ast {
         };
 
 
-        class NodeList {
-            std::vector<Node*> list;
+        class NodeList : public std::vector<Node*> {
         public:
-            void add(Node* node) {
-                list.emplace_back(node);
-            }
-
-            Node* at(unsigned long i) {
-                return list.at(i);
-            }
-
-            unsigned long size() {
-                return list.size();
+            NodeList() = default;
+            NodeList(Node* node, NodeList* _nodeList) : NodeList(*_nodeList) {
+                emplace_back(node);
             }
         };
 
