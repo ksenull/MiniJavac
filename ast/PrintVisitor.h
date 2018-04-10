@@ -1,10 +1,13 @@
 #pragma once
 
+#pragma "GraphV.h"
+
 #include "IVisitor.h"
+#include "GraphV.h"
 
 namespace ast {
 
-    class PrintVisitor :public  IVisitor<void> {
+    class PrintVisitor : public  IVisitor<void> {
     public:
 
 #define DECLARE_PRINT_VISIT(NODE)  void visit(const nodes::NODE* node) const override;
@@ -51,6 +54,8 @@ namespace ast {
 
 
 #undef DECLARE_PRINT_VISIT
+//    private:
+        mutable visualize::Graph graph;
     };
 
 

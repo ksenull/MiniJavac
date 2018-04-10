@@ -33,7 +33,8 @@ namespace ast {
         }
 
         void Graph::savePng(const std::string& filename) {
-            gvRenderFilename (gvc, graph, "png", "graph.png");
+            gvLayout(gvc, graph, "dot");
+            gvRenderFilename (gvc, graph, "png", filename.c_str());
         }
 
         void Graph::release() {

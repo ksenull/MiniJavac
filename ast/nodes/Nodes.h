@@ -52,9 +52,7 @@ namespace ast {
 
         class StatementList : public Node, public NodeList {
         public:
-            StatementList(Statement* s, StatementList* another) : StatementList(*another) {
-                emplace_back(s);
-            }
+            StatementList(Statement* s, StatementList* another) : NodeList(s, another) {}
 
             DECLARE_PRINT_ACCEPT(StatementList)
         };
@@ -73,18 +71,17 @@ namespace ast {
 
         class ArgumentDeclarationList : public Node, public NodeList { // list of VariableDeclarations
         public:
-            ArgumentDeclarationList(VariableDeclaration* vd, ArgumentDeclarationList* another) : ArgumentDeclarationList(*another) {
-                emplace_back(vd);
-            }
+            ArgumentDeclarationList(VariableDeclaration* vd, ArgumentDeclarationList* another) : NodeList(vd, another) {}
+
+            ArgumentDeclarationList(VariableDeclaration* vd) : ArgumentDeclarationList(vd, nullptr) {}
 
             DECLARE_PRINT_ACCEPT(ArgumentDeclarationList)
         };
 
         class ArgumentsList : public Node, public NodeList{ // list of expressions
         public:
-            ArgumentsList(Expression* exp, ArgumentsList* another) : ArgumentsList(*another) {
-                emplace_back(exp);
-            }
+            ArgumentsList(Expression* exp, ArgumentsList* another) : NodeList(exp, another) {}
+            ArgumentsList(Expression* exp) : ArgumentsList(exp, nullptr) {}
             DECLARE_PRINT_ACCEPT(ArgumentsList)
         };
 
@@ -102,8 +99,8 @@ namespace ast {
         class VariableDeclarationStatementList : public Node, public NodeList {
         public:
             VariableDeclarationStatementList(VariableDeclarationStatement* vds, VariableDeclarationStatementList* vdsl) :
-                    VariableDeclarationStatementList(*vdsl) {
-                emplace_back(vds);
+                    NodeList(vds, vdsl) {
+                std::cout << "VariableDeclaration" <<std::endl ;
             }
             DECLARE_PRINT_ACCEPT(VariableDeclarationStatementList)
         };
@@ -116,7 +113,9 @@ namespace ast {
             StatementList* sl;
         public:
             MethodDeclaration(const Identifier& _id, Type* _returnType, Expression* _retExp, ArgumentDeclarationList* _args, StatementList* _sl) :
-                    id(_id), returnType(_returnType), returnExp(_retExp), args(_args), sl(_sl) {}
+                    id(_id), returnType(_returnType), returnExp(_retExp), args(_args), sl(_sl) {
+                std::cout << "method declaration" << std::endl;
+            }
             MethodDeclaration(const Identifier& _id, Type* _returnType, ArgumentDeclarationList* _args, StatementList* _sl) :
                     MethodDeclaration(_id, _returnType, nullptr, _args, _sl) {}
             ~MethodDeclaration() {
@@ -132,9 +131,7 @@ namespace ast {
 
         class MethodDeclarationList : public Node, public NodeList {
         public:
-            MethodDeclarationList(MethodDeclaration* md, MethodDeclarationList* ml) : MethodDeclarationList(*ml) {
-                emplace_back(md);
-            }
+            MethodDeclarationList(MethodDeclaration* md, MethodDeclarationList* ml) : NodeList(md, ml) {}
             DECLARE_PRINT_ACCEPT(MethodDeclarationList)
         };
 
@@ -147,7 +144,9 @@ namespace ast {
 
             ClassDeclaration(const Identifier& _id, const Identifier& _base,
                              VariableDeclarationStatementList* _localVars, MethodDeclarationList* _methods) :
-                    id(_id), base(_base), localVars(_localVars), methods(_methods) {}
+                    id(_id), base(_base), localVars(_localVars), methods(_methods) {
+                std::cout << "classDecl" <<std::endl;
+            }
 
             ClassDeclaration(const Identifier& _id,
                              VariableDeclarationStatementList* _localVars, MethodDeclarationList* _methods) :
@@ -162,9 +161,7 @@ namespace ast {
 
         class ClassDeclarationList : public Node, public NodeList {
         public:
-            ClassDeclarationList(ClassDeclaration* cd, ClassDeclarationList* cdl) : ClassDeclarationList(*cdl) {
-                emplace_back(cd);
-            }
+            ClassDeclarationList(ClassDeclaration* cd, ClassDeclarationList* cdl) : NodeList(cd, cdl) {}
 
             DECLARE_PRINT_ACCEPT(ClassDeclarationList)
         };

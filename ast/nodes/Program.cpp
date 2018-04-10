@@ -8,5 +8,6 @@ namespace ast {
     namespace nodes {
 
         DEFINE_PRINT_ACCEPT(Program)
+
     }
 }

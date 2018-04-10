@@ -12,7 +12,13 @@ namespace ast {
     }
     
     void PrintVisitor::visit(const nodes::Program* program) const {
-        std::cout << "[Program]" << std::endl;
+        auto&& programNode = graph.addNode("program");
+        auto&& mainClassNode = graph.addNode("main class");
+        auto&& classesNode = graph.addNode("classes");
+        graph.addEdge(programNode, mainClassNode);
+        graph.addEdge(programNode, classesNode);
+//
+//        std::cout << "[Program]" << std::endl;
     }
 
     void PrintVisitor::visit(const nodes::MainClass* mainClass) const {

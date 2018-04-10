@@ -12,5 +12,6 @@ namespace ast {
         const std::string& Identifier::getName() const {
             return name;
         }
+
     }
 }

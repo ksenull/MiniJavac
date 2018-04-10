@@ -1,4 +1,5 @@
+#!/usr/bin/env bash
 for file in ./BadSamples/*.java
 do
-    ./lexer "$file" | grep error
+    cat "$file" | ./cmake-build-debug/ast/AST | grep error
 done

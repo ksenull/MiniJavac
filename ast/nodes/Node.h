@@ -1,31 +1,36 @@
 #pragma once
 
 #include <vector>
-#include "../IVisitor.h"
+#include "../PrintVisitor.h"
 
 namespace ast {
     namespace nodes {
 
         class Node {
         public:
-            virtual void accept(IVisitor<void>* visitor) const = 0;
+//            virtual void accept(PrintVisitor* visitor) const = 0;
         };
 
 
-        class NodeList : public std::vector<Node*> {
+        class NodeList {
         public:
             NodeList() = default;
-            NodeList(Node* node, NodeList* _nodeList) : NodeList(*_nodeList) {
-                emplace_back(node);
+
+            NodeList(Node* node, NodeList* _nodeList) {
+                if (_nodeList) {
+                    nodes = _nodeList->nodes;
+                }
+                nodes.emplace_back(node);
             }
+            std::vector<Node*> nodes;
         };
 
 
 #define DECLARE_PRINT_ACCEPT(ACCEPTOR) \
-        void accept(IVisitor<void>* visitor) const;
+        void accept(PrintVisitor* visitor) const;
 
 #define DEFINE_PRINT_ACCEPT(ACCEPTOR) \
-        void ACCEPTOR::accept(IVisitor<void>* visitor) const { \
+        void ACCEPTOR::accept(PrintVisitor* visitor) const { \
             visitor->visit(this); \
         }
 

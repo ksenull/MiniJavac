@@ -186,12 +186,14 @@ MethodDeclaration:
         ArgumentDeclarationList[a]
     RPAREN LBRACE
         StatementList[s]
-        RETURN Expression[e]
+        RETURN Expression[e] SEMICOLON
     RBRACE { $$ = new MethodDeclaration($id, $rt, $e, $a, $s); }
     ;
 
 ArgumentDeclarationList:
     %empty { $$ = nullptr; }
+    |
+    VariableDeclaration { $$ = new ArgumentDeclarationList($1); }
     |
     VariableDeclaration COMMA ArgumentDeclarationList { $$ = new ArgumentDeclarationList($1, $3); }
     ;
@@ -227,8 +229,11 @@ Statement:
     ID[id] LBRACKET Expression[ae] RBRACKET ASSIGN Expression[e] SEMICOLON { $$ = new ArrayAssignStatement($id, $ae, $e); }
     ;
 
+
 ArgumentsList:
     %empty { $$ = nullptr; }
+    |
+    Expression[e] { $$ = new ArgumentsList($e); }
     |
     Expression[e] COMMA ArgumentsList[l] { $$ = new ArgumentsList($e, $l); }
     ;
