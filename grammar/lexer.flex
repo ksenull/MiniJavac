@@ -19,12 +19,12 @@
 static Grammar::location loc;
 
 #define PROCESS_VALUE_TOKEN(TOKEN, VALUE) { \
-    std::cout << #TOKEN << " " << VALUE  << std::endl; \
+    std::cout << #TOKEN << " " << VALUE  << " "; \
     return Parser::make_##TOKEN(VALUE, loc); \
 }
 
 #define PROCESS_TOKEN(TOKEN) { \
-    std::cout << #TOKEN << " " << loc << std::endl; \
+    std::cout << #TOKEN << " " ; \
     return Parser::make_##TOKEN(loc); \
 }
 
@@ -133,5 +133,5 @@ System.out.println { PROCESS_TOKEN(PRINT) }
 {INTEGER}       { PROCESS_VALUE_TOKEN(INTEGER, std::stoi(yytext)) }
 
 <<EOF>>         { PROCESS_TOKEN(END) }
-.               ;
+.               { std::cerr << "Error: Invalid token at " << loc << " " << yytext << std::endl; }
 %%

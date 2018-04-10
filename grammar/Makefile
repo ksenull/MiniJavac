@@ -25,7 +25,7 @@ cleanDebug: clean
 clean:
 	rm -f $(OBJECTS)
 	rm -f $(GENERATED_SOURCES)
-	rm -f $(GENERATED_SOURCES:.cpp=.h)
+#	rm -f $(GENERATED_SOURCES:.cpp=.h)
 	rm -f $(TARGETNAME)
 
 Tests: $(TEST_FILES) $(TARGETNAME)

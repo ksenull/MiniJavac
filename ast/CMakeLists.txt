@@ -3,10 +3,10 @@ project(AST)
 #include_directories(nodes)
 
 set(NODES_CLASSES
+        nodes/Identifier.cpp
         nodes/ArgumentDeclaration.cpp
         nodes/ClassDeclaration.cpp
         nodes/Expression.cpp
-        nodes/Identifier.cpp
         nodes/MainClass.cpp
         nodes/MethodDeclaration.cpp
         nodes/Program.cpp
@@ -15,8 +15,15 @@ set(NODES_CLASSES
         nodes/VariableDeclaration.cpp)
 
 set(PARSE ../grammar/Scanner.cpp ../grammar/Parser.cpp ../grammar/parse.cpp)
-set(SOURCE_FILES PrintVisitor.cpp main.cpp ${NODES_CLASSES} ${PARSE})
+set(VISUALIZERS GraphV.cpp PrintVisitor.cpp)
+set(SOURCE_FILES main.cpp ${NODES_CLASSES} ${PARSE} ${VISUALIZERS})
+
+find_package(PkgConfig)
+pkg_check_modules(GVC libgvc)
+
 add_executable(AST ${SOURCE_FILES})
 
+target_compile_options(AST PUBLIC ${GVC_CFLAGS})
+target_link_libraries(AST ${GVC_LDFLAGS})
 target_link_libraries(AST)
 set_property(TARGET AST PROPERTY CXX_STANDARD 14)
