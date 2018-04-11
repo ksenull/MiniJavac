@@ -12,13 +12,14 @@ namespace ast {
     }
     
     void PrintVisitor::visit(const nodes::Program* program) const {
-        fout << "program ;";
+        fout << "program -> ";
+        program->getMainClass()->accept(this);
 //        visit(program->getMainClass());
     }
 
     void PrintVisitor::visit(const nodes::MainClass* node) const {
-        fout << "mainClass ->";
-        node->getArgsName().accept(const_cast<PrintVisitor*>(this));
+        fout << "mainClass ;";
+//        node->getArgsName().accept(const_cast<PrintVisitor*>(this));
     }
 
     void PrintVisitor::visit(const nodes::ClassDeclaration* node) const {
