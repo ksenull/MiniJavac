@@ -14,9 +14,9 @@ namespace ast {
         public:
             Identifier() = default;
 
-            explicit Identifier(std::string&& _name) : name(std::move(_name)) {}
+            Identifier(std::string&& _name) : name(std::move(_name)) {}
 
-            explicit Identifier(const char* name) : name(name) {}
+            Identifier(const char* name) : name(name) {}
             ~Identifier() = default;
 
             DECLARE_PRINT_ACCEPT(Identifier)
@@ -455,7 +455,7 @@ namespace ast {
 
             const Identifier& getId() const;
 
-            bool isThis() const;
+            bool getIsThis() const;
 
             DECLARE_PRINT_ACCEPT(IdExpression)
         };

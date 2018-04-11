@@ -7,13 +7,13 @@
 #include <iostream>
 
 namespace ast {
-    void PrintVisitor::visit(const nodes::Identifier& id) const {
-        fout << "id[" <<id.getName() << "];";
+    void PrintVisitor::visit(const nodes::Identifier* id) const {
+        fout << "id[" <<id->getName() << "];";
     }
     
     void PrintVisitor::visit(const nodes::Program* program) const {
-        fout << "program ->";
-        visit(program->getMainClass());
+        fout << "program ;";
+//        visit(program->getMainClass());
     }
 
     void PrintVisitor::visit(const nodes::MainClass* node) const {

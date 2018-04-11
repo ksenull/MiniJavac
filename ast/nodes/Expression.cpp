@@ -68,7 +68,7 @@ namespace ast {
             return id;
         }
 
-        bool IdExpression::isThis() const {
+        bool IdExpression::getIsThis() const {
             return isThis;
         }
 
