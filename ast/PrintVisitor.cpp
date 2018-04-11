@@ -7,22 +7,18 @@
 #include <iostream>
 
 namespace ast {
-    void PrintVisitor::visit(const nodes::Identifier* id) const {
-        std::cout << "[Id " + id->getName() + "]" << std::endl;
+    void PrintVisitor::visit(const nodes::Identifier& id) const {
+        fout << "id[" <<id.getName() << "];";
     }
     
     void PrintVisitor::visit(const nodes::Program* program) const {
-        auto&& programNode = graph.addNode("program");
-        auto&& mainClassNode = graph.addNode("main class");
-        auto&& classesNode = graph.addNode("classes");
-        graph.addEdge(programNode, mainClassNode);
-        graph.addEdge(programNode, classesNode);
-//
-//        std::cout << "[Program]" << std::endl;
+        fout << "program ->";
+        visit(program->getMainClass());
     }
 
-    void PrintVisitor::visit(const nodes::MainClass* mainClass) const {
-        std::cout << "\t[MainClass]" << std::endl;
+    void PrintVisitor::visit(const nodes::MainClass* node) const {
+        fout << "mainClass ->";
+        node->getArgsName().accept(const_cast<PrintVisitor*>(this));
     }
 
     void PrintVisitor::visit(const nodes::ClassDeclaration* node) const {
@@ -30,7 +26,7 @@ namespace ast {
     }
 
     void PrintVisitor::visit(const nodes::ClassDeclarationList* node) const {
-
+        fout << "classDeclarationList";
     }
 
     void PrintVisitor::visit(const nodes::VariableDeclarationStatementList* node) const {
@@ -131,6 +127,17 @@ namespace ast {
 
     void PrintVisitor::visit(const nodes::NotExpression* node) const {
 
+    }
+
+    PrintVisitor::PrintVisitor(const std::string& filename) {
+        fout.open(filename);
+        fout << "digraph G {" << std::endl;
+    }
+
+
+    void PrintVisitor::finish() {
+        fout << "}" << std::endl;
+        fout.close();
     }
 
 

@@ -16,13 +16,19 @@ namespace ast {
 
         class Graph {
         public:
-            explicit Graph(const GraphType& gt = GT_Directed);
+            Graph();
+//            explicit Graph(const GraphType& gt = GT_Directed);
             ~Graph();
+
+            void initialise(const GraphType& gt);
+
             void release();
 
             Node addNode(const std::string& name);
 
             void addEdge(const Node& from, const Node& to);
+
+            void readFromFile(const std::string& filename);
 
             void savePng(const std::string& filename);
         private:

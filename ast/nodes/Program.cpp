@@ -9,5 +9,13 @@ namespace ast {
 
         DEFINE_PRINT_ACCEPT(Program)
 
+        MainClass* Program::getMainClass() const {
+            return mainClass;
+        }
+
+        ClassDeclarationList* Program::getClassDeclarationList() const {
+            return classDeclarationList;
+        }
+
     }
 }

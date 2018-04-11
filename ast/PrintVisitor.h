@@ -2,6 +2,7 @@
 
 #pragma "GraphV.h"
 
+#include <fstream>
 #include "IVisitor.h"
 #include "GraphV.h"
 
@@ -9,10 +10,16 @@ namespace ast {
 
     class PrintVisitor : public  IVisitor<void> {
     public:
+        PrintVisitor() = default;
 
-#define DECLARE_PRINT_VISIT(NODE)  void visit(const nodes::NODE* node) const override;
+        explicit PrintVisitor(const std::string& fout);
+        ~PrintVisitor() = default;
 
-        DECLARE_PRINT_VISIT(Identifier)
+        void finish();
+
+#define DECLARE_PRINT_VISIT(NODE)  void visit(const nodes::NODE* node) const;
+
+       DECLARE_PRINT_VISIT(Identifier)
         
         DECLARE_PRINT_VISIT(Program)
         DECLARE_PRINT_VISIT(MainClass)
@@ -54,8 +61,8 @@ namespace ast {
 
 
 #undef DECLARE_PRINT_VISIT
-//    private:
-        mutable visualize::Graph graph;
+    private:
+        mutable std::ofstream fout;
     };
 
 

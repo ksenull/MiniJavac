@@ -5,23 +5,40 @@
 
 namespace ast {
     namespace visualize {
-        Graph::Graph(const GraphType& gt) {
+        Graph::Graph() {
+            gvc = gvContext();
+        }
+//        Graph::Graph(const GraphType& gt) {
+//            gvc = gvContext();
+//            switch (gt) {
+//                case GT_Directed:
+//                    graph = agopen("Test", Agdirected, 0);
+//                    break;
+//                case GT_Undirected:
+//                    graph = agopen("Test", Agundirected, 0);
+//                    break;
+//                default:
+//                    ;
+//            }
+//        }
+        Graph::~Graph() {
+            gvFreeContext(gvc);
+        }
+
+        void Graph::initialise(const GraphType& gt) {
             gvc = gvContext();
             switch (gt) {
-                case GT_Directed:
-                    graph = agopen("Test", Agdirected, 0);
-                    break;
-                case GT_Undirected:
-                    graph = agopen("Test", Agundirected, 0);
-                    break;
-                default:
-                    ;
-            }
-        }
-        Graph::~Graph() {
-
+            case GT_Directed:
+                graph = agopen("Test", Agdirected, 0);
+                break;
+            case GT_Undirected:
+                graph = agopen("Test", Agundirected, 0);
+                break;
+            default:
+                ;
         }
 
+        }
         Node Graph::addNode(const std::string& name) {
             auto* node = agnode(graph, const_cast<char*>(name.c_str()), 1);
             Node n{node};
@@ -40,7 +57,13 @@ namespace ast {
         void Graph::release() {
             gvFreeLayout(gvc, graph);
             agclose(graph);
-            gvFreeContext(gvc);
+        }
+
+        void Graph::readFromFile(const std::string& filename) {
+            {
+                auto* fp = fopen(filename.c_str(), "r");
+                graph = agread(fp, 0);
+            }
         }
     }
 }

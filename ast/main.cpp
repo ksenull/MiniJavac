@@ -3,18 +3,24 @@
 #include "PrintVisitor.h"
 #include "../grammar/parse.h"
 #include "nodes/Nodes.h"
+#include "GraphV.h"
 
+static const std::string PathPrefix = "/home/ksenull/workspace/minijavac_17/";
 
 int main() {
     ast::nodes::Program* program;
     std::filebuf fb;
-    if (fb.open ("/home/ksenull/workspace/minijavac_17/Samples/BinaryTree.java",std::ios::in)) {
+    if (fb.open (PathPrefix + "Samples/BinaryTree.java",std::ios::in)) {
         std::istream in(&fb);
         program = Grammar::Parse(in);
-        auto* visitor = new ast::PrintVisitor();
-        program->accept(visitor);
-        visitor->graph.savePng("/home/ksenull/workspace/minijavac_17/graph.png");
-        visitor->graph.release();
+        auto* visitor = new ast::PrintVisitor(PathPrefix + "ast/graph.dot");
+        visitor->visit(program);
+        visitor->finish();
+//        program->accept(visitor);
+        ast::visualize::Graph graph{};
+        graph.readFromFile(PathPrefix + "ast/graph.dot");
+        graph.savePng(PathPrefix + "ast/graph.png");
+        graph.release();
     }
 //        program = Grammar::ParseCin();
     return 0;

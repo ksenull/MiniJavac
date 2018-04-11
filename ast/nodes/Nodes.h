@@ -13,8 +13,10 @@ namespace ast {
 
         public:
             Identifier() = default;
-            Identifier(std::string&& _name) : name(std::move(_name)) {}
-            Identifier(const char* _name) : name(_name) {}
+
+            explicit Identifier(std::string&& _name) : name(std::move(_name)) {}
+
+            explicit Identifier(const char* name) : name(name) {}
             ~Identifier() = default;
 
             DECLARE_PRINT_ACCEPT(Identifier)
@@ -33,8 +35,14 @@ namespace ast {
             TypeType tt;
         public:
             Type(const TypeType& _tt, const Identifier& _id) : tt(_tt), id(_id) {}
+
             explicit Type(const TypeType& _tt) : Type(_tt, Identifier{}){}
             ~Type() = default;
+
+            const Identifier& getId() const;
+
+            TypeType getTt() const;
+
 
             DECLARE_PRINT_ACCEPT(Type)
 
@@ -66,6 +74,10 @@ namespace ast {
                 if (type) { delete(type); }
             }
 
+            Type* getType() const;
+
+            const Identifier& getId() const;
+
             DECLARE_PRINT_ACCEPT(VariableDeclaration)
         };
 
@@ -73,7 +85,7 @@ namespace ast {
         public:
             ArgumentDeclarationList(VariableDeclaration* vd, ArgumentDeclarationList* another) : NodeList(vd, another) {}
 
-            ArgumentDeclarationList(VariableDeclaration* vd) : ArgumentDeclarationList(vd, nullptr) {}
+            explicit ArgumentDeclarationList(VariableDeclaration* vd) : ArgumentDeclarationList(vd, nullptr) {}
 
             DECLARE_PRINT_ACCEPT(ArgumentDeclarationList)
         };
@@ -81,7 +93,8 @@ namespace ast {
         class ArgumentsList : public Node, public NodeList{ // list of expressions
         public:
             ArgumentsList(Expression* exp, ArgumentsList* another) : NodeList(exp, another) {}
-            ArgumentsList(Expression* exp) : ArgumentsList(exp, nullptr) {}
+
+            explicit ArgumentsList(Expression* exp) : ArgumentsList(exp, nullptr) {}
             DECLARE_PRINT_ACCEPT(ArgumentsList)
         };
 
@@ -89,6 +102,11 @@ namespace ast {
             VariableDeclaration* var;
         public:
             explicit VariableDeclarationStatement(VariableDeclaration* _var) : var(_var) {}
+
+            VariableDeclaration* getVar() const {
+                return var;
+            }
+
             ~VariableDeclarationStatement() {
                 if (var) delete(var);
             }
@@ -125,6 +143,16 @@ namespace ast {
                 if (sl) delete(sl);
             }
 
+            const Identifier& getId() const;
+
+            Type* getReturnType() const;
+
+            Expression* getReturnExp() const;
+
+            ArgumentDeclarationList* getArgs() const;
+
+            StatementList* getSl() const;
+
             DECLARE_PRINT_ACCEPT(MethodDeclaration)
 
         };
@@ -156,6 +184,14 @@ namespace ast {
                 if (methods) delete(methods);
             }
 
+            const Identifier& getId() const;
+
+            const Identifier& getBase() const;
+
+            VariableDeclarationStatementList* getLocalVars() const;
+
+            MethodDeclarationList* getMethods() const;
+
             DECLARE_PRINT_ACCEPT(ClassDeclaration)
         };
 
@@ -176,6 +212,10 @@ namespace ast {
                 if (st) delete(st);
             }
 
+            const Identifier& getArgsName() const;
+
+            Statement* getSt() const;
+
             DECLARE_PRINT_ACCEPT(MainClass)
         };
 
@@ -191,6 +231,10 @@ namespace ast {
                 if (classDeclarationList) delete(classDeclarationList);
             }
 
+            MainClass* getMainClass() const;
+
+            ClassDeclarationList* getClassDeclarationList() const;
+
             DECLARE_PRINT_ACCEPT(Program)
         };
 
@@ -201,6 +245,8 @@ namespace ast {
             ~NestedStatement() {
                 if (sl) delete(sl);
             }
+
+            StatementList* getSl() const;
 
             DECLARE_PRINT_ACCEPT(NestedStatement)
         };
@@ -220,6 +266,12 @@ namespace ast {
                 if (elseSt) delete(elseSt);
             }
 
+            Expression* getCondition() const;
+
+            Statement* getIfSt() const;
+
+            Statement* getElseSt() const;
+
             DECLARE_PRINT_ACCEPT(IfStatement)
         };
 
@@ -233,6 +285,10 @@ namespace ast {
                 if (st) delete(st);
             }
 
+            Expression* getCondition() const;
+
+            Statement* getSt() const;
+
             DECLARE_PRINT_ACCEPT(WhileStatement)
         };
 
@@ -243,6 +299,8 @@ namespace ast {
             ~PrintStatement() {
                 if (exp) delete(exp);
             }
+
+            Expression* getExp() const;
 
             DECLARE_PRINT_ACCEPT(PrintStatement)
         };
@@ -255,6 +313,10 @@ namespace ast {
             ~AssignStatement() {
                 if (exp) delete(exp);
             }
+
+            const Identifier& getId() const;
+
+            Expression* getExp() const;
 
             DECLARE_PRINT_ACCEPT(AssignStatement)
         };
@@ -270,6 +332,12 @@ namespace ast {
                 if(arrExp) delete(arrExp);
                 if(exp) delete(exp);
             }
+
+            const Identifier& getId() const;
+
+            Expression* getArrExp() const;
+
+            Expression* getExp() const;
 
             DECLARE_PRINT_ACCEPT(ArrayAssignStatement)
         };
@@ -295,6 +363,12 @@ namespace ast {
                 if (right) delete(right);
             }
 
+            Expression* getLeft() const;
+
+            Expression* getRight() const;
+
+            BinOpType getType() const;
+
             DECLARE_PRINT_ACCEPT(BinopExpression)
         };
 
@@ -308,6 +382,10 @@ namespace ast {
                 if (ind) delete(ind);
             }
 
+            Expression* getExp() const;
+
+            Expression* getInd() const;
+
             DECLARE_PRINT_ACCEPT(ArrayItemExpression)
         };
 
@@ -318,6 +396,8 @@ namespace ast {
             ~ArrayLengthExpression() {
                 if (exp) delete(exp);
             }
+
+            Expression* getExp() const;
 
             DECLARE_PRINT_ACCEPT(ArrayLengthExpression)
         };
@@ -334,6 +414,12 @@ namespace ast {
                 if (args) delete(args);
             }
 
+            Expression* getExp() const;
+
+            const Identifier& getMethod() const;
+
+            ArgumentsList* getArgs() const;
+
             DECLARE_PRINT_ACCEPT(CallExpression)
         };
 
@@ -343,14 +429,18 @@ namespace ast {
             explicit ConstExpression(int _value) : value(_value) {}
             ~ConstExpression() = default;
 
+            int getValue() const;
+
             DECLARE_PRINT_ACCEPT(ConstExpression)
         };
 
         class BoolExpression : public Expression {
             bool value;
         public:
-            BoolExpression(bool value) {}
+            explicit BoolExpression(bool _value) : value(_value) {}
             ~BoolExpression() = default;
+
+            bool isValue() const;
 
             DECLARE_PRINT_ACCEPT(BoolExpression)
         };
@@ -362,6 +452,10 @@ namespace ast {
             explicit IdExpression(const std::string& s) : isThis(true) {}
             explicit IdExpression(Identifier& _id) : id(_id) {}
             ~IdExpression() = default;
+
+            const Identifier& getId() const;
+
+            bool isThis() const;
 
             DECLARE_PRINT_ACCEPT(IdExpression)
         };
@@ -377,6 +471,10 @@ namespace ast {
                 if (exp) delete(exp);
             }
 
+            Type* getType() const;
+
+            Expression* getExp() const;
+
             DECLARE_PRINT_ACCEPT(NewArrayExpression)
         };
 
@@ -385,6 +483,8 @@ namespace ast {
         public:
             explicit NewObjectExpression(Identifier& _id) : id(_id) {}
             ~NewObjectExpression() = default;
+
+            const Identifier& getId() const;
 
             DECLARE_PRINT_ACCEPT(NewObjectExpression)
         };
@@ -396,6 +496,8 @@ namespace ast {
             ~NotExpression() {
                 if (exp) delete(exp);
             }
+
+            Expression* getExp() const;
 
             DECLARE_PRINT_ACCEPT(NotExpression)
         };
