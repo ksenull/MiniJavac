@@ -19,12 +19,12 @@
 static Grammar::location loc;
 
 #define PROCESS_VALUE_TOKEN(TOKEN, VALUE) { \
-    std::cout << #TOKEN << " " << VALUE  << " "; \
+    std::cout << #TOKEN << " " << VALUE  << " " << loc << " "; \
     return Parser::make_##TOKEN(VALUE, loc); \
 }
 
 #define PROCESS_TOKEN(TOKEN) { \
-    std::cout << #TOKEN << " " ; \
+    std::cout << #TOKEN << " " << loc << " "; \
     return Parser::make_##TOKEN(loc); \
 }
 
@@ -54,7 +54,7 @@ using token = Grammar::Parser::token;
 
 
 SPACE       [ \t]+
-NEWLINE     [\n]+
+NEWLINE     [\r\n]+[\n]+
 
 BOOL_VALUE  (true|false)
 

@@ -1,6 +1,5 @@
 project(AST)
 
-#include_directories(nodes)
 add_subdirectory(drawgraph)
 
 set(NODES_CLASSES
@@ -18,15 +17,10 @@ set(NODES_CLASSES
         nodes/VariableDeclaration.cpp)
 
 set(PARSE ../grammar/Scanner.cpp ../grammar/Parser.cpp ../grammar/parse.cpp)
-set(VISUALIZERS drawgraph/GraphV.cpp PrintVisitor.cpp)
+set(VISUALIZERS PrintVisitor.cpp)
 set(SOURCE_FILES main.cpp ${NODES_CLASSES} ${PARSE} ${VISUALIZERS})
-
-find_package(PkgConfig)
-pkg_check_modules(GVC libgvc)
 
 add_executable(AST ${SOURCE_FILES})
 
-target_compile_options(AST PUBLIC ${GVC_CFLAGS})
-target_link_libraries(AST ${GVC_LDFLAGS})
 target_link_libraries(AST)
 set_property(TARGET AST PROPERTY CXX_STANDARD 14)
