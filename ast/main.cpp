@@ -14,7 +14,6 @@ int main() {
         std::istream in(&fb);
         program = Grammar::Parse(in);
         auto* visitor = new ast::PrintVisitor(PathPrefix + "ast/graph.dot");
-
         program->accept(visitor);
         visitor->finish();
     }

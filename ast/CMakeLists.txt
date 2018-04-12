@@ -4,6 +4,8 @@ project(AST)
 add_subdirectory(drawgraph)
 
 set(NODES_CLASSES
+        nodes/Node.h
+        nodes/Nodes.h
         nodes/Identifier.cpp
         nodes/ArgumentDeclaration.cpp
         nodes/ClassDeclaration.cpp

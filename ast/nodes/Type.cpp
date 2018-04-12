@@ -11,5 +11,13 @@ namespace ast {
         const std::string& Type::get() const {
             return id.getName();
         }
+
+        TypeType Type::getTt() const {
+            return tt;
+        }
+
+        const Identifier& Type::getId() const {
+            return id;
+        }
     }
 }

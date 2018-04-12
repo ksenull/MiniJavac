@@ -27,10 +27,10 @@ namespace ast {
 
 
 #define DECLARE_PRINT_ACCEPT(ACCEPTOR) \
-        void accept(const PrintVisitor* visitor) const;
+        void accept(const IVisitor<void>* visitor) const;
 
 #define DEFINE_PRINT_ACCEPT(ACCEPTOR) \
-        void ACCEPTOR::accept(const PrintVisitor* visitor) const { \
+        void ACCEPTOR::accept(const IVisitor<void>* visitor) const { \
             visitor->visit(this); \
         }
 

@@ -8,5 +8,14 @@ namespace ast {
         DEFINE_PRINT_ACCEPT(VariableDeclarationStatementList)
         DEFINE_PRINT_ACCEPT(VariableDeclarationStatement)
         DEFINE_PRINT_ACCEPT(VariableDeclaration)
+
+
+        const Identifier& VariableDeclaration::getId() const {
+            return id;
+        }
+
+        Type* VariableDeclaration::getType() const {
+            return type;
+        }
     }
 }
