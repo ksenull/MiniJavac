@@ -1,6 +1,7 @@
 project(AST)
 
 #include_directories(nodes)
+add_subdirectory(drawgraph)
 
 set(NODES_CLASSES
         nodes/Identifier.cpp
@@ -15,7 +16,7 @@ set(NODES_CLASSES
         nodes/VariableDeclaration.cpp)
 
 set(PARSE ../grammar/Scanner.cpp ../grammar/Parser.cpp ../grammar/parse.cpp)
-set(VISUALIZERS GraphV.cpp PrintVisitor.cpp)
+set(VISUALIZERS drawgraph/GraphV.cpp PrintVisitor.cpp)
 set(SOURCE_FILES main.cpp ${NODES_CLASSES} ${PARSE} ${VISUALIZERS})
 
 find_package(PkgConfig)

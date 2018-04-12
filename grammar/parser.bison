@@ -108,7 +108,9 @@ using namespace nodes;
 %type<VariableDeclarationStatementList*> VariableDeclarationStatementList;
 %type<VariableDeclaration*> VariableDeclaration;
 %type<ArgumentDeclarationList*> ArgumentDeclarationList;
+%type<ArgumentDeclarationList*> NonEmptyArgumentDeclarationList;
 %type<ArgumentsList*> ArgumentsList;
+%type<ArgumentsList*> NonEmptyArgumentsList;
 %type<Expression*> Expression;
 
 %token<Identifier> ID
@@ -152,7 +154,7 @@ ClassDeclaration:
 VariableDeclarationStatementList:
     %empty { $$ = nullptr; }
     |
-    VariableDeclarationStatement[v] VariableDeclarationStatementList[l] { $$ = new VariableDeclarationStatementList($v, $l); }
+    VariableDeclarationStatementList[l] VariableDeclarationStatement[v] { $$ = new VariableDeclarationStatementList($v, $l); }
     ;
 
 VariableDeclaration:
@@ -172,7 +174,7 @@ Type:
 MethodDeclarationList:
     %empty { $$ = nullptr; }
     |
-    MethodDeclaration[m] MethodDeclarationList[l] { $$ = new MethodDeclarationList($m, $l); }
+    MethodDeclarationList[l] MethodDeclaration[m] { $$ = new MethodDeclarationList($m, $l); }
     ;
 
 MethodDeclaration:
@@ -193,17 +195,21 @@ MethodDeclaration:
 ArgumentDeclarationList:
     %empty { $$ = nullptr; }
     |
+    NonEmptyArgumentDeclarationList { $$ = $1; }
+    ;
+
+NonEmptyArgumentDeclarationList:
     VariableDeclaration { $$ = new ArgumentDeclarationList($1); }
     |
-    VariableDeclaration COMMA ArgumentDeclarationList { $$ = new ArgumentDeclarationList($1, $3); }
+    VariableDeclaration COMMA NonEmptyArgumentDeclarationList { $$ = new ArgumentDeclarationList($1, $3); }
     ;
 
 StatementList:
     %empty { $$ = nullptr; }
     |
-    Statement StatementList { $$ = new StatementList($1, $2); }
+    StatementList[sl] Statement[s] { $$ = new StatementList($s, $sl); }
     |
-    VariableDeclarationStatement StatementList { $$ = new StatementList($1, $2); }
+    StatementList[ls] VariableDeclarationStatement[s] { $$ = new StatementList($s, $ls); }
     ;
 
 VariableDeclarationStatement:
@@ -233,10 +239,13 @@ Statement:
 ArgumentsList:
     %empty { $$ = nullptr; }
     |
+    NonEmptyArgumentsList { $$ = $1; }
+    ;
+
+NonEmptyArgumentsList:
     Expression[e] { $$ = new ArgumentsList($e); }
     |
-    Expression[e] COMMA ArgumentsList[l] { $$ = new ArgumentsList($e, $l); }
-    ;
+    ArgumentsList[l] COMMA Expression[e] { $$ = new ArgumentsList($e, $l); }
 
 Expression:
 	Expression[L] PLUS Expression[R] { $$ = new BinopExpression( $L, $R, BOT_Plus ); }

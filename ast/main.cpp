@@ -3,7 +3,7 @@
 #include "PrintVisitor.h"
 #include "../grammar/parse.h"
 #include "nodes/Nodes.h"
-#include "GraphV.h"
+//#include "GraphV.h"
 
 static const std::string PathPrefix = "/home/ksenull/workspace/minijavac_17/";
 
@@ -17,10 +17,6 @@ int main() {
 
         program->accept(visitor);
         visitor->finish();
-        ast::visualize::Graph graph{};
-        graph.readFromFile(PathPrefix + "ast/graph.dot");
-        graph.savePng(PathPrefix + "ast/graph.png");
-        graph.release();
     }
 //        program = Grammar::ParseCin();
     return 0;

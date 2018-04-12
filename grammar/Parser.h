@@ -304,9 +304,11 @@ namespace Grammar {
     union union_type
     {
       // ArgumentDeclarationList
+      // NonEmptyArgumentDeclarationList
       char dummy1[sizeof(ArgumentDeclarationList*)];
 
       // ArgumentsList
+      // NonEmptyArgumentsList
       char dummy2[sizeof(ArgumentsList*)];
 
       // ClassDeclaration
@@ -788,7 +790,7 @@ namespace Grammar {
   // number is the opposite.  If YYTABLE_NINF, syntax error.
   static const unsigned char yytable_[];
 
-  static const short int yycheck_[];
+  static const unsigned char yycheck_[];
 
   // YYSTOS[STATE-NUM] -- The (internal number of the) accessing
   // symbol of state STATE-NUM.
@@ -905,8 +907,8 @@ namespace Grammar {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 232,     ///< Last index in yytable_.
-      yynnts_ = 16,  ///< Number of nonterminal symbols.
+      yylast_ = 230,     ///< Last index in yytable_.
+      yynnts_ = 18,  ///< Number of nonterminal symbols.
       yyfinal_ = 5, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
@@ -993,10 +995,12 @@ namespace Grammar {
       switch (other.type_get ())
     {
       case 50: // ArgumentDeclarationList
+      case 51: // NonEmptyArgumentDeclarationList
         value.copy< ArgumentDeclarationList* > (other.value);
         break;
 
-      case 54: // ArgumentsList
+      case 55: // ArgumentsList
+      case 56: // NonEmptyArgumentsList
         value.copy< ArgumentsList* > (other.value);
         break;
 
@@ -1008,7 +1012,7 @@ namespace Grammar {
         value.copy< ClassDeclarationList* > (other.value);
         break;
 
-      case 55: // Expression
+      case 57: // Expression
         value.copy< Expression* > (other.value);
         break;
 
@@ -1028,11 +1032,11 @@ namespace Grammar {
         value.copy< MethodDeclarationList* > (other.value);
         break;
 
-      case 53: // Statement
+      case 54: // Statement
         value.copy< Statement* > (other.value);
         break;
 
-      case 51: // StatementList
+      case 52: // StatementList
         value.copy< StatementList* > (other.value);
         break;
 
@@ -1044,7 +1048,7 @@ namespace Grammar {
         value.copy< VariableDeclaration* > (other.value);
         break;
 
-      case 52: // VariableDeclarationStatement
+      case 53: // VariableDeclarationStatement
         value.copy< VariableDeclarationStatement* > (other.value);
         break;
 
@@ -1078,10 +1082,12 @@ namespace Grammar {
       switch (this->type_get ())
     {
       case 50: // ArgumentDeclarationList
+      case 51: // NonEmptyArgumentDeclarationList
         value.copy< ArgumentDeclarationList* > (v);
         break;
 
-      case 54: // ArgumentsList
+      case 55: // ArgumentsList
+      case 56: // NonEmptyArgumentsList
         value.copy< ArgumentsList* > (v);
         break;
 
@@ -1093,7 +1099,7 @@ namespace Grammar {
         value.copy< ClassDeclarationList* > (v);
         break;
 
-      case 55: // Expression
+      case 57: // Expression
         value.copy< Expression* > (v);
         break;
 
@@ -1113,11 +1119,11 @@ namespace Grammar {
         value.copy< MethodDeclarationList* > (v);
         break;
 
-      case 53: // Statement
+      case 54: // Statement
         value.copy< Statement* > (v);
         break;
 
-      case 51: // StatementList
+      case 52: // StatementList
         value.copy< StatementList* > (v);
         break;
 
@@ -1129,7 +1135,7 @@ namespace Grammar {
         value.copy< VariableDeclaration* > (v);
         break;
 
-      case 52: // VariableDeclarationStatement
+      case 53: // VariableDeclarationStatement
         value.copy< VariableDeclarationStatement* > (v);
         break;
 
@@ -1306,10 +1312,12 @@ namespace Grammar {
     switch (yytype)
     {
       case 50: // ArgumentDeclarationList
+      case 51: // NonEmptyArgumentDeclarationList
         value.template destroy< ArgumentDeclarationList* > ();
         break;
 
-      case 54: // ArgumentsList
+      case 55: // ArgumentsList
+      case 56: // NonEmptyArgumentsList
         value.template destroy< ArgumentsList* > ();
         break;
 
@@ -1321,7 +1329,7 @@ namespace Grammar {
         value.template destroy< ClassDeclarationList* > ();
         break;
 
-      case 55: // Expression
+      case 57: // Expression
         value.template destroy< Expression* > ();
         break;
 
@@ -1341,11 +1349,11 @@ namespace Grammar {
         value.template destroy< MethodDeclarationList* > ();
         break;
 
-      case 53: // Statement
+      case 54: // Statement
         value.template destroy< Statement* > ();
         break;
 
-      case 51: // StatementList
+      case 52: // StatementList
         value.template destroy< StatementList* > ();
         break;
 
@@ -1357,7 +1365,7 @@ namespace Grammar {
         value.template destroy< VariableDeclaration* > ();
         break;
 
-      case 52: // VariableDeclarationStatement
+      case 53: // VariableDeclarationStatement
         value.template destroy< VariableDeclarationStatement* > ();
         break;
 
@@ -1397,10 +1405,12 @@ namespace Grammar {
       switch (this->type_get ())
     {
       case 50: // ArgumentDeclarationList
+      case 51: // NonEmptyArgumentDeclarationList
         value.move< ArgumentDeclarationList* > (s.value);
         break;
 
-      case 54: // ArgumentsList
+      case 55: // ArgumentsList
+      case 56: // NonEmptyArgumentsList
         value.move< ArgumentsList* > (s.value);
         break;
 
@@ -1412,7 +1422,7 @@ namespace Grammar {
         value.move< ClassDeclarationList* > (s.value);
         break;
 
-      case 55: // Expression
+      case 57: // Expression
         value.move< Expression* > (s.value);
         break;
 
@@ -1432,11 +1442,11 @@ namespace Grammar {
         value.move< MethodDeclarationList* > (s.value);
         break;
 
-      case 53: // Statement
+      case 54: // Statement
         value.move< Statement* > (s.value);
         break;
 
-      case 51: // StatementList
+      case 52: // StatementList
         value.move< StatementList* > (s.value);
         break;
 
@@ -1448,7 +1458,7 @@ namespace Grammar {
         value.move< VariableDeclaration* > (s.value);
         break;
 
-      case 52: // VariableDeclarationStatement
+      case 53: // VariableDeclarationStatement
         value.move< VariableDeclarationStatement* > (s.value);
         break;
 
@@ -1758,7 +1768,7 @@ namespace Grammar {
 
 #line 5 "parser.bison" // lalr1.cc:377
 } // Grammar
-#line 1762 "Parser.h" // lalr1.cc:377
+#line 1772 "Parser.h" // lalr1.cc:377
 
 
 
