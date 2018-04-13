@@ -1,0 +1,150 @@
+Terminals unused in grammar
+
+   "["
+   "]"
+   "("
+   ")"
+   ","
+   "."
+   ";"
+   EXTENDS
+   PUBLIC
+   BOOLEAN
+   INT
+   VOID
+   STATIC
+   IF
+   ELSE
+   WHILE
+   NEW
+   RETURN
+   LENGTH
+   THIS
+   MAIN
+   STRING
+   PRINT
+   EQUAL
+   LESS
+   AND
+   PLUS
+   MINUS
+   MULT
+   NOT
+   ASSIGN
+   BOOL_VALUE
+   INTEGER
+   ID
+
+
+Grammar
+
+    0 $accept: Goal END
+
+    1 Goal: MainClass
+
+    2 MainClass: CLASS "{" "}"
+
+
+Terminals, with rules where they appear
+
+END (0) 0
+error (256)
+"[" (258)
+"]" (259)
+"(" (260)
+")" (261)
+"{" (262) 2
+"}" (263) 2
+"," (264)
+"." (265)
+";" (266)
+CLASS (267) 2
+EXTENDS (268)
+PUBLIC (269)
+BOOLEAN (270)
+INT (271)
+VOID (272)
+STATIC (273)
+IF (274)
+ELSE (275)
+WHILE (276)
+NEW (277)
+RETURN (278)
+LENGTH (279)
+THIS (280)
+MAIN (281)
+STRING (282)
+PRINT (283)
+EQUAL (284)
+LESS (285)
+AND (286)
+PLUS (287)
+MINUS (288)
+MULT (289)
+NOT (290)
+ASSIGN (291)
+BOOL_VALUE (292)
+INTEGER (293)
+ID (294)
+
+
+Nonterminals, with rules where they appear
+
+$accept (40)
+    on left: 0
+Goal (41)
+    on left: 1, on right: 0
+MainClass (42)
+    on left: 2, on right: 1
+
+
+State 0
+
+    0 $accept: . Goal END
+
+    CLASS  shift, and go to state 1
+
+    Goal       go to state 2
+    MainClass  go to state 3
+
+
+State 1
+
+    2 MainClass: CLASS . "{" "}"
+
+    "{"  shift, and go to state 4
+
+
+State 2
+
+    0 $accept: Goal . END
+
+    END  shift, and go to state 5
+
+
+State 3
+
+    1 Goal: MainClass .
+
+    $default  reduce using rule 1 (Goal)
+
+
+State 4
+
+    2 MainClass: CLASS "{" . "}"
+
+    "}"  shift, and go to state 6
+
+
+State 5
+
+    0 $accept: Goal END .
+
+    $default  accept
+
+
+State 6
+
+    2 MainClass: CLASS "{" "}" .
+
+    $default  reduce using rule 2 (MainClass)

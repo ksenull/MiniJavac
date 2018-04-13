@@ -1,0 +1,3 @@
+/home/ksenull/workspace/test/miniminijavac/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/ksenull/workspace/test/miniminijavac/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/ksenull/workspace/test/miniminijavac/cmake-build-debug/CMakeFiles/AST.dir
