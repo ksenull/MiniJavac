@@ -9,13 +9,19 @@
 
 namespace ast {
 
-    void PrintVisitor::visit(const Program* program) const {
+    void PrintVisitor::visit(const Program& program) const {
         fout << "program -> ";
-        program->getMainClass()->accept(this);
+//        std::cout << program.mainClass;
+        program.mainClass->accept(*this);
     }
 
-    void PrintVisitor::visit(const MainClass* node) const {
-        fout << "mainClass;" << std::endl;
+    void PrintVisitor::visit(const MainClass& node) const {
+        fout << "mainClass -> ";
+//        node.st->accept(this);
+    }
+
+    void PrintVisitor::visit(const PrintStatement& printSt) const {
+        fout << "printStatement;" << std::endl;
     }
 
 

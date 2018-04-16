@@ -1,3 +1,3 @@
 class {
-
+    System.out.println();
 }

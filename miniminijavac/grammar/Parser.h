@@ -46,6 +46,10 @@ namespace Grammar {
     class Scanner;
 }
 #include "../nodes.h"
+
+#include <iostream>
+#include <memory>
+
 using namespace ast;
 
 // The following definitions is missing when %locations isn't used
@@ -58,7 +62,7 @@ using namespace ast;
 # endif
 
 
-#line 62 "Parser.h" // lalr1.cc:377
+#line 66 "Parser.h" // lalr1.cc:377
 
 # include <cassert>
 # include <cstdlib> // std::abort
@@ -135,7 +139,7 @@ using namespace ast;
 
 #line 5 "parser.bison" // lalr1.cc:377
 namespace Grammar {
-#line 139 "Parser.h" // lalr1.cc:377
+#line 143 "Parser.h" // lalr1.cc:377
 
 
 
@@ -302,17 +306,20 @@ namespace Grammar {
     /// An auxiliary type to compute the largest semantic type.
     union union_type
     {
-      // MainClass
-      char dummy1[sizeof(MainClass*)];
-
       // BOOL_VALUE
-      char dummy2[sizeof(bool)];
+      char dummy1[sizeof(bool)];
 
       // INTEGER
-      char dummy3[sizeof(int)];
+      char dummy2[sizeof(int)];
+
+      // Statement
+      char dummy3[sizeof(std::shared_ptr<IStatement> )];
+
+      // MainClass
+      char dummy4[sizeof(std::shared_ptr<MainClass> )];
 
       // ID
-      char dummy4[sizeof(std::string)];
+      char dummy5[sizeof(std::string)];
 };
 
     /// Symbol semantic values.
@@ -410,11 +417,13 @@ namespace Grammar {
 
   basic_symbol (typename Base::kind_type t, const location_type& l);
 
-  basic_symbol (typename Base::kind_type t, const MainClass* v, const location_type& l);
-
   basic_symbol (typename Base::kind_type t, const bool v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const int v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const std::shared_ptr<IStatement>  v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const std::shared_ptr<MainClass>  v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const std::string v, const location_type& l);
 
@@ -639,7 +648,7 @@ namespace Grammar {
 
 
     /// Build a parser object.
-    Parser (Scanner& scanner_yyarg, Program* program_yyarg);
+    Parser (Scanner& scanner_yyarg, std::shared_ptr<Program>& program_yyarg);
     virtual ~Parser ();
 
     /// Parse.
@@ -839,8 +848,8 @@ namespace Grammar {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 3,     ///< Last index in yytable_.
-      yynnts_ = 3,  ///< Number of nonterminal symbols.
+      yylast_ = 7,     ///< Last index in yytable_.
+      yynnts_ = 4,  ///< Number of nonterminal symbols.
       yyfinal_ = 5, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
@@ -850,7 +859,7 @@ namespace Grammar {
 
     // User arguments.
     Scanner& scanner;
-    Program* program;
+    std::shared_ptr<Program>& program;
   };
 
   // Symbol number corresponding to token number t.
@@ -926,16 +935,20 @@ namespace Grammar {
   {
       switch (other.type_get ())
     {
-      case 42: // MainClass
-        value.copy< MainClass* > (other.value);
-        break;
-
       case 37: // BOOL_VALUE
         value.copy< bool > (other.value);
         break;
 
       case 38: // INTEGER
         value.copy< int > (other.value);
+        break;
+
+      case 43: // Statement
+        value.copy< std::shared_ptr<IStatement>  > (other.value);
+        break;
+
+      case 42: // MainClass
+        value.copy< std::shared_ptr<MainClass>  > (other.value);
         break;
 
       case 39: // ID
@@ -959,16 +972,20 @@ namespace Grammar {
     (void) v;
       switch (this->type_get ())
     {
-      case 42: // MainClass
-        value.copy< MainClass* > (v);
-        break;
-
       case 37: // BOOL_VALUE
         value.copy< bool > (v);
         break;
 
       case 38: // INTEGER
         value.copy< int > (v);
+        break;
+
+      case 43: // Statement
+        value.copy< std::shared_ptr<IStatement>  > (v);
+        break;
+
+      case 42: // MainClass
+        value.copy< std::shared_ptr<MainClass>  > (v);
         break;
 
       case 39: // ID
@@ -991,13 +1008,6 @@ namespace Grammar {
   {}
 
   template <typename Base>
-  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const MainClass* v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
   Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const bool v, const location_type& l)
     : Base (t)
     , value (v)
@@ -1006,6 +1016,20 @@ namespace Grammar {
 
   template <typename Base>
   Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const int v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::shared_ptr<IStatement>  v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::shared_ptr<MainClass>  v, const location_type& l)
     : Base (t)
     , value (v)
     , location (l)
@@ -1044,16 +1068,20 @@ namespace Grammar {
     // Type destructor.
     switch (yytype)
     {
-      case 42: // MainClass
-        value.template destroy< MainClass* > ();
-        break;
-
       case 37: // BOOL_VALUE
         value.template destroy< bool > ();
         break;
 
       case 38: // INTEGER
         value.template destroy< int > ();
+        break;
+
+      case 43: // Statement
+        value.template destroy< std::shared_ptr<IStatement>  > ();
+        break;
+
+      case 42: // MainClass
+        value.template destroy< std::shared_ptr<MainClass>  > ();
         break;
 
       case 39: // ID
@@ -1083,16 +1111,20 @@ namespace Grammar {
     super_type::move(s);
       switch (this->type_get ())
     {
-      case 42: // MainClass
-        value.move< MainClass* > (s.value);
-        break;
-
       case 37: // BOOL_VALUE
         value.move< bool > (s.value);
         break;
 
       case 38: // INTEGER
         value.move< int > (s.value);
+        break;
+
+      case 43: // Statement
+        value.move< std::shared_ptr<IStatement>  > (s.value);
+        break;
+
+      case 42: // MainClass
+        value.move< std::shared_ptr<MainClass>  > (s.value);
         break;
 
       case 39: // ID
@@ -1393,7 +1425,7 @@ namespace Grammar {
 
 #line 5 "parser.bison" // lalr1.cc:377
 } // Grammar
-#line 1397 "Parser.h" // lalr1.cc:377
+#line 1429 "Parser.h" // lalr1.cc:377
 
 
 

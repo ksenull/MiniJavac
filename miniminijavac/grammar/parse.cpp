@@ -4,7 +4,7 @@
 #include "parse.h"
 #include "Parser.h"
 #include "Scanner.h"
-
+#include <unistd.h>
 
 namespace Grammar {
 
@@ -20,7 +20,9 @@ namespace Grammar {
         Scanner scanner(&input);
         Program* result;
         Parser parser(scanner, result);
+        usleep(100000);
         parser.parse();
+        usleep(100000);
         return result;
     }
 
@@ -32,3 +34,7 @@ namespace Grammar {
         return result;
     }
 }
+
+//int main() {
+//    return 0;
+//}

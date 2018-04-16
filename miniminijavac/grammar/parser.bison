@@ -11,6 +11,10 @@ namespace Grammar {
     class Scanner;
 }
 #include "../nodes.h"
+
+#include <iostream>
+#include <memory>
+
 using namespace ast;
 
 // The following definitions is missing when %locations isn't used
@@ -25,14 +29,12 @@ using namespace ast;
 }
 
 %parse-param { Scanner& scanner }
-%parse-param { Program* program }
+%parse-param { std::shared_ptr<Program>& program }
 
 %output "Parser.cpp"
 %defines "Parser.h"
 
 %code{
-   #include <iostream>
-
    #include "Scanner.h"
 
 #undef yylex
@@ -95,20 +97,24 @@ using namespace ast;
 %token<bool> BOOL_VALUE
 %token<int> INTEGER
 
-%type<MainClass*> MainClass;
+%type<std::shared_ptr<IStatement> > Statement;
+%type<std::shared_ptr<MainClass> > MainClass;
 %token<std::string> ID
 
 %%
 
 Goal:
-    MainClass /*ClassDeclarationList */{ program = new Program($1/*, $2*/); }
+    MainClass { program = std::make_shared<Program>(new Program($1/*, $2*/)); }
     ;
 
 MainClass:
-    CLASS /*ID*/ LBRACE
-
-    RBRACE { $$ = new MainClass(); }
+    CLASS  LBRACE
+        Statement
+    RBRACE { $$ = std::make_shared<MainClass>(new MainClass($3)); }
     ;
+
+Statement:
+    PRINT LPAREN  RPAREN SEMICOLON { $$ = std::make_shared<PrintStatement>(new PrintStatement()); }
 
 %%
 

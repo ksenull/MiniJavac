@@ -49,16 +49,14 @@
 
 #line 51 "Parser.cpp" // lalr1.cc:412
 // Unqualified %code blocks.
-#line 33 "parser.bison" // lalr1.cc:413
-
-   #include <iostream>
+#line 37 "parser.bison" // lalr1.cc:413
 
    #include "Scanner.h"
 
 #undef yylex
 #define yylex scanner.Lex
 
-#line 62 "Parser.cpp" // lalr1.cc:413
+#line 60 "Parser.cpp" // lalr1.cc:413
 
 
 #ifndef YY_
@@ -144,10 +142,10 @@
 
 #line 5 "parser.bison" // lalr1.cc:479
 namespace Grammar {
-#line 148 "Parser.cpp" // lalr1.cc:479
+#line 146 "Parser.cpp" // lalr1.cc:479
 
   /// Build a parser object.
-  Parser::Parser (Scanner& scanner_yyarg, Program* program_yyarg)
+  Parser::Parser (Scanner& scanner_yyarg, std::shared_ptr<Program>& program_yyarg)
     :
 #if YYDEBUG
       yydebug_ (false),
@@ -219,16 +217,20 @@ namespace Grammar {
   {
       switch (that.type_get ())
     {
-      case 42: // MainClass
-        value.move< MainClass* > (that.value);
-        break;
-
       case 37: // BOOL_VALUE
         value.move< bool > (that.value);
         break;
 
       case 38: // INTEGER
         value.move< int > (that.value);
+        break;
+
+      case 43: // Statement
+        value.move< std::shared_ptr<IStatement>  > (that.value);
+        break;
+
+      case 42: // MainClass
+        value.move< std::shared_ptr<MainClass>  > (that.value);
         break;
 
       case 39: // ID
@@ -250,16 +252,20 @@ namespace Grammar {
     state = that.state;
       switch (that.type_get ())
     {
-      case 42: // MainClass
-        value.copy< MainClass* > (that.value);
-        break;
-
       case 37: // BOOL_VALUE
         value.copy< bool > (that.value);
         break;
 
       case 38: // INTEGER
         value.copy< int > (that.value);
+        break;
+
+      case 43: // Statement
+        value.copy< std::shared_ptr<IStatement>  > (that.value);
+        break;
+
+      case 42: // MainClass
+        value.copy< std::shared_ptr<MainClass>  > (that.value);
         break;
 
       case 39: // ID
@@ -494,16 +500,20 @@ namespace Grammar {
          when using variants.  */
         switch (yyr1_[yyn])
     {
-      case 42: // MainClass
-        yylhs.value.build< MainClass* > ();
-        break;
-
       case 37: // BOOL_VALUE
         yylhs.value.build< bool > ();
         break;
 
       case 38: // INTEGER
         yylhs.value.build< int > ();
+        break;
+
+      case 43: // Statement
+        yylhs.value.build< std::shared_ptr<IStatement>  > ();
+        break;
+
+      case 42: // MainClass
+        yylhs.value.build< std::shared_ptr<MainClass>  > ();
         break;
 
       case 39: // ID
@@ -528,19 +538,25 @@ namespace Grammar {
           switch (yyn)
             {
   case 2:
-#line 104 "parser.bison" // lalr1.cc:859
-    { program = new Program(yystack_[0].value.as< MainClass* > ()/*, $2*/); }
-#line 534 "Parser.cpp" // lalr1.cc:859
+#line 107 "parser.bison" // lalr1.cc:859
+    { program = std::make_shared<Program>(new Program(yystack_[0].value.as< std::shared_ptr<MainClass>  > ()/*, $2*/)); }
+#line 544 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 3:
-#line 110 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< MainClass* > () = new MainClass(); }
-#line 540 "Parser.cpp" // lalr1.cc:859
+#line 113 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< std::shared_ptr<MainClass>  > () = std::make_shared<MainClass>(new MainClass(yystack_[1].value.as< std::shared_ptr<IStatement>  > ())); }
+#line 550 "Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 4:
+#line 117 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< std::shared_ptr<IStatement>  > () = std::make_shared<PrintStatement>(new PrintStatement()); }
+#line 556 "Parser.cpp" // lalr1.cc:859
     break;
 
 
-#line 544 "Parser.cpp" // lalr1.cc:859
+#line 560 "Parser.cpp" // lalr1.cc:859
             default:
               break;
             }
@@ -706,62 +722,65 @@ namespace Grammar {
   }
 
 
-  const signed char Parser::yypact_ninf_ = -13;
+  const signed char Parser::yypact_ninf_ = -26;
 
   const signed char Parser::yytable_ninf_ = -1;
 
   const signed char
   Parser::yypact_[] =
   {
-     -12,    -6,     2,   -13,    -5,   -13,   -13
+     -12,    -6,     2,   -26,   -25,   -26,    -1,    -3,     0,   -26,
+      -4,   -26
   };
 
   const unsigned char
   Parser::yydefact_[] =
   {
-       0,     0,     0,     2,     0,     1,     3
+       0,     0,     0,     2,     0,     1,     0,     0,     0,     3,
+       0,     4
   };
 
   const signed char
   Parser::yypgoto_[] =
   {
-     -13,   -13,   -13
+     -26,   -26,   -26,   -26
   };
 
   const signed char
   Parser::yydefgoto_[] =
   {
-      -1,     2,     3
+      -1,     2,     3,     7
   };
 
   const unsigned char
   Parser::yytable_[] =
   {
-       1,     4,     5,     6
+       1,     4,     5,     6,     8,     9,    10,    11
   };
 
   const unsigned char
   Parser::yycheck_[] =
   {
-      12,     7,     0,     8
+      12,     7,     0,    28,     5,     8,     6,    11
   };
 
   const unsigned char
   Parser::yystos_[] =
   {
-       0,    12,    41,    42,     7,     0,     8
+       0,    12,    41,    42,     7,     0,    28,    43,     5,     8,
+       6,    11
   };
 
   const unsigned char
   Parser::yyr1_[] =
   {
-       0,    40,    41,    42
+       0,    40,    41,    42,    43
   };
 
   const unsigned char
   Parser::yyr2_[] =
   {
-       0,     2,     1,     3
+       0,     2,     1,     4,     4
   };
 
 
@@ -776,14 +795,14 @@ namespace Grammar {
   "PUBLIC", "BOOLEAN", "INT", "VOID", "STATIC", "IF", "ELSE", "WHILE",
   "NEW", "RETURN", "LENGTH", "THIS", "MAIN", "STRING", "PRINT", "EQUAL",
   "LESS", "AND", "PLUS", "MINUS", "MULT", "NOT", "ASSIGN", "BOOL_VALUE",
-  "INTEGER", "ID", "$accept", "Goal", "MainClass", YY_NULLPTR
+  "INTEGER", "ID", "$accept", "Goal", "MainClass", "Statement", YY_NULLPTR
   };
 
 
   const unsigned char
   Parser::yyrline_[] =
   {
-       0,   104,   104,   108
+       0,   107,   107,   111,   117
   };
 
   // Print the state stack on the debug stream.
@@ -818,8 +837,8 @@ namespace Grammar {
 
 #line 5 "parser.bison" // lalr1.cc:1167
 } // Grammar
-#line 822 "Parser.cpp" // lalr1.cc:1167
-#line 113 "parser.bison" // lalr1.cc:1168
+#line 841 "Parser.cpp" // lalr1.cc:1167
+#line 119 "parser.bison" // lalr1.cc:1168
 
 
 void

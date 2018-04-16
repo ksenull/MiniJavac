@@ -1,43 +1,54 @@
 #pragma once
 
+#include <memory>
 #include "Visitor.h"
 namespace ast {
 
 
-    class Node {
-    public:
-        Node() = default;
-        Node(const Node& another) = default;
-        virtual ~Node() = default;
-        virtual void accept(const IVisitor<void>* visitor) const = 0;
+    template <class T>
+    struct IVisitorTarget {
+        virtual ~IVisitorTarget() = default;
+        virtual T accept(const IVisitor<T>& visitor) = 0;
     };
 
+    struct INode : IVisitorTarget<void>{
+    };
+
+    struct IStatement : INode {
+    };
+
+
 #define DECLARE_PRINT_ACCEPT(ACCEPTOR) \
-        void accept(const IVisitor<void>* visitor) const { \
-            visitor->visit(this); \
+        virtual void accept(const IVisitor<void>& visitor) override { \
+            visitor.visit(*this); \
         }
 
 
-    class MainClass : Node {
-    public:
+    struct PrintStatement : public IStatement {
+        DECLARE_PRINT_ACCEPT(PrintStatement)
+        PrintStatement() = default;
+        PrintStatement(PrintStatement* another) {};
+    };
+
+    struct MainClass : public INode {
+        std::shared_ptr<IStatement> st;
+
+        MainClass(std::shared_ptr<IStatement>& st) : st(st) {};
+        MainClass(MainClass* another) {
+            st = another->st;
+        }
         DECLARE_PRINT_ACCEPT(MainClass)
     };
 
-    class Program : public Node {
-        MainClass* mainClass;
+    struct Program : public INode {
+        std::shared_ptr<MainClass> mainClass;
 
-    public:
-        Program(MainClass* _mainClass) : mainClass(_mainClass){}
-        Program(const Program& another) {
-            mainClass = another.getMainClass();
+        Program() = default;
+        Program(std::shared_ptr<MainClass>& _mainClass) : mainClass(_mainClass){}
+        Program(Program* another) {
+            mainClass = another->mainClass;
         }
-        ~Program() override {
-            if (mainClass) delete(mainClass);
-        }
-
-        MainClass* getMainClass() const {
-            return mainClass;
-        }
+        ~Program() = default;
 
         DECLARE_PRINT_ACCEPT(Program)
     };

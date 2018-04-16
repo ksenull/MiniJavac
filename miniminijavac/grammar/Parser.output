@@ -2,11 +2,8 @@ Terminals unused in grammar
 
    "["
    "]"
-   "("
-   ")"
    ","
    "."
-   ";"
    EXTENDS
    PUBLIC
    BOOLEAN
@@ -22,7 +19,6 @@ Terminals unused in grammar
    THIS
    MAIN
    STRING
-   PRINT
    EQUAL
    LESS
    AND
@@ -42,7 +38,9 @@ Grammar
 
     1 Goal: MainClass
 
-    2 MainClass: CLASS "{" "}"
+    2 MainClass: CLASS "{" Statement "}"
+
+    3 Statement: PRINT "(" ")" ";"
 
 
 Terminals, with rules where they appear
@@ -51,13 +49,13 @@ END (0) 0
 error (256)
 "[" (258)
 "]" (259)
-"(" (260)
-")" (261)
+"(" (260) 3
+")" (261) 3
 "{" (262) 2
 "}" (263) 2
 "," (264)
 "." (265)
-";" (266)
+";" (266) 3
 CLASS (267) 2
 EXTENDS (268)
 PUBLIC (269)
@@ -74,7 +72,7 @@ LENGTH (279)
 THIS (280)
 MAIN (281)
 STRING (282)
-PRINT (283)
+PRINT (283) 3
 EQUAL (284)
 LESS (285)
 AND (286)
@@ -96,6 +94,8 @@ Goal (41)
     on left: 1, on right: 0
 MainClass (42)
     on left: 2, on right: 1
+Statement (43)
+    on left: 3, on right: 2
 
 
 State 0
@@ -110,7 +110,7 @@ State 0
 
 State 1
 
-    2 MainClass: CLASS . "{" "}"
+    2 MainClass: CLASS . "{" Statement "}"
 
     "{"  shift, and go to state 4
 
@@ -131,9 +131,11 @@ State 3
 
 State 4
 
-    2 MainClass: CLASS "{" . "}"
+    2 MainClass: CLASS "{" . Statement "}"
 
-    "}"  shift, and go to state 6
+    PRINT  shift, and go to state 6
+
+    Statement  go to state 7
 
 
 State 5
@@ -145,6 +147,41 @@ State 5
 
 State 6
 
-    2 MainClass: CLASS "{" "}" .
+    3 Statement: PRINT . "(" ")" ";"
+
+    "("  shift, and go to state 8
+
+
+State 7
+
+    2 MainClass: CLASS "{" Statement . "}"
+
+    "}"  shift, and go to state 9
+
+
+State 8
+
+    3 Statement: PRINT "(" . ")" ";"
+
+    ")"  shift, and go to state 10
+
+
+State 9
+
+    2 MainClass: CLASS "{" Statement "}" .
 
     $default  reduce using rule 2 (MainClass)
+
+
+State 10
+
+    3 Statement: PRINT "(" ")" . ";"
+
+    ";"  shift, and go to state 11
+
+
+State 11
+
+    3 Statement: PRINT "(" ")" ";" .
+
+    $default  reduce using rule 3 (Statement)
