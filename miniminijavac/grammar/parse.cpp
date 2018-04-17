@@ -8,17 +8,17 @@
 
 namespace Grammar {
 
-    Program* ParseCin() {
+    Program ParseCin() {
         Scanner scanner(&std::cin);
-        Program* result;
+        Program result;
         Parser parser(scanner, result);
         parser.parse();
         return result;
     }
 
-    Program* Parse(std::istream& input) {
+    Program Parse(std::istream& input) {
         Scanner scanner(&input);
-        Program* result;
+        Program result;
         Parser parser(scanner, result);
         usleep(100000);
         parser.parse();
@@ -26,9 +26,9 @@ namespace Grammar {
         return result;
     }
 
-    Program* Parse(std::istream* input) {
+    Program Parse(std::istream* input) {
         Scanner scanner(input);
-        Program* result;
+        Program result;
         Parser parser(scanner, result);
         parser.parse();
         return result;

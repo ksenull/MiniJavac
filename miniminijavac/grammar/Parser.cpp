@@ -145,7 +145,7 @@ namespace Grammar {
 #line 146 "Parser.cpp" // lalr1.cc:479
 
   /// Build a parser object.
-  Parser::Parser (Scanner& scanner_yyarg, std::shared_ptr<Program>& program_yyarg)
+  Parser::Parser (Scanner& scanner_yyarg, Program& program_yyarg)
     :
 #if YYDEBUG
       yydebug_ (false),
@@ -217,20 +217,24 @@ namespace Grammar {
   {
       switch (that.type_get ())
     {
+      case 43: // StatementList
+        value.move< CStatementList* > (that.value);
+        break;
+
+      case 44: // Statement
+        value.move< IStatement* > (that.value);
+        break;
+
+      case 42: // MainClass
+        value.move< MainClass* > (that.value);
+        break;
+
       case 37: // BOOL_VALUE
         value.move< bool > (that.value);
         break;
 
       case 38: // INTEGER
         value.move< int > (that.value);
-        break;
-
-      case 43: // Statement
-        value.move< std::shared_ptr<IStatement>  > (that.value);
-        break;
-
-      case 42: // MainClass
-        value.move< std::shared_ptr<MainClass>  > (that.value);
         break;
 
       case 39: // ID
@@ -252,20 +256,24 @@ namespace Grammar {
     state = that.state;
       switch (that.type_get ())
     {
+      case 43: // StatementList
+        value.copy< CStatementList* > (that.value);
+        break;
+
+      case 44: // Statement
+        value.copy< IStatement* > (that.value);
+        break;
+
+      case 42: // MainClass
+        value.copy< MainClass* > (that.value);
+        break;
+
       case 37: // BOOL_VALUE
         value.copy< bool > (that.value);
         break;
 
       case 38: // INTEGER
         value.copy< int > (that.value);
-        break;
-
-      case 43: // Statement
-        value.copy< std::shared_ptr<IStatement>  > (that.value);
-        break;
-
-      case 42: // MainClass
-        value.copy< std::shared_ptr<MainClass>  > (that.value);
         break;
 
       case 39: // ID
@@ -500,20 +508,24 @@ namespace Grammar {
          when using variants.  */
         switch (yyr1_[yyn])
     {
+      case 43: // StatementList
+        yylhs.value.build< CStatementList* > ();
+        break;
+
+      case 44: // Statement
+        yylhs.value.build< IStatement* > ();
+        break;
+
+      case 42: // MainClass
+        yylhs.value.build< MainClass* > ();
+        break;
+
       case 37: // BOOL_VALUE
         yylhs.value.build< bool > ();
         break;
 
       case 38: // INTEGER
         yylhs.value.build< int > ();
-        break;
-
-      case 43: // Statement
-        yylhs.value.build< std::shared_ptr<IStatement>  > ();
-        break;
-
-      case 42: // MainClass
-        yylhs.value.build< std::shared_ptr<MainClass>  > ();
         break;
 
       case 39: // ID
@@ -538,25 +550,46 @@ namespace Grammar {
           switch (yyn)
             {
   case 2:
-#line 107 "parser.bison" // lalr1.cc:859
-    { program = std::make_shared<Program>(new Program(yystack_[0].value.as< std::shared_ptr<MainClass>  > ()/*, $2*/)); }
-#line 544 "Parser.cpp" // lalr1.cc:859
-    break;
-
-  case 3:
-#line 113 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< std::shared_ptr<MainClass>  > () = std::make_shared<MainClass>(new MainClass(yystack_[1].value.as< std::shared_ptr<IStatement>  > ())); }
-#line 550 "Parser.cpp" // lalr1.cc:859
-    break;
-
-  case 4:
-#line 117 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< std::shared_ptr<IStatement>  > () = std::make_shared<PrintStatement>(new PrintStatement()); }
+#line 108 "parser.bison" // lalr1.cc:859
+    { program = Program(yystack_[0].value.as< MainClass* > ()); }
 #line 556 "Parser.cpp" // lalr1.cc:859
     break;
 
+  case 3:
+#line 114 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< MainClass* > () = new MainClass(yystack_[1].value.as< CStatementList* > ()); }
+#line 562 "Parser.cpp" // lalr1.cc:859
+    break;
 
-#line 560 "Parser.cpp" // lalr1.cc:859
+  case 4:
+#line 118 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< CStatementList* > () = new CStatementList(); }
+#line 568 "Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 5:
+#line 120 "parser.bison" // lalr1.cc:859
+    {
+        yystack_[1].value.as< CStatementList* > ()->nodes.emplace_back(yystack_[0].value.as< IStatement* > ());
+        yylhs.value.as< CStatementList* > () = yystack_[1].value.as< CStatementList* > ();
+    }
+#line 577 "Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 6:
+#line 127 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IStatement* > () = new PrintStatement(); }
+#line 583 "Parser.cpp" // lalr1.cc:859
+    break;
+
+  case 7:
+#line 129 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IStatement* > () = new ReturnStatement(); }
+#line 589 "Parser.cpp" // lalr1.cc:859
+    break;
+
+
+#line 593 "Parser.cpp" // lalr1.cc:859
             default:
               break;
             }
@@ -722,65 +755,69 @@ namespace Grammar {
   }
 
 
-  const signed char Parser::yypact_ninf_ = -26;
+  const signed char Parser::yypact_ninf_ = -12;
 
   const signed char Parser::yytable_ninf_ = -1;
 
   const signed char
   Parser::yypact_[] =
   {
-     -12,    -6,     2,   -26,   -25,   -26,    -1,    -3,     0,   -26,
-      -4,   -26
+     -11,    -5,     3,   -12,   -12,   -12,    -8,   -12,   -12,    -1,
+     -12,     0,    -6,   -12
   };
 
   const unsigned char
   Parser::yydefact_[] =
   {
-       0,     0,     0,     2,     0,     1,     0,     0,     0,     3,
-       0,     4
+       0,     0,     0,     2,     4,     1,     0,     3,     7,     0,
+       5,     0,     0,     6
   };
 
   const signed char
   Parser::yypgoto_[] =
   {
-     -26,   -26,   -26,   -26
+     -12,   -12,   -12,   -12,   -12
   };
 
   const signed char
   Parser::yydefgoto_[] =
   {
-      -1,     2,     3,     7
+      -1,     2,     3,     6,    10
   };
 
   const unsigned char
   Parser::yytable_[] =
   {
-       1,     4,     5,     6,     8,     9,    10,    11
+       7,     1,     4,     5,    11,    13,    12,     0,     0,     0,
+       0,     0,     0,     0,     0,     8,     0,     0,     0,     0,
+       9
   };
 
-  const unsigned char
+  const signed char
   Parser::yycheck_[] =
   {
-      12,     7,     0,    28,     5,     8,     6,    11
+       8,    12,     7,     0,     5,    11,     6,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    23,    -1,    -1,    -1,    -1,
+      28
   };
 
   const unsigned char
   Parser::yystos_[] =
   {
-       0,    12,    41,    42,     7,     0,    28,    43,     5,     8,
-       6,    11
+       0,    12,    41,    42,     7,     0,    43,     8,    23,    28,
+      44,     5,     6,    11
   };
 
   const unsigned char
   Parser::yyr1_[] =
   {
-       0,    40,    41,    42,    43
+       0,    40,    41,    42,    43,    43,    44,    44
   };
 
   const unsigned char
   Parser::yyr2_[] =
   {
-       0,     2,     1,     4,     4
+       0,     2,     1,     4,     0,     2,     4,     1
   };
 
 
@@ -795,14 +832,15 @@ namespace Grammar {
   "PUBLIC", "BOOLEAN", "INT", "VOID", "STATIC", "IF", "ELSE", "WHILE",
   "NEW", "RETURN", "LENGTH", "THIS", "MAIN", "STRING", "PRINT", "EQUAL",
   "LESS", "AND", "PLUS", "MINUS", "MULT", "NOT", "ASSIGN", "BOOL_VALUE",
-  "INTEGER", "ID", "$accept", "Goal", "MainClass", "Statement", YY_NULLPTR
+  "INTEGER", "ID", "$accept", "Goal", "MainClass", "StatementList",
+  "Statement", YY_NULLPTR
   };
 
 
   const unsigned char
   Parser::yyrline_[] =
   {
-       0,   107,   107,   111,   117
+       0,   108,   108,   112,   118,   120,   127,   129
   };
 
   // Print the state stack on the debug stream.
@@ -837,8 +875,8 @@ namespace Grammar {
 
 #line 5 "parser.bison" // lalr1.cc:1167
 } // Grammar
-#line 841 "Parser.cpp" // lalr1.cc:1167
-#line 119 "parser.bison" // lalr1.cc:1168
+#line 879 "Parser.cpp" // lalr1.cc:1167
+#line 131 "parser.bison" // lalr1.cc:1168
 
 
 void

@@ -29,7 +29,7 @@ using namespace ast;
 }
 
 %parse-param { Scanner& scanner }
-%parse-param { std::shared_ptr<Program>& program }
+%parse-param { Program& program }
 
 %output "Parser.cpp"
 %defines "Parser.h"
@@ -97,25 +97,37 @@ using namespace ast;
 %token<bool> BOOL_VALUE
 %token<int> INTEGER
 
-%type<std::shared_ptr<IStatement> > Statement;
-%type<std::shared_ptr<MainClass> > MainClass;
+%type<IStatement*> Statement;
+%type<CStatementList*> StatementList;
+%type<MainClass*> MainClass;
 %token<std::string> ID
 
 %%
 
 Goal:
-    MainClass { program = std::make_shared<Program>(new Program($1/*, $2*/)); }
+    MainClass { program = Program($1); }
     ;
 
 MainClass:
     CLASS  LBRACE
-        Statement
-    RBRACE { $$ = std::make_shared<MainClass>(new MainClass($3)); }
+        StatementList[s]
+    RBRACE { $$ = new MainClass($s); }
+    ;
+
+StatementList:
+    %empty { $$ = new CStatementList(); }
+    |
+    StatementList Statement {
+        $1->nodes.emplace_back($2);
+        $$ = $1;
+    }
     ;
 
 Statement:
-    PRINT LPAREN  RPAREN SEMICOLON { $$ = std::make_shared<PrintStatement>(new PrintStatement()); }
-
+    PRINT LPAREN RPAREN SEMICOLON { $$ = new PrintStatement(); }
+    |
+    RETURN { $$ = new ReturnStatement(); }
+    ;
 %%
 
 void

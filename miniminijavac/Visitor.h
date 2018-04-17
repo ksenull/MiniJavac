@@ -10,12 +10,16 @@ namespace ast {
 
     class PrintStatement;
 
+    class ReturnStatement;
+
+    class CStatementList;
+
 
     template<typename T>
     class IVisitor {
     public:
 
-#define DECLARE_IVISIT(NODE) virtual T visit(const NODE& node) const = 0;
+#define DECLARE_IVISIT(NODE) virtual T visit(const NODE* node) const = 0;
 //
 //        DECLARE_IVISIT(Identifier)
         DECLARE_IVISIT(Program)
@@ -23,6 +27,10 @@ namespace ast {
         DECLARE_IVISIT(MainClass)
 
         DECLARE_IVISIT(PrintStatement)
+
+        DECLARE_IVISIT(ReturnStatement)
+
+        DECLARE_IVISIT(CStatementList)
 
 
 #undef DECLARE_IVISIT
@@ -40,7 +48,7 @@ namespace ast {
 
         void finish();
 
-#define DECLARE_PRINT_VISIT(NODE)  void visit(const NODE& node)  const;
+#define DECLARE_PRINT_VISIT(NODE)  void visit(const NODE* node)  const;
 
 //            DECLARE_PRINT_VISIT(Identifier)
 
@@ -49,6 +57,10 @@ namespace ast {
         DECLARE_PRINT_VISIT(MainClass)
 
         DECLARE_PRINT_VISIT(PrintStatement)
+
+        DECLARE_PRINT_VISIT(ReturnStatement)
+
+        DECLARE_PRINT_VISIT(CStatementList)
 
 #undef DECLARE_PRINT_VISIT
     private:

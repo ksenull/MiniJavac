@@ -1,0 +1,5 @@
+digraph G {
+program -> mainClass -> statementList;
+statementList -> printStatement;
+statementList -> returnStatement;
+}

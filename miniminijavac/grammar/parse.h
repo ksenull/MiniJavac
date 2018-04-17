@@ -9,9 +9,9 @@ namespace ast {
 }
 
 namespace Grammar {
-    ast::Program* ParseCin();
+    ast::Program ParseCin();
 
-    ast::Program* Parse(std::istream& input);
+    ast::Program Parse(std::istream& input);
 
-    ast::Program* Parse(std::istream* input);
+    ast::Program Parse(std::istream* input);
 }

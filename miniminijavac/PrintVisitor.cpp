@@ -9,21 +9,31 @@
 
 namespace ast {
 
-    void PrintVisitor::visit(const Program& program) const {
+    void PrintVisitor::visit(const Program* program) const {
         fout << "program -> ";
 //        std::cout << program.mainClass;
-        program.mainClass->accept(*this);
+        program->mainClass->accept(this);
     }
 
-    void PrintVisitor::visit(const MainClass& node) const {
+    void PrintVisitor::visit(const MainClass* node) const {
         fout << "mainClass -> ";
-//        node.st->accept(this);
+        node->statement->accept(this);
     }
 
-    void PrintVisitor::visit(const PrintStatement& printSt) const {
+    void PrintVisitor::visit(const CStatementList* statementList) const {
+        fout << "statementList;" << std::endl;
+        for (auto&& st : statementList->nodes) {
+            fout << "statementList -> ";
+            st->accept(this);
+        }
+    }
+    void PrintVisitor::visit(const PrintStatement* printSt) const {
         fout << "printStatement;" << std::endl;
     }
 
+    void PrintVisitor::visit(const ReturnStatement* printSt) const {
+        fout << "returnStatement;" << std::endl;
+    }
 
     PrintVisitor::PrintVisitor(const std::string& filename) {
         fout.open(filename);

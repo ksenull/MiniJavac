@@ -1,55 +1,61 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 #include "Visitor.h"
 namespace ast {
 
-
-    template <class T>
-    struct IVisitorTarget {
-        virtual ~IVisitorTarget() = default;
-        virtual T accept(const IVisitor<T>& visitor) = 0;
+    struct INode {
+        virtual void accept(const IVisitor<void>* visitor) const = 0;
     };
 
-    struct INode : IVisitorTarget<void>{
+    struct INodeList : INode {
+        std::vector<INode*> nodes;
     };
+
 
     struct IStatement : INode {
+//        virtual void accept(const IVisitor<void>* visitor) const = 0;
     };
 
-
-#define DECLARE_PRINT_ACCEPT(ACCEPTOR) \
-        virtual void accept(const IVisitor<void>& visitor) override { \
-            visitor.visit(*this); \
-        }
-
-
-    struct PrintStatement : public IStatement {
-        DECLARE_PRINT_ACCEPT(PrintStatement)
+    struct PrintStatement : IStatement {
         PrintStatement() = default;
-        PrintStatement(PrintStatement* another) {};
-    };
-
-    struct MainClass : public INode {
-        std::shared_ptr<IStatement> st;
-
-        MainClass(std::shared_ptr<IStatement>& st) : st(st) {};
-        MainClass(MainClass* another) {
-            st = another->st;
+        void accept(const IVisitor<void>* visitor) const {
+            visitor->visit(this);
         }
-        DECLARE_PRINT_ACCEPT(MainClass)
+    };
+    
+    struct  ReturnStatement : IStatement {
+        ReturnStatement() = default;
+        
+        void accept(const IVisitor<void>* visitor) const {
+            visitor->visit(this);
+        }
     };
 
-    struct Program : public INode {
-        std::shared_ptr<MainClass> mainClass;
+    struct CStatementList : INodeList {
+        void accept(const IVisitor<void>* visitor) const {
+            visitor->visit(this);
+        }
+    };
 
+    struct MainClass : INode  {
+        CStatementList* statement;
+        MainClass() = default;
+        explicit MainClass(CStatementList* printStatement1) : statement(printStatement1) {}
+
+        void accept(const IVisitor<void>* visitor) const {
+            visitor->visit(this);
+        }
+    };
+    struct Program {
+        MainClass* mainClass;
         Program() = default;
-        Program(std::shared_ptr<MainClass>& _mainClass) : mainClass(_mainClass){}
-        Program(Program* another) {
-            mainClass = another->mainClass;
-        }
-        ~Program() = default;
 
-        DECLARE_PRINT_ACCEPT(Program)
+        explicit Program(MainClass* mainClass1) : mainClass(mainClass1) {};
+
+        void accept(const IVisitor<void>* visitor) const {
+            visitor->visit(this);
+        }
     };
 }
