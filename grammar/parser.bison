@@ -26,7 +26,7 @@ using namespace nodes;
 }
 
 %parse-param { Scanner& scanner }
-%parse-param { Program* program }
+%parse-param { Program& program }
 
 %output "Parser.cpp"
 %defines "Parser.h"
@@ -118,10 +118,10 @@ using namespace nodes;
 %%
 
 Goal:
-    MainClass ClassDeclarationList { program = new Program($1, $2); }
+    MainClass ClassDeclarationList { program = Program($1, $2); }
     ;
 
-MainClass:
+MainClass: // TODO first ID
     CLASS ID LBRACE
         PUBLIC STATIC VOID MAIN LPAREN
             STRING LBRACKET RBRACKET

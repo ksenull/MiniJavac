@@ -6,31 +6,23 @@
 namespace ast {
     namespace nodes {
 
-        class Node {
-        public:
-//            virtual void accept(PrintVisitor* visitor) const = 0;
+        struct INode {
+            virtual void accept(IVisitor<void>* visitor) const = 0;
+        };
+
+        struct IStatement : public INode {};
+
+        struct IExpression : public INode {};
+
+        struct INodeList : public INode {
+            INodeList() = default;
+
+            std::vector<INode*> nodes;
         };
 
 
-        class NodeList {
-        public:
-            NodeList() = default;
-
-            NodeList(Node* node, NodeList* _nodeList) {
-                if (_nodeList) {
-                    nodes = _nodeList->nodes;
-                }
-                nodes.emplace_back(node);
-            }
-            std::vector<Node*> nodes;
-        };
-
-
-#define DECLARE_PRINT_ACCEPT(ACCEPTOR) \
-        void accept(const IVisitor<void>* visitor) const;
-
-#define DEFINE_PRINT_ACCEPT(ACCEPTOR) \
-        void ACCEPTOR::accept(const IVisitor<void>* visitor) const { \
+#define DEFINE_PRINT_ACCEPT \
+        void accept(const IVisitor<void>* visitor) const { \
             visitor->visit(this); \
         }
 

@@ -54,7 +54,7 @@ using token = Grammar::Parser::token;
 
 
 SPACE       [ \t]+
-NEWLINE     [\r\n]+[\n]+
+NEWLINE     ([\r]?[\n])+
 
 BOOL_VALUE  (true|false)
 
@@ -129,7 +129,7 @@ System.out.println { PROCESS_TOKEN(PRINT) }
 
 
 {ID}            { PROCESS_VALUE_TOKEN(ID, yytext ) }
-{BOOL_VALUE}    { PROCESS_VALUE_TOKEN(BOOL_VALUE, strcmp(yytext, "false")) }
+{BOOL_VALUE}    { PROCESS_VALUE_TOKEN(BOOL_VALUE, strcmp(yytext, "false")) } // TODO RULE CANNOT BE MATCHED
 {INTEGER}       { PROCESS_VALUE_TOKEN(INTEGER, std::stoi(yytext)) }
 
 <<EOF>>         { PROCESS_TOKEN(END) }

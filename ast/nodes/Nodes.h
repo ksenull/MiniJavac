@@ -8,338 +8,193 @@
 namespace ast {
     namespace nodes {
 
-        class Identifier : public Node {
+        struct Identifier : INode {
             std::string name;
 
-        public:
             Identifier() = default;
 
-            Identifier(std::string&& _name) : name(std::move(_name)) {}
+            /* implicit */ Identifier(std::string&& name) : name(std::move(name)) {}
 
-            Identifier(const char* name) : name(name) {}
-            ~Identifier() = default;
+            /* implicit */ Identifier(const char* name) : name(name) {}
 
-            DECLARE_PRINT_ACCEPT(Identifier)
-
-            const std::string& getName() const;
+            DEFINE_PRINT_ACCEPT
         };
 
         enum TypeType {
             TT_Array,
             TT_Bool,
             TT_Int,
-            TT_Object
+            TT_Object,
+            TT_Void
         };
-        class Type : public Node {
+        struct Type : INode {
             Identifier id;
             TypeType tt;
-        public:
-            Type(const TypeType& _tt, const Identifier& _id) : tt(_tt), id(_id) {}
 
-            explicit Type(const TypeType& _tt) : Type(_tt, Identifier{}){}
-            ~Type() = default;
+            Type(const TypeType& tt, Identifier id) : tt(tt), id(std::move(id)) {}
 
-            const Identifier& getId() const;
+            explicit Type(const TypeType& tt) : Type(tt, Identifier{}){}
 
-            TypeType getTt() const;
-
-
-            DECLARE_PRINT_ACCEPT(Type)
+            DEFINE_PRINT_ACCEPT
 
             const std::string& get() const;
         };
 
-        class Expression : public Node {
+        struct CExpressionList : INodeList {
+            DEFINE_PRINT_ACCEPT
         };
 
-        class ExpressionList : public Node, NodeList {
+        struct CStatementList : INodeList {
+            DEFINE_PRINT_ACCEPT
         };
 
-        class Statement : public Node {
-        };
-
-        class StatementList : public Node, public NodeList {
-        public:
-            StatementList(Statement* s, StatementList* another) : NodeList(s, another) {}
-
-            DECLARE_PRINT_ACCEPT(StatementList)
-        };
-
-        class VariableDeclaration : public Node {
+        struct VariableDeclaration : INode {
             Type* type;
             Identifier id;
-        public:
-            VariableDeclaration(Type* _type, const Identifier& _id) : type(_type), id(_id) {}
-            ~VariableDeclaration() {
-                if (type) { delete(type); }
-            }
+            VariableDeclaration(Type* type, Identifier id) : type(type), id(std::move(id)) {}
 
-            Type* getType() const;
-
-            const Identifier& getId() const;
-
-            DECLARE_PRINT_ACCEPT(VariableDeclaration)
+            DEFINE_PRINT_ACCEPT
         };
 
-        class ArgumentDeclarationList : public Node, public NodeList { // list of VariableDeclarations
-        public:
-            ArgumentDeclarationList(VariableDeclaration* vd, ArgumentDeclarationList* another) : NodeList(vd, another) {}
-
-            explicit ArgumentDeclarationList(VariableDeclaration* vd) : ArgumentDeclarationList(vd, nullptr) {}
-
-            DECLARE_PRINT_ACCEPT(ArgumentDeclarationList)
+        struct ArgumentDeclarationList : INodeList { // list of VariableDeclarations
+            DEFINE_PRINT_ACCEPT
         };
 
-        class ArgumentsList : public Node, public NodeList{ // list of expressions
-        public:
-            ArgumentsList(Expression* exp, ArgumentsList* another) : NodeList(exp, another) {}
-
-            explicit ArgumentsList(Expression* exp) : ArgumentsList(exp, nullptr) {}
-            DECLARE_PRINT_ACCEPT(ArgumentsList)
+        struct ArgumentsList : INodeList { // list of expressions
+            DEFINE_PRINT_ACCEPT
         };
 
-        class VariableDeclarationStatement : public Statement {
+        struct VariableDeclarationStatement : IStatement {
             VariableDeclaration* var;
-        public:
-            explicit VariableDeclarationStatement(VariableDeclaration* _var) : var(_var) {}
 
-            VariableDeclaration* getVar() const {
-                return var;
-            }
+            explicit VariableDeclarationStatement(VariableDeclaration* var) : var(var) {}
 
-            ~VariableDeclarationStatement() {
-                if (var) delete(var);
-            }
-
-            DECLARE_PRINT_ACCEPT(VariableDeclarationStatement)
+            DEFINE_PRINT_ACCEPT
         };
 
-        class VariableDeclarationStatementList : public Node, public NodeList {
+        struct VariableDeclarationStatementList : INodeList { //TODO нельзя  ли заменить на statemetntsList
         public:
-            VariableDeclarationStatementList(VariableDeclarationStatement* vds, VariableDeclarationStatementList* vdsl) :
-                    NodeList(vds, vdsl) {
-                std::cout << "VariableDeclaration" <<std::endl ;
-            }
-            DECLARE_PRINT_ACCEPT(VariableDeclarationStatementList)
+            DEFINE_PRINT_ACCEPT
         };
 
-        class MethodDeclaration : public Node {
+        struct MethodDeclaration : INode {
             Identifier id;
             Type* returnType;
-            Expression* returnExp;
+            IExpression* returnExp;
             ArgumentDeclarationList* args;
-            StatementList* sl;
+            CStatementList* statementList;
         public:
-            MethodDeclaration(const Identifier& _id, Type* _returnType, Expression* _retExp, ArgumentDeclarationList* _args, StatementList* _sl) :
-                    id(_id), returnType(_returnType), returnExp(_retExp), args(_args), sl(_sl) {
-                std::cout << "method declaration" << std::endl;
-            }
-            MethodDeclaration(const Identifier& _id, Type* _returnType, ArgumentDeclarationList* _args, StatementList* _sl) :
-                    MethodDeclaration(_id, _returnType, nullptr, _args, _sl) {}
-            ~MethodDeclaration() {
-                if (returnType) delete(returnType);
-                if (returnExp) delete(returnExp);
-                if (args) delete(args);
-                if (sl) delete(sl);
-            }
+            MethodDeclaration(const Identifier& id, Type* returnType,
+                              IExpression* retExp, ArgumentDeclarationList* args, CStatementList* statementList1) :
+                    id(id), returnType(returnType), returnExp(retExp), args(args), statementList(statementList1) {}
+            MethodDeclaration(const Identifier& id, Type* returnType,
+                              ArgumentDeclarationList* args, CStatementList* statementList1) :
+                    MethodDeclaration(id, returnType , nullptr, args, statementList1) {}
 
-            const Identifier& getId() const;
-
-            Type* getReturnType() const;
-
-            Expression* getReturnExp() const;
-
-            ArgumentDeclarationList* getArgs() const;
-
-            StatementList* getSl() const;
-
-            DECLARE_PRINT_ACCEPT(MethodDeclaration)
+            DEFINE_PRINT_ACCEPT
 
         };
 
-        class MethodDeclarationList : public Node, public NodeList {
-        public:
-            MethodDeclarationList(MethodDeclaration* md, MethodDeclarationList* ml) : NodeList(md, ml) {}
-            DECLARE_PRINT_ACCEPT(MethodDeclarationList)
+        struct MethodDeclarationList : INodeList {
+            DEFINE_PRINT_ACCEPT
         };
 
-        class ClassDeclaration : public Node {
+        struct ClassDeclaration : INode {
             Identifier id;
             Identifier base;
             VariableDeclarationStatementList* localVars;
             MethodDeclarationList* methods;
-        public:
 
-            ClassDeclaration(const Identifier& _id, const Identifier& _base,
-                             VariableDeclarationStatementList* _localVars, MethodDeclarationList* _methods) :
-                    id(_id), base(_base), localVars(_localVars), methods(_methods) {
-                std::cout << "classDecl" <<std::endl;
+            ClassDeclaration(const Identifier& id, const Identifier& base,
+                             VariableDeclarationStatementList* localVars, MethodDeclarationList* methods) :
+                    id(id), base(base), localVars(localVars), methods(methods) {
             }
 
-            ClassDeclaration(const Identifier& _id,
-                             VariableDeclarationStatementList* _localVars, MethodDeclarationList* _methods) :
-                    ClassDeclaration(_id, Identifier{} , _localVars, _methods) {}
-            ~ClassDeclaration() {
-                if (localVars) delete(localVars);
-                if (methods) delete(methods);
-            }
-
-            const Identifier& getId() const;
-
-            const Identifier& getBase() const;
-
-            VariableDeclarationStatementList* getLocalVars() const;
-
-            MethodDeclarationList* getMethods() const;
-
-            DECLARE_PRINT_ACCEPT(ClassDeclaration)
+            ClassDeclaration(const Identifier& id,
+                             VariableDeclarationStatementList* localVars, MethodDeclarationList* methods) :
+                    ClassDeclaration(id, {}, localVars, methods) {}
+            DEFINE_PRINT_ACCEPT
         };
 
-        class ClassDeclarationList : public Node, public NodeList {
-        public:
-            ClassDeclarationList(ClassDeclaration* cd, ClassDeclarationList* cdl) : NodeList(cd, cdl) {}
-
-            DECLARE_PRINT_ACCEPT(ClassDeclarationList)
+        struct ClassDeclarationList : INodeList {
+            DEFINE_PRINT_ACCEPT
         };
 
 
-        class MainClass : Node {
+        struct MainClass : INode {
             Identifier argsName;
-            Statement* st;
+            IStatement* st;
         public:
-            MainClass(const Identifier& id, Statement* _st) : argsName(id), st(_st){}
-            ~MainClass() {
-                if (st) delete(st);
-            }
+            MainClass(const Identifier& id, IStatement* st) : argsName(id), st(st){}
 
-            const Identifier& getArgsName() const;
-
-            Statement* getSt() const;
-
-            DECLARE_PRINT_ACCEPT(MainClass)
+            DEFINE_PRINT_ACCEPT
         };
 
 
-        class Program : public Node {
+        struct Program : INode {
             MainClass* mainClass;
             ClassDeclarationList* classDeclarationList;
 
-        public:
-            Program(MainClass* _mainClass, ClassDeclarationList* _cdl) : mainClass(_mainClass), classDeclarationList(_cdl) {}
-            ~Program() {
-                if (mainClass) delete(mainClass);
-                if (classDeclarationList) delete(classDeclarationList);
-            }
+            Program(MainClass* mainClass, ClassDeclarationList* cdl) : mainClass(mainClass), classDeclarationList(cdl) {}
 
-            MainClass* getMainClass() const;
-
-            ClassDeclarationList* getClassDeclarationList() const;
-
-            DECLARE_PRINT_ACCEPT(Program)
+            DEFINE_PRINT_ACCEPT
         };
 
-        class NestedStatement : public Statement {
-            StatementList* sl;
-        public:
-            explicit NestedStatement(StatementList* _sl) : sl(_sl) {}
-            ~NestedStatement() {
-                if (sl) delete(sl);
-            }
+        struct NestedStatement : public IStatement {
+            CStatementList* statementList;
 
-            StatementList* getSl() const;
+            explicit NestedStatement(CStatementList* statementList1) : statementList(statementList1) {}
 
-            DECLARE_PRINT_ACCEPT(NestedStatement)
+            DEFINE_PRINT_ACCEPT
         };
 
-        class IfStatement : public Statement {
-            Expression* condition;
-            Statement* ifSt;
-            Statement* elseSt;
-        public:
-            IfStatement(Expression* _condition, Statement* _ifSt, Statement* _elseSt) :
-                    condition(_condition), ifSt(_ifSt), elseSt(_elseSt) {}
-            ~IfStatement() {
-                if (condition) {
-                    delete(condition);
-                }
-                if (ifSt) delete(ifSt);
-                if (elseSt) delete(elseSt);
-            }
+        struct IfStatement : IStatement {
+            IExpression* condition;
+            IStatement* ifStatement;
+            IStatement* elseStatement;
 
-            Expression* getCondition() const;
+            IfStatement(IExpression* condition, IStatement* ifStatement, IStatement* elseStatement) :
+                condition(condition), ifStatement(ifStatement), elseStatement(elseStatement) {}
 
-            Statement* getIfSt() const;
-
-            Statement* getElseSt() const;
-
-            DECLARE_PRINT_ACCEPT(IfStatement)
+            DEFINE_PRINT_ACCEPT
         };
 
-        class WhileStatement : public Statement {
-            Expression* condition;
-            Statement* st;
-        public:
-            WhileStatement(Expression* _condition, Statement* _st) : condition(_condition), st(_st) {}
-            ~WhileStatement() {
-                if (condition) delete(condition);
-                if (st) delete(st);
-            }
+        struct WhileStatement : IStatement {
+            IExpression* condition;
+            IStatement* statement;
 
-            Expression* getCondition() const;
+            WhileStatement(IExpression* condition, IStatement* statement) :
+                    condition(condition), statement(statement) {}
 
-            Statement* getSt() const;
-
-            DECLARE_PRINT_ACCEPT(WhileStatement)
+            DEFINE_PRINT_ACCEPT
         };
 
-        class PrintStatement : public Statement {
-            Expression* exp;
-        public:
-            explicit PrintStatement(Expression* _exp) : exp(_exp) {}
-            ~PrintStatement() {
-                if (exp) delete(exp);
-            }
+        struct PrintStatement : IStatement {
+            IExpression* exp;
 
-            Expression* getExp() const;
+            explicit PrintStatement(IExpression* exp) : exp(exp) {}
 
-            DECLARE_PRINT_ACCEPT(PrintStatement)
+            DEFINE_PRINT_ACCEPT
         };
 
-        class AssignStatement : public Statement {
+        struct AssignStatement : IStatement {
             Identifier id;
-            Expression* exp;
+            IExpression* exp;
         public:
-            AssignStatement(Identifier& _id, Expression* _exp) : id(_id), exp(_exp) {}
-            ~AssignStatement() {
-                if (exp) delete(exp);
-            }
+            AssignStatement(Identifier& id, IExpression* exp) : id(id), exp(exp) {}
 
-            const Identifier& getId() const;
-
-            Expression* getExp() const;
-
-            DECLARE_PRINT_ACCEPT(AssignStatement)
+            DEFINE_PRINT_ACCEPT
         };
 
-        class ArrayAssignStatement : public Statement {
+        struct ArrayAssignStatement : IStatement {
             Identifier id;
-            Expression* arrExp;
-            Expression* exp;
-        public:
-            ArrayAssignStatement(Identifier& _id, Expression* _arrExp, Expression* _exp) :
-                    id(_id), arrExp(_arrExp), exp(_exp) {}
-            ~ArrayAssignStatement() {
-                if(arrExp) delete(arrExp);
-                if(exp) delete(exp);
-            }
+            IExpression* arrExp;
+            IExpression* exp;
 
-            const Identifier& getId() const;
+            ArrayAssignStatement(Identifier& id, IExpression* arrExp, IExpression* exp) :
+                    id(id), arrExp(arrExp), exp(exp) {}
 
-            Expression* getArrExp() const;
-
-            Expression* getExp() const;
-
-            DECLARE_PRINT_ACCEPT(ArrayAssignStatement)
+            DEFINE_PRINT_ACCEPT
         };
 
         enum BinOpType {
@@ -351,155 +206,95 @@ namespace ast {
             BOT_Less,
         };
 
-        class BinopExpression : public Expression {
-            Expression* left;
-            Expression* right;
+        struct BinopExpression : IExpression {
+            IExpression* left;
+            IExpression* right;
             BinOpType type;
-        public:
-            BinopExpression(Expression* _left, Expression* _right, const BinOpType& _type) :
-                    left(_left), right(_right), type(_type) {}
-            ~BinopExpression() {
-                if (left) delete(left);
-                if (right) delete(right);
-            }
 
-            Expression* getLeft() const;
+            BinopExpression(IExpression* left, IExpression* right, const BinOpType& type) :
+                    left(left), right(right), type(type) {}
 
-            Expression* getRight() const;
-
-            BinOpType getType() const;
-
-            DECLARE_PRINT_ACCEPT(BinopExpression)
+            DEFINE_PRINT_ACCEPT
         };
 
-        class ArrayItemExpression : public Expression {
-            Expression* exp;
-            Expression* ind;
-        public:
-            ArrayItemExpression(Expression* _exp, Expression* _ind) : exp(_exp), ind(_ind) {}
-            ~ArrayItemExpression() {
-                if (exp) delete(exp);
-                if (ind) delete(ind);
-            }
+        struct ArrayItemExpression : IExpression {
+            IExpression* arr;
+            IExpression* ind;
 
-            Expression* getExp() const;
+            ArrayItemExpression(IExpression* arr, IExpression* ind) : arr(arr), ind(ind) {}
 
-            Expression* getInd() const;
-
-            DECLARE_PRINT_ACCEPT(ArrayItemExpression)
+            DEFINE_PRINT_ACCEPT
         };
 
-        class ArrayLengthExpression : public Expression {
-            Expression* exp;
-        public:
-            explicit ArrayLengthExpression(Expression* _exp) : exp(_exp) {}
-            ~ArrayLengthExpression() {
-                if (exp) delete(exp);
-            }
+        struct ArrayLengthExpression : IExpression {
+            IExpression* arr;
 
-            Expression* getExp() const;
+            explicit ArrayLengthExpression(IExpression* arr) : arr(arr) {}
 
-            DECLARE_PRINT_ACCEPT(ArrayLengthExpression)
+            DEFINE_PRINT_ACCEPT
         };
 
-        class CallExpression : public Expression {
-            Expression* exp;
+        struct CallExpression : IExpression {
+            IExpression* obj;
             Identifier method;
             ArgumentsList* args;
-        public:
-            CallExpression(Expression* _exp, Identifier& _method, ArgumentsList* _args) :
-                    exp(_exp), method(_method), args(_args) {}
-            ~CallExpression() {
-                if (exp) delete(exp);
-                if (args) delete(args);
-            }
 
-            Expression* getExp() const;
+            CallExpression(IExpression* obj, Identifier& method, ArgumentsList* args) :
+                    obj(obj), method(method), args(args) {}
 
-            const Identifier& getMethod() const;
-
-            ArgumentsList* getArgs() const;
-
-            DECLARE_PRINT_ACCEPT(CallExpression)
+            DEFINE_PRINT_ACCEPT
         };
 
-        class ConstExpression : public Expression {
+        struct ConstExpression : IExpression {
             int value;
-        public:
-            explicit ConstExpression(int _value) : value(_value) {}
-            ~ConstExpression() = default;
 
-            int getValue() const;
+            explicit ConstExpression(int value) : value(value) {}
 
-            DECLARE_PRINT_ACCEPT(ConstExpression)
+            DEFINE_PRINT_ACCEPT
         };
 
-        class BoolExpression : public Expression {
+        struct BoolExpression : IExpression {
             bool value;
-        public:
-            explicit BoolExpression(bool _value) : value(_value) {}
-            ~BoolExpression() = default;
 
-            bool isValue() const;
+            explicit BoolExpression(bool value) : value(value) {}
 
-            DECLARE_PRINT_ACCEPT(BoolExpression)
+            DEFINE_PRINT_ACCEPT
         };
 
-        class IdExpression : public Expression {
+        struct IdExpression : IExpression {
             Identifier id;
-            bool isThis;
-        public:
+            bool isThis; //TODO
+
             explicit IdExpression(const std::string& s) : isThis(true) {}
-            explicit IdExpression(Identifier& _id) : id(_id) {}
-            ~IdExpression() = default;
+            explicit IdExpression(Identifier& id) : id(id) {}
 
-            const Identifier& getId() const;
-
-            bool getIsThis() const;
-
-            DECLARE_PRINT_ACCEPT(IdExpression)
+            DEFINE_PRINT_ACCEPT
         };
 
-        class NewArrayExpression : public Expression {
+        struct NewArrayExpression : IExpression {
             Type* type;
-            Expression* exp;
-        public:
-            NewArrayExpression(Type* _type, Expression* _exp) :
-                        type(_type), exp(_exp) {}
-            ~NewArrayExpression() {
-                if (type) delete(type);
-                if (exp) delete(exp);
-            }
+            IExpression* exp;
 
-            Type* getType() const;
+            NewArrayExpression(Type* type, IExpression* exp) :
+                        type(type), exp(exp) {}
 
-            Expression* getExp() const;
-
-            DECLARE_PRINT_ACCEPT(NewArrayExpression)
+            DEFINE_PRINT_ACCEPT
         };
 
-        class NewObjectExpression : public Expression {
+        struct NewObjectExpression : IExpression {
             Identifier id;
-        public:
-            explicit NewObjectExpression(Identifier& _id) : id(_id) {}
-            ~NewObjectExpression() = default;
 
-            const Identifier& getId() const;
+            explicit NewObjectExpression(Identifier& id) : id(id) {}
 
-            DECLARE_PRINT_ACCEPT(NewObjectExpression)
+            DEFINE_PRINT_ACCEPT
         };
 
-        class NotExpression : public Expression {
-            Expression* exp;
+        struct NotExpression : IExpression {
+            IExpression* exp;
         public:
-            explicit NotExpression(Expression* _exp) : exp(_exp) {}
-            ~NotExpression() {
-                if (exp) delete(exp);
-            }
+            explicit NotExpression(IExpression* exp) : exp(exp) {}
 
-            Expression* getExp() const;
-
-            DECLARE_PRINT_ACCEPT(NotExpression)
+            DEFINE_PRINT_ACCEPT
         };
     }
 }
