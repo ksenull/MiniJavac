@@ -7,7 +7,7 @@ namespace ast {
     namespace nodes {
 
         struct INode {
-            virtual void accept(IVisitor<void>* visitor) const = 0;
+            virtual void accept(const IVisitor<void>* visitor) const = 0;
         };
 
         struct IStatement : public INode {};

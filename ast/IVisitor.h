@@ -22,7 +22,7 @@ namespace ast {
 
         class ArgumentDeclarationList;
 
-        class StatementList;
+        class CStatementList;
         class NestedStatement;
         class IfStatement;
         class WhileStatement;
@@ -69,7 +69,7 @@ namespace ast {
 
     DECLARE_IVISIT(ArgumentDeclarationList)
 
-    DECLARE_IVISIT(StatementList)
+    DECLARE_IVISIT(CStatementList)
     DECLARE_IVISIT(NestedStatement)
     DECLARE_IVISIT(IfStatement)
     DECLARE_IVISIT(WhileStatement)

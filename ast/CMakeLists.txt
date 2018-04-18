@@ -5,16 +5,7 @@ add_subdirectory(drawgraph)
 set(NODES_CLASSES
         nodes/Node.h
         nodes/Nodes.h
-        nodes/Identifier.cpp
-        nodes/ArgumentDeclaration.cpp
-        nodes/ClassDeclaration.cpp
-        nodes/Expression.cpp
-        nodes/MainClass.cpp
-        nodes/MethodDeclaration.cpp
-        nodes/Program.cpp
-        nodes/Statement.cpp
-        nodes/Type.cpp
-        nodes/VariableDeclaration.cpp)
+        )
 
 set(PARSE ../grammar/Scanner.cpp ../grammar/Parser.cpp ../grammar/parse.cpp)
 set(VISUALIZERS PrintVisitor.cpp)

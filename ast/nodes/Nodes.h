@@ -8,7 +8,7 @@
 namespace ast {
     namespace nodes {
 
-        struct Identifier : INode {
+        struct Identifier {
             std::string name;
 
             Identifier() = default;
@@ -40,9 +40,9 @@ namespace ast {
             const std::string& get() const;
         };
 
-        struct CExpressionList : INodeList {
-            DEFINE_PRINT_ACCEPT
-        };
+//        struct CExpressionList : INodeList {
+//            DEFINE_PRINT_ACCEPT
+//        };
 
         struct CStatementList : INodeList {
             DEFINE_PRINT_ACCEPT
@@ -57,10 +57,18 @@ namespace ast {
         };
 
         struct ArgumentDeclarationList : INodeList { // list of VariableDeclarations
+            ArgumentDeclarationList() = default;
+            explicit ArgumentDeclarationList(VariableDeclaration* var) {
+                    nodes = {var};
+            };
             DEFINE_PRINT_ACCEPT
         };
 
         struct ArgumentsList : INodeList { // list of expressions
+            ArgumentsList() = default;
+            explicit ArgumentsList(IExpression* exp) {
+                    nodes = {exp};
+            };
             DEFINE_PRINT_ACCEPT
         };
 
@@ -122,10 +130,12 @@ namespace ast {
 
 
         struct MainClass : INode {
+            Identifier mainClass;
             Identifier argsName;
             IStatement* st;
         public:
-            MainClass(const Identifier& id, IStatement* st) : argsName(id), st(st){}
+            MainClass(Identifier mainClass, Identifier id, IStatement* st) : 
+                    mainClass(std::move(mainClass)), argsName(std::move(id)), st(st){}
 
             DEFINE_PRINT_ACCEPT
         };
@@ -134,6 +144,8 @@ namespace ast {
         struct Program : INode {
             MainClass* mainClass;
             ClassDeclarationList* classDeclarationList;
+
+            Program() = default;
 
             Program(MainClass* mainClass, ClassDeclarationList* cdl) : mainClass(mainClass), classDeclarationList(cdl) {}
 

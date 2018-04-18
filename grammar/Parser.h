@@ -311,32 +311,32 @@ namespace Grammar {
       // NonEmptyArgumentsList
       char dummy2[sizeof(ArgumentsList*)];
 
+      // StatementList
+      char dummy3[sizeof(CStatementList*)];
+
       // ClassDeclaration
-      char dummy3[sizeof(ClassDeclaration*)];
+      char dummy4[sizeof(ClassDeclaration*)];
 
       // ClassDeclarationList
-      char dummy4[sizeof(ClassDeclarationList*)];
+      char dummy5[sizeof(ClassDeclarationList*)];
 
       // Expression
-      char dummy5[sizeof(Expression*)];
-
-      // ID
-      char dummy6[sizeof(Identifier)];
-
-      // MainClass
-      char dummy7[sizeof(MainClass*)];
-
-      // MethodDeclaration
-      char dummy8[sizeof(MethodDeclaration*)];
-
-      // MethodDeclarationList
-      char dummy9[sizeof(MethodDeclarationList*)];
+      char dummy6[sizeof(IExpression*)];
 
       // Statement
-      char dummy10[sizeof(Statement*)];
+      char dummy7[sizeof(IStatement*)];
 
-      // StatementList
-      char dummy11[sizeof(StatementList*)];
+      // ID
+      char dummy8[sizeof(Identifier)];
+
+      // MainClass
+      char dummy9[sizeof(MainClass*)];
+
+      // MethodDeclaration
+      char dummy10[sizeof(MethodDeclaration*)];
+
+      // MethodDeclarationList
+      char dummy11[sizeof(MethodDeclarationList*)];
 
       // Type
       char dummy12[sizeof(Type*)];
@@ -456,11 +456,15 @@ namespace Grammar {
 
   basic_symbol (typename Base::kind_type t, const ArgumentsList* v, const location_type& l);
 
+  basic_symbol (typename Base::kind_type t, const CStatementList* v, const location_type& l);
+
   basic_symbol (typename Base::kind_type t, const ClassDeclaration* v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const ClassDeclarationList* v, const location_type& l);
 
-  basic_symbol (typename Base::kind_type t, const Expression* v, const location_type& l);
+  basic_symbol (typename Base::kind_type t, const IExpression* v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const IStatement* v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const Identifier v, const location_type& l);
 
@@ -469,10 +473,6 @@ namespace Grammar {
   basic_symbol (typename Base::kind_type t, const MethodDeclaration* v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const MethodDeclarationList* v, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const Statement* v, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const StatementList* v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const Type* v, const location_type& l);
 
@@ -707,7 +707,7 @@ namespace Grammar {
 
 
     /// Build a parser object.
-    Parser (Scanner& scanner_yyarg, Program* program_yyarg);
+    Parser (Scanner& scanner_yyarg, Program& program_yyarg);
     virtual ~Parser ();
 
     /// Parse.
@@ -918,7 +918,7 @@ namespace Grammar {
 
     // User arguments.
     Scanner& scanner;
-    Program* program;
+    Program& program;
   };
 
   // Symbol number corresponding to token number t.
@@ -1004,6 +1004,10 @@ namespace Grammar {
         value.copy< ArgumentsList* > (other.value);
         break;
 
+      case 52: // StatementList
+        value.copy< CStatementList* > (other.value);
+        break;
+
       case 44: // ClassDeclaration
         value.copy< ClassDeclaration* > (other.value);
         break;
@@ -1013,7 +1017,11 @@ namespace Grammar {
         break;
 
       case 57: // Expression
-        value.copy< Expression* > (other.value);
+        value.copy< IExpression* > (other.value);
+        break;
+
+      case 54: // Statement
+        value.copy< IStatement* > (other.value);
         break;
 
       case 39: // ID
@@ -1030,14 +1038,6 @@ namespace Grammar {
 
       case 48: // MethodDeclarationList
         value.copy< MethodDeclarationList* > (other.value);
-        break;
-
-      case 54: // Statement
-        value.copy< Statement* > (other.value);
-        break;
-
-      case 52: // StatementList
-        value.copy< StatementList* > (other.value);
         break;
 
       case 47: // Type
@@ -1091,6 +1091,10 @@ namespace Grammar {
         value.copy< ArgumentsList* > (v);
         break;
 
+      case 52: // StatementList
+        value.copy< CStatementList* > (v);
+        break;
+
       case 44: // ClassDeclaration
         value.copy< ClassDeclaration* > (v);
         break;
@@ -1100,7 +1104,11 @@ namespace Grammar {
         break;
 
       case 57: // Expression
-        value.copy< Expression* > (v);
+        value.copy< IExpression* > (v);
+        break;
+
+      case 54: // Statement
+        value.copy< IStatement* > (v);
         break;
 
       case 39: // ID
@@ -1117,14 +1125,6 @@ namespace Grammar {
 
       case 48: // MethodDeclarationList
         value.copy< MethodDeclarationList* > (v);
-        break;
-
-      case 54: // Statement
-        value.copy< Statement* > (v);
-        break;
-
-      case 52: // StatementList
-        value.copy< StatementList* > (v);
         break;
 
       case 47: // Type
@@ -1181,6 +1181,13 @@ namespace Grammar {
   {}
 
   template <typename Base>
+  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const CStatementList* v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
   Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const ClassDeclaration* v, const location_type& l)
     : Base (t)
     , value (v)
@@ -1195,7 +1202,14 @@ namespace Grammar {
   {}
 
   template <typename Base>
-  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const Expression* v, const location_type& l)
+  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const IExpression* v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const IStatement* v, const location_type& l)
     : Base (t)
     , value (v)
     , location (l)
@@ -1224,20 +1238,6 @@ namespace Grammar {
 
   template <typename Base>
   Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const MethodDeclarationList* v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
-  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const Statement* v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
-  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const StatementList* v, const location_type& l)
     : Base (t)
     , value (v)
     , location (l)
@@ -1321,6 +1321,10 @@ namespace Grammar {
         value.template destroy< ArgumentsList* > ();
         break;
 
+      case 52: // StatementList
+        value.template destroy< CStatementList* > ();
+        break;
+
       case 44: // ClassDeclaration
         value.template destroy< ClassDeclaration* > ();
         break;
@@ -1330,7 +1334,11 @@ namespace Grammar {
         break;
 
       case 57: // Expression
-        value.template destroy< Expression* > ();
+        value.template destroy< IExpression* > ();
+        break;
+
+      case 54: // Statement
+        value.template destroy< IStatement* > ();
         break;
 
       case 39: // ID
@@ -1347,14 +1355,6 @@ namespace Grammar {
 
       case 48: // MethodDeclarationList
         value.template destroy< MethodDeclarationList* > ();
-        break;
-
-      case 54: // Statement
-        value.template destroy< Statement* > ();
-        break;
-
-      case 52: // StatementList
-        value.template destroy< StatementList* > ();
         break;
 
       case 47: // Type
@@ -1414,6 +1414,10 @@ namespace Grammar {
         value.move< ArgumentsList* > (s.value);
         break;
 
+      case 52: // StatementList
+        value.move< CStatementList* > (s.value);
+        break;
+
       case 44: // ClassDeclaration
         value.move< ClassDeclaration* > (s.value);
         break;
@@ -1423,7 +1427,11 @@ namespace Grammar {
         break;
 
       case 57: // Expression
-        value.move< Expression* > (s.value);
+        value.move< IExpression* > (s.value);
+        break;
+
+      case 54: // Statement
+        value.move< IStatement* > (s.value);
         break;
 
       case 39: // ID
@@ -1440,14 +1448,6 @@ namespace Grammar {
 
       case 48: // MethodDeclarationList
         value.move< MethodDeclarationList* > (s.value);
-        break;
-
-      case 54: // Statement
-        value.move< Statement* > (s.value);
-        break;
-
-      case 52: // StatementList
-        value.move< StatementList* > (s.value);
         break;
 
       case 47: // Type

@@ -102,8 +102,8 @@ using namespace nodes;
 %type<Type*> Type;
 %type<MethodDeclarationList*> MethodDeclarationList;
 %type<MethodDeclaration*> MethodDeclaration;
-%type<Statement*> Statement;
-%type<StatementList*> StatementList;
+%type<IStatement*> Statement;
+%type<CStatementList*> StatementList;
 %type<VariableDeclarationStatement*> VariableDeclarationStatement;
 %type<VariableDeclarationStatementList*> VariableDeclarationStatementList;
 %type<VariableDeclaration*> VariableDeclaration;
@@ -111,7 +111,7 @@ using namespace nodes;
 %type<ArgumentDeclarationList*> NonEmptyArgumentDeclarationList;
 %type<ArgumentsList*> ArgumentsList;
 %type<ArgumentsList*> NonEmptyArgumentsList;
-%type<Expression*> Expression;
+%type<IExpression*> Expression;
 
 %token<Identifier> ID
 
@@ -121,8 +121,8 @@ Goal:
     MainClass ClassDeclarationList { program = Program($1, $2); }
     ;
 
-MainClass: // TODO first ID
-    CLASS ID LBRACE
+MainClass:
+    CLASS ID[mainClass] LBRACE
         PUBLIC STATIC VOID MAIN LPAREN
             STRING LBRACKET RBRACKET
             ID[id]
@@ -130,13 +130,16 @@ MainClass: // TODO first ID
         LBRACE
             Statement[s]
         RBRACE
-    RBRACE { $$ = new MainClass($id, $s); }
+    RBRACE { $$ = new MainClass($mainClass, $id, $s); }
     ;
 
 ClassDeclarationList:
-    %empty { $$ = nullptr; }
+    %empty { $$ = new ClassDeclarationList; }
     |
-    ClassDeclarationList ClassDeclaration { $$ = new ClassDeclarationList($2, $1); }
+    ClassDeclarationList ClassDeclaration {
+        $1->nodes.emplace_back($2);
+        $$ = $1;
+    }
     ;
 
 ClassDeclaration:
@@ -152,9 +155,12 @@ ClassDeclaration:
     ;
 
 VariableDeclarationStatementList:
-    %empty { $$ = nullptr; }
+    %empty { $$ = new VariableDeclarationStatementList(); }
     |
-    VariableDeclarationStatementList[l] VariableDeclarationStatement[v] { $$ = new VariableDeclarationStatementList($v, $l); }
+    VariableDeclarationStatementList[l] VariableDeclarationStatement[v] {
+             $1->nodes.emplace_back($2);
+             $$ = $1;
+    }
     ;
 
 VariableDeclaration:
@@ -172,9 +178,12 @@ Type:
    ;
 
 MethodDeclarationList:
-    %empty { $$ = nullptr; }
+    %empty { $$ = new MethodDeclarationList(); }
     |
-    MethodDeclarationList[l] MethodDeclaration[m] { $$ = new MethodDeclarationList($m, $l); }
+    MethodDeclarationList[l] MethodDeclaration[m] {
+            $1->nodes.emplace_back($2);
+            $$ = $1;
+    }
     ;
 
 MethodDeclaration:
@@ -193,7 +202,7 @@ MethodDeclaration:
     ;
 
 ArgumentDeclarationList:
-    %empty { $$ = nullptr; }
+    %empty { $$ = new ArgumentDeclarationList(); }
     |
     NonEmptyArgumentDeclarationList { $$ = $1; }
     ;
@@ -201,15 +210,24 @@ ArgumentDeclarationList:
 NonEmptyArgumentDeclarationList:
     VariableDeclaration { $$ = new ArgumentDeclarationList($1); }
     |
-    VariableDeclaration COMMA NonEmptyArgumentDeclarationList { $$ = new ArgumentDeclarationList($1, $3); }
+    VariableDeclaration COMMA NonEmptyArgumentDeclarationList {
+        $3->nodes.emplace_back($1);
+        $$ = $3;
+    }
     ;
 
 StatementList:
-    %empty { $$ = nullptr; }
+    %empty { $$ =  new CStatementList(); }
     |
-    StatementList[sl] Statement[s] { $$ = new StatementList($s, $sl); }
+    StatementList[sl] Statement[s] {
+        $1->nodes.emplace_back($2);
+        $$ = $1;
+    }
     |
-    StatementList[ls] VariableDeclarationStatement[s] { $$ = new StatementList($s, $ls); }
+    StatementList[ls] VariableDeclarationStatement[s] {
+        $1->nodes.emplace_back($2);
+        $$ = $1;
+    }
     ;
 
 VariableDeclarationStatement:
@@ -237,7 +255,7 @@ Statement:
 
 
 ArgumentsList:
-    %empty { $$ = nullptr; }
+    %empty { $$ = new ArgumentsList(); }
     |
     NonEmptyArgumentsList { $$ = $1; }
     ;
@@ -245,7 +263,11 @@ ArgumentsList:
 NonEmptyArgumentsList:
     Expression[e] { $$ = new ArgumentsList($e); }
     |
-    ArgumentsList[l] COMMA Expression[e] { $$ = new ArgumentsList($e, $l); }
+    ArgumentsList[l] COMMA Expression[e] {
+        $1->nodes.emplace_back($3);
+        $$ = $1;
+    }
+    ;
 
 Expression:
 	Expression[L] PLUS Expression[R] { $$ = new BinopExpression( $L, $R, BOT_Plus ); }

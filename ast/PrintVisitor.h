@@ -36,7 +36,7 @@ namespace ast {
 
         DECLARE_PRINT_VISIT(ArgumentDeclarationList)
 
-        DECLARE_PRINT_VISIT(StatementList)
+        DECLARE_PRINT_VISIT(CStatementList)
         DECLARE_PRINT_VISIT(NestedStatement)
         DECLARE_PRINT_VISIT(IfStatement)
         DECLARE_PRINT_VISIT(WhileStatement)
