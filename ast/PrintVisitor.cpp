@@ -8,10 +8,19 @@
 #include <sstream>
 
 namespace ast {
-    void PrintVisitor::visit(const nodes::Identifier* id) const {
-        fout << "id " << id->name << " (" << id << ");" << std::endl;
+
+#define GET_NICE_ADDRESS(s) {\
+    s << node;\
+    s.ignore(2);\
     }
-    
+
+    void PrintVisitor::visit(const nodes::Identifier* id) const {
+        std::stringstream s;
+        s << id;
+        s.ignore(2);
+        fout << "id_" << id->name << "_" << s.rdbuf() << "_;" << std::endl;
+    }
+
     void PrintVisitor::visit(const nodes::Program* program) const {
         fout << "program -> ";
         program->mainClass->accept(this);
@@ -27,237 +36,289 @@ namespace ast {
     }
 
     void PrintVisitor::visit(const nodes::ClassDeclaration* node) const {
-        fout << "Class [" << node <<"] -> ";
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
+        fout << "Class_" << s.rdbuf() << "_ -> ";
         node->id.accept(this);
-        fout << "Class [" << node <<"] -> ";
+        fout << "Class_" << s.rdbuf() << "_ -> ";
         node->base.accept(this);
-        fout << "Class [" << node <<"] -> ";
+        fout << "Class_" << s.rdbuf() << "_ -> ";
         node->localVars->accept(this);
-        fout << "Class [" << node <<"] -> ";
+        fout << "Class_" << s.rdbuf() << "_ -> ";
         node->methods->accept(this);
     }
 
     void PrintVisitor::visit(const nodes::ClassDeclarationList* node) const {
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
         for (auto&& c : node->nodes) {
-            fout << "Class list [" << node <<" -> ";
+            fout << "Class_list_" << s.rdbuf() << " -> ";
             c->accept(this);
         }
     }
 
     void PrintVisitor::visit(const nodes::VariableDeclarationStatementList* node) const {
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
         for (auto&& var : node->nodes) {
-            fout << "Vars list [" << node <<" -> ";
+            fout << "Vars_list_" << s.rdbuf() << " -> ";
             var->accept(this);
         }
     }
 
     void PrintVisitor::visit(const nodes::VariableDeclarationStatement* node) const {
-        fout << "var statement [" << node << "] -> ";
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
+        fout << "var_statement_" << s.rdbuf() << "_ -> ";
         node->var->accept(this);
     }
 
     void PrintVisitor::visit(const nodes::VariableDeclaration* node) const {
-        fout << "var [" << node << "] -> ";
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
+        fout << "var_" << s.rdbuf() << "_ -> ";
         node->type->accept(this);
-        fout << "var [" << node << "] -> ";
+        fout << "var_" << s.rdbuf() << "_ -> ";
         node->id.accept(this);
     }
 
     void PrintVisitor::visit(const nodes::Type* node) const {
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
         switch (node->tt) {
             case nodes::TT_Array:
-                fout << "int[] [" << node << "];" << std ::endl;
+                fout << "intArr_" << s.rdbuf() << "_;" << std::endl;
                 break;
             case nodes::TT_Bool:
-                fout << "bool [" << node << "];" << std ::endl;
+                fout << "bool_" << s.rdbuf() << "_;" << std::endl;
                 break;
             case nodes::TT_Int:
-                fout << "int [" << node << "];" << std ::endl;
+                fout << "int_" << s.rdbuf() << "_;" << std::endl;
                 break;
             case nodes::TT_Object:
-                fout << "class [" << node << "] -> ";
+                fout << "class_" << s.rdbuf() << "_ -> ";
                 node->id.accept(this);
                 break;
             case nodes::TT_Void:
-                fout << "void [" << node << "];" << std ::endl;
+                fout << "void_" << s.rdbuf() << "_;" << std::endl;
                 break;
             default:
-                fout << "?? [" << node << "];" << std ::endl;
+                fout << "??_" << s.rdbuf() << "_;" << std::endl;
 
         }
     }
 
     void PrintVisitor::visit(const nodes::MethodDeclarationList* node) const {
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
         for (auto&& method : node->nodes) {
-            fout << "Methods [" << node << "] -> ";
+            fout << "Methods_" << s.rdbuf() << "_ -> ";
             method->accept(this);
         }
     }
 
     void PrintVisitor::visit(const nodes::MethodDeclaration* node) const {
-        fout << "Method(){} [" << node << "] -> ";
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
+        fout << "Method_" << s.rdbuf() << "_ -> ";
         node->returnType->accept(this);
-        fout << "Method(){} [" << node << "] -> ";
+        fout << "Method_" << s.rdbuf() << "_ -> ";
         node->id.accept(this);
-        fout << "Method(){} [" << node << "] -> ";
+        fout << "Method_" << s.rdbuf() << "_ -> ";
         node->args->accept(this);
-        fout << "Method(){} [" << node << "] -> ";
+        fout << "Method_" << s.rdbuf() << "_ -> ";
         node->statementList->accept(this);
-        fout << "Method(){} [" << node << "] -> ";
+        fout << "Method_" << s.rdbuf() << "_ -> ";
         node->returnExp->accept(this);
     }
 
     void PrintVisitor::visit(const nodes::ArgumentDeclarationList* node) const {
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
         for (auto&& args : node->nodes) {
-            fout << "Argument declarations [" << node << "] -> ";
+            fout << "Argument_declarations_" << s.rdbuf() << "_ -> ";
             args->accept(this);
         }
     }
 
     void PrintVisitor::visit(const nodes::CStatementList* node) const {
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
         for (auto&& st : node->nodes) {
-            fout << "Statements [" << node << "] -> ";
+            fout << "Statements_" << s.rdbuf() << "_ -> ";
             st->accept(this);
         }
     }
 
     void PrintVisitor::visit(const nodes::NestedStatement* node) const {
-        fout << "Nested Statement [" << node << "] -> ";
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
+        fout << "Nested Statement_" << s.rdbuf() << "_ -> ";
         node->statementList->accept(this);
     }
 
     void PrintVisitor::visit(const nodes::IfStatement* node) const {
-        fout << "If [" << node << "] -> ";
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
+        fout << "If_" << s.rdbuf() << "_ -> ";
         node->condition->accept(this);
-        fout << "If [" << node << "] -> ";
+        fout << "If_" << s.rdbuf() << "_ -> ";
         node->ifStatement->accept(this);
-        fout << "If [" << node << "] -> ";
+        fout << "If_" << s.rdbuf() << "_ -> ";
         node->elseStatement->accept(this);
     }
 
     void PrintVisitor::visit(const nodes::WhileStatement* node) const {
-        fout << "While [" << node << "] -> ";
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
+        fout << "While_" << s.rdbuf() << "_ -> ";
         node->condition->accept(this);
-        fout << "While [" << node << "] -> ";
+        fout << "While_" << s.rdbuf() << "_ -> ";
         node->statement->accept(this);
     }
 
     void PrintVisitor::visit(const nodes::PrintStatement* node) const {
-        fout << "Print [" << node <<"] -> ";
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
+        fout << "Print_" << s.rdbuf() << "_ -> ";
         node->exp->accept(this);
     }
 
     void PrintVisitor::visit(const nodes::AssignStatement* node) const {
-        fout << "Assign [" << node <<"] -> ";
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
+        fout << "Assign_" << s.rdbuf() << "_ -> ";
         node->id.accept(this);
-        fout << "Assign [" << node <<"] -> ";
+        fout << "Assign_" << s.rdbuf() << "_ -> ";
         node->exp->accept(this);
     }
 
     void PrintVisitor::visit(const nodes::ArrayAssignStatement* node) const {
-        fout << "Arr[exp1] = exp2 [" << node << "] -> ";
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
+        fout << "Arr[exp1] = exp2_" << s.rdbuf() << "_ -> ";
         node->id.accept(this);
-        fout << "Arr[exp1] = exp2 [" << node << "] -> ";
+        fout << "Arr[exp1] = exp2_" << s.rdbuf() << "_ -> ";
         node->arrExp->accept(this);
-        fout << "Arr[exp1] = exp2 [" << node << "] -> ";
+        fout << "Arr[exp1] = exp2_" << s.rdbuf() << "_ -> ";
         node->exp->accept(this);
     }
 
     void PrintVisitor::visit(const nodes::ArgumentsList* node) const {
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
         for (auto&& n : node->nodes) {
-            fout << "Arguments [" << node << "] -> ";
+            fout << "Arguments_" << s.rdbuf() << "_ -> ";
             n->accept(this);
         }
     }
 
     void PrintVisitor::visit(const nodes::BinopExpression* node) const {
-        fout << "Binary operation [" << node << "] -> ";
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
+        fout << "Binary_operation_" << s.rdbuf() << "_ -> ";
         node->left->accept(this);
-        fout << "Binary operation [" << node << "] -> ";
+        fout << "Binary_operation_" << s.rdbuf() << "_ -> ";
         switch (node->type) {
             case nodes::BOT_Plus:
-                fout << "+ [" << node <<"];" << std::endl;
+                fout << "+_" << s.rdbuf() << "_;" << std::endl;
                 break;
             case nodes::BOT_Minus:
-                fout << "- [" << node <<"];" << std::endl;
+                fout << "-_" << s.rdbuf() << "_;" << std::endl;
                 break;
             case nodes::BOT_Multiply:
-                fout << "* [" << node <<"];" << std::endl;
+                fout << "*_" << s.rdbuf() << "_;" << std::endl;
                 break;
             case nodes::BOT_Less:
-                fout << "< [" << node <<"];" << std::endl;
+                fout << "<_" << s.rdbuf() << "_;" << std::endl;
                 break;
             case nodes::BOT_Equal:
-                fout << "== [" << node <<"];" << std::endl;
+                fout << "==_" << s.rdbuf() << "_;" << std::endl;
                 break;
             case nodes::BOT_And:
-                fout << "&& [" << node <<"];" << std::endl;
+                fout << "&&_" << s.rdbuf() << "_;" << std::endl;
                 break;
             default:
-                fout << "? [" << node <<"];" << std::endl;
+                fout << "?_" << s.rdbuf() << "_;" << std::endl;
         }
-        fout << "Binary operation [" << node << "] -> ";
+        fout << "Binary_operation_" << s.rdbuf() << "_ -> ";
         node->right->accept(this);
     }
 
     void PrintVisitor::visit(const nodes::ArrayItemExpression* node) const {
-        fout << "GetItem [" << node <<"] -> ";
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
+        fout << "GetItem_" << s.rdbuf() << "_ -> ";
         node->arr->accept(this);
-        fout << "GetItem [" << node <<"] -> ";
+        fout << "GetItem_" << s.rdbuf() << "_ -> ";
         node->ind->accept(this);
     }
 
     void PrintVisitor::visit(const nodes::ArrayLengthExpression* node) const {
-        fout << "Length [" << node <<"] -> ";
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
+        fout << "Length_" << s.rdbuf() << "_ -> ";
         node->arr->accept(this);
     }
 
     void PrintVisitor::visit(const nodes::CallExpression* node) const {
-        fout << "Call [" << node << "] -> ";
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
+        fout << "Call_" << s.rdbuf() << "_ -> ";
         node->obj->accept(this);
-        fout << "Call [" << node << "] -> ";
+        fout << "Call_" << s.rdbuf() << "_ -> ";
         node->method.accept(this);
-        fout << "Call [" << node << "] -> ";
+        fout << "Call_" << s.rdbuf() << "_ -> ";
         node->args->accept(this);
     }
 
     void PrintVisitor::visit(const nodes::ConstExpression* node) const {
-        fout << "constant " << node->value << " [" << node << "];" << std::endl;
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
+        fout << "constant_" << node->value << "_" << s.rdbuf() << "_;" << std::endl;
     }
 
     void PrintVisitor::visit(const nodes::BoolExpression* node) const {
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
         if (node->value) {
-            fout << "true [" << node <<"];" << std::endl;
-        }
-        else {
-            fout << "false [" << node <<"];" << std::endl;
+            fout << "true_" << s.rdbuf() << "_;" << std::endl;
+        } else {
+            fout << "false_" << s.rdbuf() << "_;" << std::endl;
         }
     }
 
     void PrintVisitor::visit(const nodes::IdExpression* node) const {
-        fout << "IdExpression [" << node << "] -> ";
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
+        fout << "IdExpression_" << s.rdbuf() << "_ -> ";
         if (node->isThis) {
-            fout << "this [" << node << "];" << std::endl;
-        }
-        else {
+            fout << "this_" << s.rdbuf() << "_;" << std::endl;
+        } else {
             node->id.accept(this);
         }
     }
 
     void PrintVisitor::visit(const nodes::NewArrayExpression* node) const {
-        fout << "New Array [" << node << "] -> ";
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
+        fout << "New_Array_" << s.rdbuf() << "_ -> ";
         node->type->accept(this);
-        fout << "New Array [" << node << "] -> ";
+        fout << "New_Array_" << s.rdbuf() << "_ -> ";
         node->exp->accept(this);
     }
 
     void PrintVisitor::visit(const nodes::NewObjectExpression* node) const {
-        fout << "New Object [" << node << "] -> ";
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
+        fout << "New_Object_" << s.rdbuf() << "_ -> ";
         node->id.accept(this);
     }
 
     void PrintVisitor::visit(const nodes::NotExpression* node) const {
-        fout << "Not [" << node << "] -> ";
+        std::stringstream s;
+        GET_NICE_ADDRESS(s)
+        fout << "Not_" << s.rdbuf() << "_ -> ";
         node->exp->accept(this);
     }
 
