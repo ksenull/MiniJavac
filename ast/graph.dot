@@ -1,0 +1,29 @@
+digraph G {
+program -> mainClass -> id_Factorial_16def48_;
+mainClass -> id_a_16def68_;
+mainClass -> Print_0x16def20_ -> Call_0x16deee0_ -> New_Object_0x16d3cd0_ -> id_Fac_16d3cd8_;
+Call_0x16deee0_ -> id_ComputeFac_16deef0_;
+Call_0x16deee0_ -> Arguments_0x16dee90_ -> constant_10_0x16dee70_;
+program -> Class_list_0x16defa0 -> Class_0x16df610_ -> id_Fac_16df618_;
+Class_0x16df610_ -> id__16df638_;
+Class_0x16df610_ -> Class_0x16df610_ -> Methods_0x16df000_ -> Method_0x16df5c0_ -> int_0x16df030_;
+Method_0x16df5c0_ -> id_ComputeFac_16df5c8_;
+Method_0x16df5c0_ -> Argument_declarations_0x16df0f0_ -> var_0x16df0b0_ -> int_0x16df070_;
+var_0x16df0b0_ -> id_num_16df0c0_;
+Method_0x16df5c0_ -> Statements_0x16df140_ -> var_statement_0x16df1f0_ -> var_0x16df1b0_ -> int_0x16df170_;
+var_0x16df1b0_ -> id_num_aux_16df1c0_;
+Statements_0x16df140_ -> If_0x16df530_ -> Binary_operation_0x16df290_ -> IdExpression_0x16df230_ -> id_num_16df238_;
+Binary_operation_0x16df290_ -> less_0x16df290_;
+Binary_operation_0x16df290_ -> constant_1_0x16df270_;
+If_0x16df530_ -> Assign_0x16df2e0_ -> id_num_aux_16df2e8_;
+Assign_0x16df2e0_ -> constant_1_0x16df2c0_;
+If_0x16df530_ -> Assign_0x16df4f0_ -> id_num_aux_16df4f8_;
+Assign_0x16df4f0_ -> Binary_operation_0x16df4c0_ -> IdExpression_0x16df320_ -> id_num_16df328_;
+Binary_operation_0x16df4c0_ -> mult_0x16df4c0_;
+Binary_operation_0x16df4c0_ -> Call_0x16df480_ -> IdExpression_0x16df360_ -> this_0x16df360_;
+Call_0x16df480_ -> id_ComputeFac_16df490_;
+Call_0x16df480_ -> Arguments_0x16df430_ -> Binary_operation_0x16df400_ -> IdExpression_0x16df3a0_ -> id_num_16df3a8_;
+Binary_operation_0x16df400_ -> minus_0x16df400_;
+Binary_operation_0x16df400_ -> constant_1_0x16df3e0_;
+Method_0x16df5c0_ -> IdExpression_0x16df580_ -> id_num_aux_16df588_;
+}
