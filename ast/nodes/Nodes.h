@@ -243,6 +243,25 @@ namespace ast {
                     left(left), right(right), type(type) {}
 
             DEFINE_PRINT_ACCEPT
+
+            std::string binOpTypeToStr() const {
+                switch (type) {
+                    case BOT_Plus:
+                        return "Plus";
+                    case BOT_Minus:
+                        return "Minus";
+                    case BOT_Multiply:
+                        return "Multiply";
+                    case BOT_And:
+                        return "And";
+                    case BOT_Equal:
+                        return "Equal";
+                    case BOT_Less:
+                        return "Less";
+                    default:
+                        return "";
+                }
+            }
         };
 
         struct ArrayItemExpression : IExpression {

@@ -1,14 +1,12 @@
-//
-// Created by ksenull on 4/9/18.
-//
+#pragma once
 
-#ifndef MINIJAVAC_TABLE_H
-#define MINIJAVAC_TABLE_H
+#include <list>
+namespace symboltable {
 
-
-class Table {
-
-};
-
-
-#endif //MINIJAVAC_TABLE_H
+    class Table {
+    public:
+        
+    private:
+        std::list<IInfo*> blocks;
+    };
+}

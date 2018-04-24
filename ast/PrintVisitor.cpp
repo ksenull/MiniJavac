@@ -168,8 +168,10 @@ namespace ast {
 
     void PrintVisitor::visit(const nodes::NestedStatement* node) const {
         GET_NICE_ADDRESS
-        fout << "Nested Statement_" << s << "_ -> ";
+        auto nodeId = "Nested Statement_" + s;
+        fout << nodeId << " -> ";
         node->statementList->accept(this);
+        SET_NODE_LABEL("Nested Stm")
     }
 
     void PrintVisitor::visit(const nodes::IfStatement* node) const {
@@ -209,124 +211,147 @@ namespace ast {
         node->id.accept(this);
         fout << nodeId << " -> ";
         node->exp->accept(this);
-        SET_NODE_LABEL("Assign")
+        SET_NODE_LABEL("=")
     }
 
     void PrintVisitor::visit(const nodes::ArrayAssignStatement* node) const {
         GET_NICE_ADDRESS
-        fout << "Arr[exp1] = exp2_" << s << "_ -> ";
+        auto nodeId = "ArrayAssign_" + s;
+        fout << nodeId << " -> ";
         node->id.accept(this);
-        fout << "Arr[exp1] = exp2_" << s << "_ -> ";
+        fout << nodeId << " -> ";
         node->arrExp->accept(this);
-        fout << "Arr[exp1] = exp2_" << s << "_ -> ";
+        fout << nodeId << " -> ";
         node->exp->accept(this);
+        SET_NODE_LABEL("arr[i] = exp")
     }
 
     void PrintVisitor::visit(const nodes::ArgumentsList* node) const {
         GET_NICE_ADDRESS
         for (auto&& n : node->nodes) {
-            fout << "Arguments_" << s << "_ -> ";
+            auto nodeId = "Arguments_" + s;
+            fout << nodeId << " -> ";
             n->accept(this);
+            SET_NODE_LABEL("Args")
         }
     }
 
     void PrintVisitor::visit(const nodes::BinopExpression* node) const {
         GET_NICE_ADDRESS
-        fout << "Binary_operation_" << s << "_ -> ";
+        auto nodeId = node->binOpTypeToStr() + "_" + s;
+        fout << nodeId << " -> ";
         node->left->accept(this);
-        fout << "Binary_operation_" << s << "_ -> ";
+        fout << nodeId << " -> ";
+        node->right->accept(this);
+
         switch (node->type) {
             case nodes::BOT_Plus:
-                fout << "plus_" << s << "_;" << std::endl;
+                SET_NODE_LABEL("+")
                 break;
             case nodes::BOT_Minus:
-                fout << "minus_" << s << "_;" << std::endl;
+                SET_NODE_LABEL("-")
                 break;
             case nodes::BOT_Multiply:
-                fout << "mult_" << s << "_;" << std::endl;
+                SET_NODE_LABEL("*")
                 break;
             case nodes::BOT_Less:
-                fout << "less_" << s << "_;" << std::endl;
+                SET_NODE_LABEL("<")
                 break;
             case nodes::BOT_Equal:
-                fout << "equal_" << s << "_;" << std::endl;
+                SET_NODE_LABEL("==")
                 break;
             case nodes::BOT_And:
-                fout << "and_" << s << "_;" << std::endl;
+                SET_NODE_LABEL("&&")
                 break;
             default:
-                fout << "xxx_" << s << "_;" << std::endl;
+                SET_NODE_LABEL("")
         }
-        fout << "Binary_operation_" << s << "_ -> ";
-        node->right->accept(this);
     }
 
     void PrintVisitor::visit(const nodes::ArrayItemExpression* node) const {
         GET_NICE_ADDRESS
-        fout << "GetItem_" << s << "_ -> ";
+        auto nodeId = "GetItem_" + s;
+        fout << nodeId << " -> ";
         node->arr->accept(this);
-        fout << "GetItem_" << s << "_ -> ";
+        fout << nodeId << " -> ";
         node->ind->accept(this);
+        SET_NODE_LABEL("[]")
     }
 
     void PrintVisitor::visit(const nodes::ArrayLengthExpression* node) const {
         GET_NICE_ADDRESS
-        fout << "Length_" << s << "_ -> ";
+        auto nodeId = "Length_" + s;
+        fout << nodeId << " -> ";
         node->arr->accept(this);
+        SET_NODE_LABEL(".Length")
     }
 
     void PrintVisitor::visit(const nodes::CallExpression* node) const {
         GET_NICE_ADDRESS
-        fout << "Call_" << s << "_ -> ";
+        auto nodeId = "Call_" + s;
+        fout << nodeId << " -> ";
         node->obj->accept(this);
-        fout << "Call_" << s << "_ -> ";
+        fout << nodeId << " -> ";
         node->method.accept(this);
-        fout << "Call_" << s << "_ -> ";
+        fout << nodeId << " -> ";
         node->args->accept(this);
+        SET_NODE_LABEL(node->method.name + "()")
     }
 
     void PrintVisitor::visit(const nodes::ConstExpression* node) const {
         GET_NICE_ADDRESS
-        fout << "constant_" << node->value << "_" << s << "_;" << std::endl;
+        auto nodeId = "constant_" + s;
+        fout << nodeId << std::endl;
+        std::stringstream itostr;
+        itostr << node->value;
+        SET_NODE_LABEL(itostr.rdbuf())
     }
 
     void PrintVisitor::visit(const nodes::BoolExpression* node) const {
         GET_NICE_ADDRESS
-        if (node->value) {
-            fout << "true_" << s << "_;" << std::endl;
-        } else {
-            fout << "false_" << s << "_;" << std::endl;
-        }
+        auto nodeId = "Bool_" + s;
+        fout << nodeId << ";" << std::endl;
+        SET_NODE_LABEL((node->value ? "true" : "false"))
     }
 
     void PrintVisitor::visit(const nodes::IdExpression* node) const {
         GET_NICE_ADDRESS
-        fout << "IdExpression_" << s << "_ -> ";
+        auto nodeId = "IdExp_" + s;
+        fout << nodeId;
         if (node->isThis) {
-            fout << "this_" << s << "_;" << std::endl;
+            fout << ";" << std::endl;
+            SET_NODE_LABEL("this")
         } else {
+            fout << " -> ";
             node->id.accept(this);
+            SET_NODE_LABEL("Id Exp")
         }
     }
 
     void PrintVisitor::visit(const nodes::NewArrayExpression* node) const {
         GET_NICE_ADDRESS
-        fout << "New_Array_" << s << "_ -> ";
+        auto nodeId = "New_Array_" + s;
+        fout << nodeId << " -> ";
         node->type->accept(this);
-        fout << "New_Array_" << s << "_ -> ";
+        fout << nodeId << " -> ";
         node->exp->accept(this);
+        SET_NODE_LABEL("new type[]")
     }
 
     void PrintVisitor::visit(const nodes::NewObjectExpression* node) const {
         GET_NICE_ADDRESS
-        fout << "New_Object_" << s << "_ -> ";
+        auto nodeId = "New_Object_" + s;
+        fout << nodeId << " -> ";
         node->id.accept(this);
+        SET_NODE_LABEL("new Obj")
     }
 
     void PrintVisitor::visit(const nodes::NotExpression* node) const {
         GET_NICE_ADDRESS
-        fout << "Not_" << s << "_ -> ";
+        auto nodeId = "Not_" + s;
+        fout << nodeId << " -> ";
         node->exp->accept(this);
+        SET_NODE_LABEL("Not")
     }
 
     PrintVisitor::PrintVisitor(const std::string& filename) {

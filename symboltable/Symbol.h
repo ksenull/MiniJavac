@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <unordered_map>
+#include "../ast/nodes/Nodes.h"
 
 namespace symboltable {
 
@@ -34,4 +35,7 @@ namespace symboltable {
         return newVal;
     }
 
+    struct IInfo {
+        virtual ~IInfo() = 0;
+    };
 }

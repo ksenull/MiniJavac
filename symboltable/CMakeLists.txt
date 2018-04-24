@@ -1,7 +1,7 @@
 project(SymbolTable)
 
 set(HEADER_FILES Symbol.h)
-set(SOURCE_FILES main.cpp)
+set(SOURCE_FILES main.cpp VariableInfo.h MethodInfo.h ClassInfo.h)
 
 add_executable(SymbolTable ${SOURCE_FILES} ${HEADER_FILES})
 
