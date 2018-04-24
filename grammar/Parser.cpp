@@ -49,7 +49,7 @@
 
 #line 51 "Parser.cpp" // lalr1.cc:412
 // Unqualified %code blocks.
-#line 34 "parser.bison" // lalr1.cc:413
+#line 36 "parser.bison" // lalr1.cc:413
 
    #include <iostream>
 
@@ -690,25 +690,25 @@ namespace Grammar {
           switch (yyn)
             {
   case 2:
-#line 121 "parser.bison" // lalr1.cc:859
-    { program = Program(yystack_[1].value.as< MainClass* > (), yystack_[0].value.as< ClassDeclarationList* > ()); }
+#line 123 "parser.bison" // lalr1.cc:859
+    { program = Program(yystack_[1].value.as< MainClass* > (), yystack_[0].value.as< ClassDeclarationList* > (), LOCATION(yylhs.location)); }
 #line 696 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 3:
-#line 133 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< MainClass* > () = new MainClass(yystack_[15].value.as< Identifier > (), yystack_[5].value.as< Identifier > (), yystack_[2].value.as< IStatement* > ()); }
+#line 135 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< MainClass* > () = new MainClass(yystack_[15].value.as< Identifier > (), yystack_[5].value.as< Identifier > (), yystack_[2].value.as< IStatement* > (), LOCATION(yylhs.location)); }
 #line 702 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 4:
-#line 137 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< ClassDeclarationList* > () = new ClassDeclarationList; }
+#line 139 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< ClassDeclarationList* > () = new ClassDeclarationList(); }
 #line 708 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 5:
-#line 139 "parser.bison" // lalr1.cc:859
+#line 141 "parser.bison" // lalr1.cc:859
     {
         yystack_[1].value.as< ClassDeclarationList* > ()->nodes.emplace_back(yystack_[0].value.as< ClassDeclaration* > ());
         yylhs.value.as< ClassDeclarationList* > () = yystack_[1].value.as< ClassDeclarationList* > ();
@@ -717,25 +717,25 @@ namespace Grammar {
     break;
 
   case 6:
-#line 149 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< ClassDeclaration* > () = new ClassDeclaration(yystack_[4].value.as< Identifier > (), yystack_[2].value.as< VariableDeclarationStatementList* > (), yystack_[1].value.as< MethodDeclarationList* > ()); }
+#line 151 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< ClassDeclaration* > () = new ClassDeclaration(yystack_[4].value.as< Identifier > (), yystack_[2].value.as< VariableDeclarationStatementList* > (), yystack_[1].value.as< MethodDeclarationList* > (), LOCATION(yylhs.location)); }
 #line 723 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 7:
-#line 154 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< ClassDeclaration* > () = new ClassDeclaration(yystack_[6].value.as< Identifier > (), yystack_[4].value.as< Identifier > (), yystack_[2].value.as< VariableDeclarationStatementList* > (), yystack_[1].value.as< MethodDeclarationList* > ()); }
+#line 156 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< ClassDeclaration* > () = new ClassDeclaration(yystack_[6].value.as< Identifier > (), yystack_[4].value.as< Identifier > (), yystack_[2].value.as< VariableDeclarationStatementList* > (), yystack_[1].value.as< MethodDeclarationList* > (), LOCATION(yylhs.location)); }
 #line 729 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 8:
-#line 158 "parser.bison" // lalr1.cc:859
+#line 160 "parser.bison" // lalr1.cc:859
     { yylhs.value.as< VariableDeclarationStatementList* > () = new VariableDeclarationStatementList(); }
 #line 735 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 9:
-#line 160 "parser.bison" // lalr1.cc:859
+#line 162 "parser.bison" // lalr1.cc:859
     {
              yystack_[1].value.as< VariableDeclarationStatementList* > ()->nodes.emplace_back(yystack_[0].value.as< VariableDeclarationStatement* > ());
              yylhs.value.as< VariableDeclarationStatementList* > () = yystack_[1].value.as< VariableDeclarationStatementList* > ();
@@ -744,43 +744,43 @@ namespace Grammar {
     break;
 
   case 10:
-#line 167 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< VariableDeclaration* > () = new VariableDeclaration(yystack_[1].value.as< Type* > (), yystack_[0].value.as< Identifier > ()); }
+#line 169 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< VariableDeclaration* > () = new VariableDeclaration(yystack_[1].value.as< Type* > (), yystack_[0].value.as< Identifier > (), LOCATION(yylhs.location)); }
 #line 750 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 11:
-#line 171 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< Type* > () = new Type(TT_Array); }
+#line 173 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< Type* > () = new Type(TT_Array, LOCATION(yylhs.location)); }
 #line 756 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 12:
-#line 173 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< Type* > () = new Type(TT_Bool); }
+#line 175 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< Type* > () = new Type(TT_Bool, LOCATION(yylhs.location)); }
 #line 762 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 13:
-#line 175 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< Type* > () = new Type(TT_Int); }
+#line 177 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< Type* > () = new Type(TT_Int, LOCATION(yylhs.location)); }
 #line 768 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 14:
-#line 177 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< Type* > () = new Type(TT_Object, yystack_[0].value.as< Identifier > ()); }
+#line 179 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< Type* > () = new Type(TT_Object, yystack_[0].value.as< Identifier > (), LOCATION(yylhs.location)); }
 #line 774 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 15:
-#line 181 "parser.bison" // lalr1.cc:859
+#line 183 "parser.bison" // lalr1.cc:859
     { yylhs.value.as< MethodDeclarationList* > () = new MethodDeclarationList(); }
 #line 780 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 16:
-#line 183 "parser.bison" // lalr1.cc:859
+#line 185 "parser.bison" // lalr1.cc:859
     {
             yystack_[1].value.as< MethodDeclarationList* > ()->nodes.emplace_back(yystack_[0].value.as< MethodDeclaration* > ());
             yylhs.value.as< MethodDeclarationList* > () = yystack_[1].value.as< MethodDeclarationList* > ();
@@ -789,37 +789,37 @@ namespace Grammar {
     break;
 
   case 17:
-#line 194 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< MethodDeclaration* > () = new MethodDeclaration(yystack_[6].value.as< Identifier > (), yystack_[7].value.as< Type* > (), yystack_[4].value.as< ArgumentDeclarationList* > (), yystack_[1].value.as< CStatementList* > ()); }
+#line 196 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< MethodDeclaration* > () = new MethodDeclaration(yystack_[6].value.as< Identifier > (), yystack_[7].value.as< Type* > (), yystack_[4].value.as< ArgumentDeclarationList* > (), yystack_[1].value.as< CStatementList* > (), LOCATION(yylhs.location)); }
 #line 795 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 18:
-#line 201 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< MethodDeclaration* > () = new MethodDeclaration(yystack_[9].value.as< Identifier > (), yystack_[10].value.as< Type* > (), yystack_[2].value.as< IExpression* > (), yystack_[7].value.as< ArgumentDeclarationList* > (), yystack_[4].value.as< CStatementList* > ()); }
+#line 203 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< MethodDeclaration* > () = new MethodDeclaration(yystack_[9].value.as< Identifier > (), yystack_[10].value.as< Type* > (), yystack_[2].value.as< IExpression* > (), yystack_[7].value.as< ArgumentDeclarationList* > (), yystack_[4].value.as< CStatementList* > (), LOCATION(yylhs.location)); }
 #line 801 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 19:
-#line 205 "parser.bison" // lalr1.cc:859
+#line 207 "parser.bison" // lalr1.cc:859
     { yylhs.value.as< ArgumentDeclarationList* > () = new ArgumentDeclarationList(); }
 #line 807 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 20:
-#line 207 "parser.bison" // lalr1.cc:859
+#line 209 "parser.bison" // lalr1.cc:859
     { yylhs.value.as< ArgumentDeclarationList* > () = yystack_[0].value.as< ArgumentDeclarationList* > (); }
 #line 813 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 21:
-#line 211 "parser.bison" // lalr1.cc:859
+#line 213 "parser.bison" // lalr1.cc:859
     { yylhs.value.as< ArgumentDeclarationList* > () = new ArgumentDeclarationList(yystack_[0].value.as< VariableDeclaration* > ()); }
 #line 819 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 22:
-#line 213 "parser.bison" // lalr1.cc:859
+#line 215 "parser.bison" // lalr1.cc:859
     {
         yystack_[0].value.as< ArgumentDeclarationList* > ()->nodes.emplace_back(yystack_[2].value.as< VariableDeclaration* > ());
         yylhs.value.as< ArgumentDeclarationList* > () = yystack_[0].value.as< ArgumentDeclarationList* > ();
@@ -828,13 +828,13 @@ namespace Grammar {
     break;
 
   case 23:
-#line 220 "parser.bison" // lalr1.cc:859
+#line 222 "parser.bison" // lalr1.cc:859
     { yylhs.value.as< CStatementList* > () =  new CStatementList(); }
 #line 834 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 24:
-#line 222 "parser.bison" // lalr1.cc:859
+#line 224 "parser.bison" // lalr1.cc:859
     {
         yystack_[1].value.as< CStatementList* > ()->nodes.emplace_back(yystack_[0].value.as< IStatement* > ());
         yylhs.value.as< CStatementList* > () = yystack_[1].value.as< CStatementList* > ();
@@ -843,7 +843,7 @@ namespace Grammar {
     break;
 
   case 25:
-#line 227 "parser.bison" // lalr1.cc:859
+#line 229 "parser.bison" // lalr1.cc:859
     {
         yystack_[1].value.as< CStatementList* > ()->nodes.emplace_back(yystack_[0].value.as< VariableDeclarationStatement* > ());
         yylhs.value.as< CStatementList* > () = yystack_[1].value.as< CStatementList* > ();
@@ -852,67 +852,67 @@ namespace Grammar {
     break;
 
   case 26:
-#line 234 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< VariableDeclarationStatement* > () = new VariableDeclarationStatement(yystack_[1].value.as< VariableDeclaration* > ()); }
+#line 236 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< VariableDeclarationStatement* > () = new VariableDeclarationStatement(yystack_[1].value.as< VariableDeclaration* > (), LOCATION(yylhs.location)); }
 #line 858 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 27:
-#line 240 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IStatement* > () = new NestedStatement(yystack_[1].value.as< CStatementList* > ()); }
+#line 242 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IStatement* > () = new NestedStatement(yystack_[1].value.as< CStatementList* > (), LOCATION(yylhs.location)); }
 #line 864 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 28:
-#line 245 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IStatement* > () = new IfStatement(yystack_[4].value.as< IExpression* > (), yystack_[2].value.as< IStatement* > (), yystack_[0].value.as< IStatement* > ()); }
+#line 247 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IStatement* > () = new IfStatement(yystack_[4].value.as< IExpression* > (), yystack_[2].value.as< IStatement* > (), yystack_[0].value.as< IStatement* > (), LOCATION(yylhs.location)); }
 #line 870 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 29:
-#line 247 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IStatement* > () = new WhileStatement(yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IStatement* > ()); }
+#line 249 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IStatement* > () = new WhileStatement(yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IStatement* > (), LOCATION(yylhs.location)); }
 #line 876 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 30:
-#line 249 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IStatement* > () = new PrintStatement(yystack_[2].value.as< IExpression* > ()); }
+#line 251 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IStatement* > () = new PrintStatement(yystack_[2].value.as< IExpression* > (), LOCATION(yylhs.location)); }
 #line 882 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 31:
-#line 251 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IStatement* > () = new AssignStatement(yystack_[3].value.as< Identifier > (), yystack_[1].value.as< IExpression* > ()); }
+#line 253 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IStatement* > () = new AssignStatement(yystack_[3].value.as< Identifier > (), yystack_[1].value.as< IExpression* > (), LOCATION(yylhs.location)); }
 #line 888 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 32:
-#line 253 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IStatement* > () = new ArrayAssignStatement(yystack_[6].value.as< Identifier > (), yystack_[4].value.as< IExpression* > (), yystack_[1].value.as< IExpression* > ()); }
+#line 255 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IStatement* > () = new ArrayAssignStatement(yystack_[6].value.as< Identifier > (), yystack_[4].value.as< IExpression* > (), yystack_[1].value.as< IExpression* > (), LOCATION(yylhs.location)); }
 #line 894 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 33:
-#line 258 "parser.bison" // lalr1.cc:859
+#line 260 "parser.bison" // lalr1.cc:859
     { yylhs.value.as< ArgumentsList* > () = new ArgumentsList(); }
 #line 900 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 34:
-#line 260 "parser.bison" // lalr1.cc:859
+#line 262 "parser.bison" // lalr1.cc:859
     { yylhs.value.as< ArgumentsList* > () = yystack_[0].value.as< ArgumentsList* > (); }
 #line 906 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 35:
-#line 264 "parser.bison" // lalr1.cc:859
+#line 266 "parser.bison" // lalr1.cc:859
     { yylhs.value.as< ArgumentsList* > () = new ArgumentsList(yystack_[0].value.as< IExpression* > ()); }
 #line 912 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 36:
-#line 266 "parser.bison" // lalr1.cc:859
+#line 268 "parser.bison" // lalr1.cc:859
     {
         yystack_[2].value.as< ArgumentsList* > ()->nodes.emplace_back(yystack_[0].value.as< IExpression* > ());
         yylhs.value.as< ArgumentsList* > () = yystack_[2].value.as< ArgumentsList* > ();
@@ -921,103 +921,103 @@ namespace Grammar {
     break;
 
   case 37:
-#line 273 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_Plus ); }
+#line 275 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_Plus, LOCATION(yylhs.location)); }
 #line 927 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 38:
-#line 274 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_Minus ); }
+#line 276 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_Minus, LOCATION(yylhs.location)); }
 #line 933 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 39:
-#line 275 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_Multiply ); }
+#line 277 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_Multiply, LOCATION(yylhs.location)); }
 #line 939 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 40:
-#line 276 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_And ); }
+#line 278 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_And, LOCATION(yylhs.location)); }
 #line 945 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 41:
-#line 277 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_Equal ); }
+#line 279 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_Equal, LOCATION(yylhs.location)); }
 #line 951 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 42:
-#line 278 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_Less ); }
+#line 280 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_Less, LOCATION(yylhs.location)); }
 #line 957 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 43:
-#line 280 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new ArrayItemExpression( yystack_[3].value.as< IExpression* > (), yystack_[1].value.as< IExpression* > () ); }
+#line 282 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IExpression* > () = new ArrayItemExpression( yystack_[3].value.as< IExpression* > (), yystack_[1].value.as< IExpression* > (), LOCATION(yylhs.location)); }
 #line 963 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 44:
-#line 281 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new ArrayLengthExpression( yystack_[2].value.as< IExpression* > () ); }
+#line 283 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IExpression* > () = new ArrayLengthExpression( yystack_[2].value.as< IExpression* > (), LOCATION(yylhs.location)); }
 #line 969 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 45:
-#line 282 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new CallExpression( yystack_[5].value.as< IExpression* > (), yystack_[3].value.as< Identifier > (), yystack_[1].value.as< ArgumentsList* > () ); }
+#line 284 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IExpression* > () = new CallExpression( yystack_[5].value.as< IExpression* > (), yystack_[3].value.as< Identifier > (), yystack_[1].value.as< ArgumentsList* > (), LOCATION(yylhs.location)); }
 #line 975 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 46:
-#line 283 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new ConstExpression( yystack_[0].value.as< int > () ); }
+#line 285 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IExpression* > () = new ConstExpression( yystack_[0].value.as< int > (), LOCATION(yylhs.location)); }
 #line 981 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 47:
-#line 284 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new BoolExpression( yystack_[0].value.as< bool > () ); }
+#line 286 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IExpression* > () = new BoolExpression( yystack_[0].value.as< bool > (), LOCATION(yylhs.location)); }
 #line 987 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 48:
-#line 285 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new IdExpression( yystack_[0].value.as< Identifier > () ); }
+#line 287 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IExpression* > () = new IdExpression( yystack_[0].value.as< Identifier > (), LOCATION(yylhs.location)); }
 #line 993 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 49:
-#line 286 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new IdExpression( "this" ); }
+#line 288 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IExpression* > () = new IdExpression( "this", LOCATION(yylhs.location)); }
 #line 999 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 50:
-#line 287 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new NewArrayExpression( yystack_[3].value.as< Type* > (), yystack_[1].value.as< IExpression* > () ); }
+#line 289 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IExpression* > () = new NewArrayExpression( yystack_[3].value.as< Type* > (), yystack_[1].value.as< IExpression* > (), LOCATION(yylhs.location)); }
 #line 1005 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 51:
-#line 288 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new NewObjectExpression( yystack_[2].value.as< Identifier > () ); }
+#line 290 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IExpression* > () = new NewObjectExpression( yystack_[2].value.as< Identifier > (), LOCATION(yylhs.location)); }
 #line 1011 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 52:
-#line 289 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new NotExpression( yystack_[0].value.as< IExpression* > () ); }
+#line 291 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IExpression* > () = new NotExpression( yystack_[0].value.as< IExpression* > (), LOCATION(yylhs.location)); }
 #line 1017 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 53:
-#line 290 "parser.bison" // lalr1.cc:859
+#line 292 "parser.bison" // lalr1.cc:859
     { yylhs.value.as< IExpression* > () = yystack_[1].value.as< IExpression* > (); }
 #line 1023 "Parser.cpp" // lalr1.cc:859
     break;
@@ -1369,12 +1369,12 @@ namespace Grammar {
   const unsigned short int
   Parser::yyrline_[] =
   {
-       0,   121,   121,   125,   137,   139,   146,   151,   158,   160,
-     167,   171,   173,   175,   177,   181,   183,   190,   196,   205,
-     207,   211,   213,   220,   222,   227,   234,   238,   242,   247,
-     249,   251,   253,   258,   260,   264,   266,   273,   274,   275,
-     276,   277,   278,   280,   281,   282,   283,   284,   285,   286,
-     287,   288,   289,   290
+       0,   123,   123,   127,   139,   141,   148,   153,   160,   162,
+     169,   173,   175,   177,   179,   183,   185,   192,   198,   207,
+     209,   213,   215,   222,   224,   229,   236,   240,   244,   249,
+     251,   253,   255,   260,   262,   266,   268,   275,   276,   277,
+     278,   279,   280,   282,   283,   284,   285,   286,   287,   288,
+     289,   290,   291,   292
   };
 
   // Print the state stack on the debug stream.
@@ -1410,7 +1410,7 @@ namespace Grammar {
 #line 5 "parser.bison" // lalr1.cc:1167
 } // Grammar
 #line 1413 "Parser.cpp" // lalr1.cc:1167
-#line 294 "parser.bison" // lalr1.cc:1168
+#line 296 "parser.bison" // lalr1.cc:1168
 
 
 void

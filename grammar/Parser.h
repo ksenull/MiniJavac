@@ -58,8 +58,10 @@ using namespace nodes;
 #  endif
 # endif
 
+#define LOCATION(l) \
+    Location{l.begin.line, l.begin.column, l.end.line, l.end.column}
 
-#line 63 "Parser.h" // lalr1.cc:377
+#line 65 "Parser.h" // lalr1.cc:377
 
 # include <cassert>
 # include <cstdlib> // std::abort
@@ -136,7 +138,7 @@ using namespace nodes;
 
 #line 5 "parser.bison" // lalr1.cc:377
 namespace Grammar {
-#line 140 "Parser.h" // lalr1.cc:377
+#line 142 "Parser.h" // lalr1.cc:377
 
 
 
@@ -1768,7 +1770,7 @@ namespace Grammar {
 
 #line 5 "parser.bison" // lalr1.cc:377
 } // Grammar
-#line 1772 "Parser.h" // lalr1.cc:377
+#line 1774 "Parser.h" // lalr1.cc:377
 
 
 

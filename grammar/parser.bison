@@ -23,6 +23,8 @@ using namespace nodes;
 #  endif
 # endif
 
+#define LOCATION(l) \
+    Location{l.begin.line, l.begin.column, l.end.line, l.end.column}
 }
 
 %parse-param { Scanner& scanner }
@@ -118,7 +120,7 @@ using namespace nodes;
 %%
 
 Goal:
-    MainClass ClassDeclarationList { program = Program($1, $2); }
+    MainClass ClassDeclarationList { program = Program($1, $2, LOCATION(@$)); }
     ;
 
 MainClass:
@@ -130,11 +132,11 @@ MainClass:
         LBRACE
             Statement[s]
         RBRACE
-    RBRACE { $$ = new MainClass($mainClass, $id, $s); }
+    RBRACE { $$ = new MainClass($mainClass, $id, $s, LOCATION(@$)); }
     ;
 
 ClassDeclarationList:
-    %empty { $$ = new ClassDeclarationList; }
+    %empty { $$ = new ClassDeclarationList(); }
     |
     ClassDeclarationList ClassDeclaration {
         $1->nodes.emplace_back($2);
@@ -146,12 +148,12 @@ ClassDeclaration:
     CLASS ID[id] LBRACE
         VariableDeclarationStatementList[v]
         MethodDeclarationList[m]
-    RBRACE { $$ = new ClassDeclaration($id, $v, $m); }
+    RBRACE { $$ = new ClassDeclaration($id, $v, $m, LOCATION(@$)); }
     |
     CLASS ID[id] EXTENDS ID[b] LBRACE
         VariableDeclarationStatementList[v]
         MethodDeclarationList[m]
-    RBRACE { $$ = new ClassDeclaration($id, $b, $v, $m); }
+    RBRACE { $$ = new ClassDeclaration($id, $b, $v, $m, LOCATION(@$)); }
     ;
 
 VariableDeclarationStatementList:
@@ -164,17 +166,17 @@ VariableDeclarationStatementList:
     ;
 
 VariableDeclaration:
-    Type ID[y] { $$ = new VariableDeclaration($1, $2); }
+    Type ID[y] { $$ = new VariableDeclaration($1, $2, LOCATION(@$)); }
     ;
 
 Type:
-    INT LBRACKET RBRACKET { $$ = new Type(TT_Array); }
+    INT LBRACKET RBRACKET { $$ = new Type(TT_Array, LOCATION(@$)); }
     |
-    BOOLEAN { $$ = new Type(TT_Bool); }
+    BOOLEAN { $$ = new Type(TT_Bool, LOCATION(@$)); }
     |
-    INT { $$ = new Type(TT_Int); }
+    INT { $$ = new Type(TT_Int, LOCATION(@$)); }
     |
-    ID { $$ = new Type(TT_Object, $1); }
+    ID { $$ = new Type(TT_Object, $1, LOCATION(@$)); }
    ;
 
 MethodDeclarationList:
@@ -191,14 +193,14 @@ MethodDeclaration:
         ArgumentDeclarationList[a]
     RPAREN LBRACE
         StatementList[s]
-    RBRACE { $$ = new MethodDeclaration($id, $rt, $a, $s); }
+    RBRACE { $$ = new MethodDeclaration($id, $rt, $a, $s, LOCATION(@$)); }
     |
     PUBLIC Type[rt] ID[id] LPAREN
         ArgumentDeclarationList[a]
     RPAREN LBRACE
         StatementList[s]
         RETURN Expression[e] SEMICOLON
-    RBRACE { $$ = new MethodDeclaration($id, $rt, $e, $a, $s); }
+    RBRACE { $$ = new MethodDeclaration($id, $rt, $e, $a, $s, LOCATION(@$)); }
     ;
 
 ArgumentDeclarationList:
@@ -231,26 +233,26 @@ StatementList:
     ;
 
 VariableDeclarationStatement:
-    VariableDeclaration SEMICOLON { $$ = new VariableDeclarationStatement($1); }
+    VariableDeclaration SEMICOLON { $$ = new VariableDeclarationStatement($1, LOCATION(@$)); }
     ;
 
 Statement:
     LBRACE
         StatementList[l]
-    RBRACE { $$ = new NestedStatement($l); }
+    RBRACE { $$ = new NestedStatement($l, LOCATION(@$)); }
     |
     IF LPAREN Expression[e] RPAREN
         Statement[is]
     ELSE
-        Statement[es] { $$ = new IfStatement($e, $is, $es); }
+        Statement[es] { $$ = new IfStatement($e, $is, $es, LOCATION(@$)); }
     |
-    WHILE LPAREN Expression[e] RPAREN Statement[s] { $$ = new WhileStatement($e, $s); }
+    WHILE LPAREN Expression[e] RPAREN Statement[s] { $$ = new WhileStatement($e, $s, LOCATION(@$)); }
     |
-    PRINT LPAREN Expression[e] RPAREN SEMICOLON { $$ = new PrintStatement($e); }
+    PRINT LPAREN Expression[e] RPAREN SEMICOLON { $$ = new PrintStatement($e, LOCATION(@$)); }
     |
-    ID[id] ASSIGN Expression[e] SEMICOLON { $$ = new AssignStatement($id, $e); }
+    ID[id] ASSIGN Expression[e] SEMICOLON { $$ = new AssignStatement($id, $e, LOCATION(@$)); }
     |
-    ID[id] LBRACKET Expression[ae] RBRACKET ASSIGN Expression[e] SEMICOLON { $$ = new ArrayAssignStatement($id, $ae, $e); }
+    ID[id] LBRACKET Expression[ae] RBRACKET ASSIGN Expression[e] SEMICOLON { $$ = new ArrayAssignStatement($id, $ae, $e, LOCATION(@$)); }
     ;
 
 
@@ -270,23 +272,23 @@ NonEmptyArgumentsList:
     ;
 
 Expression:
-	Expression[L] PLUS Expression[R] { $$ = new BinopExpression( $L, $R, BOT_Plus ); }
-	| Expression[L] MINUS Expression[R] { $$ = new BinopExpression( $L, $R, BOT_Minus ); }
-	| Expression[L] MULT Expression[R] { $$ = new BinopExpression( $L, $R, BOT_Multiply ); }
-	| Expression[L] AND Expression[R] { $$ = new BinopExpression( $L, $R, BOT_And ); }
-	| Expression[L] EQUAL Expression[R] { $$ = new BinopExpression( $L, $R, BOT_Equal ); }
-	| Expression[L] LESS Expression[R] { $$ = new BinopExpression( $L, $R, BOT_Less ); }
+	Expression[L] PLUS Expression[R] { $$ = new BinopExpression( $L, $R, BOT_Plus, LOCATION(@$)); }
+	| Expression[L] MINUS Expression[R] { $$ = new BinopExpression( $L, $R, BOT_Minus, LOCATION(@$)); }
+	| Expression[L] MULT Expression[R] { $$ = new BinopExpression( $L, $R, BOT_Multiply, LOCATION(@$)); }
+	| Expression[L] AND Expression[R] { $$ = new BinopExpression( $L, $R, BOT_And, LOCATION(@$)); }
+	| Expression[L] EQUAL Expression[R] { $$ = new BinopExpression( $L, $R, BOT_Equal, LOCATION(@$)); }
+	| Expression[L] LESS Expression[R] { $$ = new BinopExpression( $L, $R, BOT_Less, LOCATION(@$)); }
 
-	| Expression[A] LBRACKET Expression[N] RBRACKET{ $$ = new ArrayItemExpression( $A, $N ); }
-	| Expression[A] DOT LENGTH { $$ = new ArrayLengthExpression( $A ); }
-	| Expression[O] DOT ID[M] LPAREN ArgumentsList[A] RPAREN { $$ = new CallExpression( $O, $M, $A ); }
-	| INTEGER { $$ = new ConstExpression( $1 ); }
-	| BOOL_VALUE { $$ = new BoolExpression( $1 ); }
-	| ID { $$ = new IdExpression( $1 ); }
-	| THIS { $$ = new IdExpression( "this" ); }
-	| NEW Type[T] LBRACKET Expression[L] RBRACKET { $$ = new NewArrayExpression( $T, $L ); }
-	| NEW ID[T] LPAREN RPAREN { $$ = new NewObjectExpression( $T ); }
-	| NOT Expression[E] { $$ = new NotExpression( $E ); }
+	| Expression[A] LBRACKET Expression[N] RBRACKET{ $$ = new ArrayItemExpression( $A, $N, LOCATION(@$)); }
+	| Expression[A] DOT LENGTH { $$ = new ArrayLengthExpression( $A, LOCATION(@$)); }
+	| Expression[O] DOT ID[M] LPAREN ArgumentsList[A] RPAREN { $$ = new CallExpression( $O, $M, $A, LOCATION(@$)); }
+	| INTEGER { $$ = new ConstExpression( $1, LOCATION(@$)); }
+	| BOOL_VALUE { $$ = new BoolExpression( $1, LOCATION(@$)); }
+	| ID { $$ = new IdExpression( $1, LOCATION(@$)); }
+	| THIS { $$ = new IdExpression( "this", LOCATION(@$)); }
+	| NEW Type[T] LBRACKET Expression[L] RBRACKET { $$ = new NewArrayExpression( $T, $L, LOCATION(@$)); }
+	| NEW ID[T] LPAREN RPAREN { $$ = new NewObjectExpression( $T, LOCATION(@$)); }
+	| NOT Expression[E] { $$ = new NotExpression( $E, LOCATION(@$)); }
 	| LPAREN Expression[E] RPAREN { $$ = $E; }
 ;
 

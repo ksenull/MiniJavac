@@ -14,12 +14,11 @@ namespace symboltable {
 
         Symbol(std::string&& name) : name(std::move(name)) {}
 
-        Symbol(const Symbol&) = delete;
+//        Symbol(const Symbol&) = delete;
 
-        Symbol operator=(const Symbol&) = delete;
+//        Symbol operator=(const Symbol&) = delete;
 
-    private:
-        std::string name;
+        const std::string name;
     };
 
     Symbol* getIntern(const std::string& src) {

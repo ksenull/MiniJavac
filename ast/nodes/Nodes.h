@@ -4,21 +4,10 @@
 #include <utility>
 
 #include "INode.h"
+#include "Identifier.h"
 
 namespace ast {
     namespace nodes {
-
-        struct Identifier {
-            std::string name;
-
-            Identifier() = default;
-
-            /* implicit */ Identifier(std::string&& name) : name(std::move(name)) {}
-
-            /* implicit */ Identifier(const char* name) : name(name) {}
-
-            DEFINE_PRINT_ACCEPT
-        };
 
         enum TypeType {
             TT_Array,
@@ -32,9 +21,9 @@ namespace ast {
             Identifier id;
             TypeType tt;
 
-            Type(const TypeType& tt, Identifier id) : tt(tt), id(std::move(id)) {}
+            Type(const TypeType& tt, const Identifier& id, const Location& loc) : INode(loc), tt(tt), id(std::move(id)) {}
 
-            explicit Type(const TypeType& tt) : Type(tt, Identifier{}){}
+            explicit Type(const TypeType& tt, const Location& loc) : Type(tt, Identifier{}, loc){}
 
             DEFINE_PRINT_ACCEPT
 
@@ -67,7 +56,7 @@ namespace ast {
         struct VariableDeclaration : INode {
             Type* type;
             Identifier id;
-            VariableDeclaration(Type* type, Identifier id) : type(type), id(std::move(id)) {}
+            VariableDeclaration(Type* type, const Identifier& id, const Location& loc) : INode(loc), type(type), id(std::move(id)) {}
 
             DEFINE_PRINT_ACCEPT
         };
@@ -91,7 +80,7 @@ namespace ast {
         struct VariableDeclarationStatement : IStatement {
             VariableDeclaration* var;
 
-            explicit VariableDeclarationStatement(VariableDeclaration* var) : var(var) {}
+            explicit VariableDeclarationStatement(VariableDeclaration* var, const Location& loc) : IStatement(loc), var(var) {}
 
             DEFINE_PRINT_ACCEPT
         };
@@ -107,13 +96,15 @@ namespace ast {
             IExpression* returnExp;
             ArgumentDeclarationList* args;
             CStatementList* statementList;
-        public:
+
             MethodDeclaration(const Identifier& id, Type* returnType,
-                              IExpression* retExp, ArgumentDeclarationList* args, CStatementList* statementList1) :
-                    id(id), returnType(returnType), returnExp(retExp), args(args), statementList(statementList1) {}
+                              IExpression* retExp, ArgumentDeclarationList* args,
+                              CStatementList* statementList1, const Location& loc) :
+                    INode(loc), id(id), returnType(returnType), returnExp(retExp),
+                    args(args), statementList(statementList1) {}
             MethodDeclaration(const Identifier& id, Type* returnType,
-                              ArgumentDeclarationList* args, CStatementList* statementList1) :
-                    MethodDeclaration(id, returnType , nullptr, args, statementList1) {}
+                              ArgumentDeclarationList* args, CStatementList* statementList1, const Location& loc) :
+                    MethodDeclaration(id, returnType , nullptr, args, statementList1, loc) {}
 
             DEFINE_PRINT_ACCEPT
 
@@ -130,13 +121,14 @@ namespace ast {
             MethodDeclarationList* methods;
 
             ClassDeclaration(const Identifier& id, const Identifier& base,
-                             VariableDeclarationStatementList* localVars, MethodDeclarationList* methods) :
-                    id(id), base(base), localVars(localVars), methods(methods) {
-            }
+                             VariableDeclarationStatementList* localVars,
+                             MethodDeclarationList* methods, const Location& loc) :
+                    INode(loc), id(id), base(base), localVars(localVars), methods(methods) {}
 
             ClassDeclaration(const Identifier& id,
-                             VariableDeclarationStatementList* localVars, MethodDeclarationList* methods) :
-                    ClassDeclaration(id, {}, localVars, methods) {}
+                             VariableDeclarationStatementList* localVars,
+                             MethodDeclarationList* methods, const Location& loc) :
+                    ClassDeclaration(id, {}, localVars, methods, loc) {}
             DEFINE_PRINT_ACCEPT
         };
 
@@ -150,8 +142,8 @@ namespace ast {
             Identifier argsName;
             IStatement* st;
         public:
-            MainClass(Identifier mainClass, Identifier id, IStatement* st) : 
-                    mainClass(std::move(mainClass)), argsName(std::move(id)), st(st){}
+            MainClass(Identifier mainClass, Identifier id, IStatement* st, const Location& loc) : INode(loc),
+                    mainClass(std::move(mainClass)), argsName(std::move(id)), st(st) {}
 
             DEFINE_PRINT_ACCEPT
         };
@@ -163,7 +155,8 @@ namespace ast {
 
             Program() = default;
 
-            Program(MainClass* mainClass, ClassDeclarationList* cdl) : mainClass(mainClass), classDeclarationList(cdl) {}
+            Program(MainClass* mainClass, ClassDeclarationList* cdl, const Location& loc) :
+                    INode(loc), mainClass(mainClass), classDeclarationList(cdl) {}
 
             DEFINE_PRINT_ACCEPT
         };
@@ -171,7 +164,8 @@ namespace ast {
         struct NestedStatement : public IStatement {
             CStatementList* statementList;
 
-            explicit NestedStatement(CStatementList* statementList1) : statementList(statementList1) {}
+            explicit NestedStatement(CStatementList* statementList1, const Location& loc) :
+                    IStatement(loc), statementList(statementList1) {}
 
             DEFINE_PRINT_ACCEPT
         };
@@ -181,7 +175,8 @@ namespace ast {
             IStatement* ifStatement;
             IStatement* elseStatement;
 
-            IfStatement(IExpression* condition, IStatement* ifStatement, IStatement* elseStatement) :
+            IfStatement(IExpression* condition, IStatement* ifStatement,
+                        IStatement* elseStatement, const Location& loc) : IStatement(loc),
                 condition(condition), ifStatement(ifStatement), elseStatement(elseStatement) {}
 
             DEFINE_PRINT_ACCEPT
@@ -191,7 +186,8 @@ namespace ast {
             IExpression* condition;
             IStatement* statement;
 
-            WhileStatement(IExpression* condition, IStatement* statement) :
+            WhileStatement(IExpression* condition, IStatement* statement,
+                    const Location& loc) : IStatement(loc),
                     condition(condition), statement(statement) {}
 
             DEFINE_PRINT_ACCEPT
@@ -200,7 +196,7 @@ namespace ast {
         struct PrintStatement : IStatement {
             IExpression* exp;
 
-            explicit PrintStatement(IExpression* exp) : exp(exp) {}
+            explicit PrintStatement(IExpression* exp, const Location& loc) : IStatement(loc), exp(exp) {}
 
             DEFINE_PRINT_ACCEPT
         };
@@ -209,7 +205,7 @@ namespace ast {
             Identifier id;
             IExpression* exp;
         public:
-            AssignStatement(Identifier& id, IExpression* exp) : id(id), exp(exp) {}
+            AssignStatement(Identifier& id, IExpression* exp, const Location& loc) : IStatement(loc), id(id), exp(exp) {}
 
             DEFINE_PRINT_ACCEPT
         };
@@ -219,8 +215,8 @@ namespace ast {
             IExpression* arrExp;
             IExpression* exp;
 
-            ArrayAssignStatement(Identifier& id, IExpression* arrExp, IExpression* exp) :
-                    id(id), arrExp(arrExp), exp(exp) {}
+            ArrayAssignStatement(Identifier& id, IExpression* arrExp, IExpression* exp, const Location& loc) :
+                    IStatement(loc), id(id), arrExp(arrExp), exp(exp) {}
 
             DEFINE_PRINT_ACCEPT
         };
@@ -239,8 +235,8 @@ namespace ast {
             IExpression* right;
             BinOpType type;
 
-            BinopExpression(IExpression* left, IExpression* right, const BinOpType& type) :
-                    left(left), right(right), type(type) {}
+            BinopExpression(IExpression* left, IExpression* right, const BinOpType& type, const Location& loc) :
+                    IExpression(loc), left(left), right(right), type(type) {}
 
             DEFINE_PRINT_ACCEPT
 
@@ -268,7 +264,8 @@ namespace ast {
             IExpression* arr;
             IExpression* ind;
 
-            ArrayItemExpression(IExpression* arr, IExpression* ind) : arr(arr), ind(ind) {}
+            ArrayItemExpression(IExpression* arr, IExpression* ind, const Location& loc) :
+                    IExpression(loc), arr(arr), ind(ind) {}
 
             DEFINE_PRINT_ACCEPT
         };
@@ -276,7 +273,7 @@ namespace ast {
         struct ArrayLengthExpression : IExpression {
             IExpression* arr;
 
-            explicit ArrayLengthExpression(IExpression* arr) : arr(arr) {}
+            explicit ArrayLengthExpression(IExpression* arr, const Location& loc) : IExpression(loc), arr(arr) {}
 
             DEFINE_PRINT_ACCEPT
         };
@@ -286,8 +283,8 @@ namespace ast {
             Identifier method;
             ArgumentsList* args;
 
-            CallExpression(IExpression* obj, Identifier& method, ArgumentsList* args) :
-                    obj(obj), method(method), args(args) {}
+            CallExpression(IExpression* obj, Identifier& method, ArgumentsList* args, const Location& loc) :
+                    IExpression(loc), obj(obj), method(method), args(args) {}
 
             DEFINE_PRINT_ACCEPT
         };
@@ -295,7 +292,7 @@ namespace ast {
         struct ConstExpression : IExpression {
             int value;
 
-            explicit ConstExpression(int value) : value(value) {}
+            explicit ConstExpression(int value, const Location& loc) : IExpression(loc), value(value) {}
 
             DEFINE_PRINT_ACCEPT
         };
@@ -303,7 +300,7 @@ namespace ast {
         struct BoolExpression : IExpression {
             bool value;
 
-            explicit BoolExpression(bool value) : value(value) {}
+            explicit BoolExpression(bool value, const Location& loc) : IExpression(loc), value(value) {}
 
             DEFINE_PRINT_ACCEPT
         };
@@ -312,8 +309,8 @@ namespace ast {
             Identifier id;
             bool isThis; //TODO
 
-            explicit IdExpression(const std::string& s) : isThis(true) {}
-            explicit IdExpression(Identifier& id) : id(id) {}
+            explicit IdExpression(const std::string& s, const Location& loc) : IExpression(loc), isThis(true) {}
+            explicit IdExpression(Identifier& id, const Location& loc) : IExpression(loc), id(id) {}
 
             DEFINE_PRINT_ACCEPT
         };
@@ -322,8 +319,8 @@ namespace ast {
             Type* type;
             IExpression* exp;
 
-            NewArrayExpression(Type* type, IExpression* exp) :
-                        type(type), exp(exp) {}
+            NewArrayExpression(Type* type, IExpression* exp, const Location& loc) :
+                        IExpression(loc), type(type), exp(exp) {}
 
             DEFINE_PRINT_ACCEPT
         };
@@ -331,7 +328,7 @@ namespace ast {
         struct NewObjectExpression : IExpression {
             Identifier id;
 
-            explicit NewObjectExpression(Identifier& id) : id(id) {}
+            explicit NewObjectExpression(Identifier& id, const Location& loc) : IExpression(loc), id(id) {}
 
             DEFINE_PRINT_ACCEPT
         };
@@ -339,7 +336,7 @@ namespace ast {
         struct NotExpression : IExpression {
             IExpression* exp;
         public:
-            explicit NotExpression(IExpression* exp) : exp(exp) {}
+            explicit NotExpression(IExpression* exp, const Location& loc) : IExpression(loc), exp(exp) {}
 
             DEFINE_PRINT_ACCEPT
         };
