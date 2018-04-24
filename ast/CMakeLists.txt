@@ -3,7 +3,7 @@ project(AST)
 add_subdirectory(drawgraph)
 
 set(NODES_CLASSES
-        nodes/Node.h
+        nodes/INode.h
         nodes/Nodes.h
         )
 

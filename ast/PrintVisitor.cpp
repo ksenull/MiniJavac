@@ -15,11 +15,16 @@ namespace ast {
     ss.ignore(2);\
     std::string s = ss.str();
 
+#define SET_NODE_LABEL(label) \
+    fout << nodeId << "[label=\"" << label << "\"];" << std::endl;
+
     void PrintVisitor::visit(const nodes::Identifier* id) const {
         std::stringstream s;
         s << id;
         s.ignore(2);
-        fout << "id_" << id->name << "_" << s.rdbuf() << "_;" << std::endl;
+        std::string nodeId = "id_" + id->name + "_" + s.str();
+        fout << nodeId << ";" << std::endl;
+        SET_NODE_LABEL("Id " + id->name)
     }
 
     void PrintVisitor::visit(const nodes::Program* program) const {
@@ -40,44 +45,54 @@ namespace ast {
 
     void PrintVisitor::visit(const nodes::ClassDeclaration* node) const {
         GET_NICE_ADDRESS
-        fout << "Class_" << s << "_ -> ";
+        auto nodeId =  "Class_" + s;
+        fout << nodeId << " -> ";
         node->id.accept(this);
-        fout << "Class_" << s << "_ -> ";
+        fout << nodeId << " -> ";
         node->base.accept(this);
-        fout << "Class_" << s << "_ -> ";
+        fout << nodeId << " -> ";
         node->localVars->accept(this);
-        fout << "Class_" << s << "_ -> ";
+        fout << nodeId << " -> ";
         node->methods->accept(this);
+        SET_NODE_LABEL("Class " + node->id.name)
     }
 
     void PrintVisitor::visit(const nodes::ClassDeclarationList* node) const {
         GET_NICE_ADDRESS
         for (auto&& c : node->nodes) {
-            fout << "Class_list_" << s << " -> ";
+            auto nodeId = "Class_list_" + s;
+            fout << nodeId << " -> ";
             c->accept(this);
+            SET_NODE_LABEL("Classes")
         }
     }
 
     void PrintVisitor::visit(const nodes::VariableDeclarationStatementList* node) const {
         GET_NICE_ADDRESS
         for (auto&& var : node->nodes) {
-            fout << "Vars_list_" << s << " -> ";
+            auto nodeId = "Vars_list_" + s;
+            fout << nodeId << " -> ";
             var->accept(this);
+            SET_NODE_LABEL("Variables")
         }
     }
 
     void PrintVisitor::visit(const nodes::VariableDeclarationStatement* node) const {
         GET_NICE_ADDRESS
-        fout << "var_statement_" << s << "_ -> ";
+        auto nodeId = "var_statement_" + s;
+        fout << nodeId << " -> ";
         node->var->accept(this);
+        SET_NODE_LABEL("Var decl")
     }
 
     void PrintVisitor::visit(const nodes::VariableDeclaration* node) const {
         GET_NICE_ADDRESS
-        fout << "var_" << s << "_ -> ";
-        node->type->accept(this);
-        fout << "var_" << s << "_ -> ";
+        auto nodeId = "var_" + s;
+//        fout << nodeId << " -> ";
+//        node->type->accept(this);
+        fout << nodeId << " -> ";
         node->id.accept(this);
+        SET_NODE_LABEL(node->id.name + " : " + node->type->getTT())
     }
 
     void PrintVisitor::visit(const nodes::Type* node) const {
@@ -108,38 +123,46 @@ namespace ast {
     void PrintVisitor::visit(const nodes::MethodDeclarationList* node) const {
         GET_NICE_ADDRESS
         for (auto&& method : node->nodes) {
-            fout << "Methods_" << s << "_ -> ";
+            auto nodeId = "Methods_" + s;
+            fout << nodeId << " -> ";
             method->accept(this);
+            SET_NODE_LABEL("Methods")
         }
     }
 
     void PrintVisitor::visit(const nodes::MethodDeclaration* node) const {
         GET_NICE_ADDRESS
-        fout << "Method_" << s << "_ -> ";
+        auto nodeId = "Method_" + s;
+        fout << nodeId << " -> ";
         node->returnType->accept(this);
-        fout << "Method_" << s << "_ -> ";
+        fout << nodeId << " -> ";
         node->id.accept(this);
-        fout << "Method_" << s << "_ -> ";
+        fout << nodeId << " -> ";
         node->args->accept(this);
-        fout << "Method_" << s << "_ -> ";
+        fout << nodeId << " -> ";
         node->statementList->accept(this);
-        fout << "Method_" << s << "_ -> ";
+        fout << nodeId << " -> ";
         node->returnExp->accept(this);
+        SET_NODE_LABEL("Method " + node->id.name)
     }
 
     void PrintVisitor::visit(const nodes::ArgumentDeclarationList* node) const {
         GET_NICE_ADDRESS
         for (auto&& args : node->nodes) {
-            fout << "Argument_declarations_" << s << "_ -> ";
+            auto nodeId = "Argument_declarations_" + s;
+            fout << nodeId << " -> ";
             args->accept(this);
+            SET_NODE_LABEL("Arg declaration")
         }
     }
 
     void PrintVisitor::visit(const nodes::CStatementList* node) const {
         GET_NICE_ADDRESS
         for (auto&& st : node->nodes) {
-            fout << "Statements_" << s << "_ -> ";
+            auto nodeId = "Statements_" + s;
+            fout << nodeId << " -> ";
             st->accept(this);
+            SET_NODE_LABEL("Statements")
         }
     }
 
@@ -151,34 +174,42 @@ namespace ast {
 
     void PrintVisitor::visit(const nodes::IfStatement* node) const {
         GET_NICE_ADDRESS
-        fout << "If_" << s << "_ -> ";
+        auto nodeId = "If_" + s;
+        fout << nodeId << " -> ";
         node->condition->accept(this);
-        fout << "If_" << s << "_ -> ";
+        fout << nodeId << " -> ";
         node->ifStatement->accept(this);
-        fout << "If_" << s << "_ -> ";
+        fout << nodeId << " -> ";
         node->elseStatement->accept(this);
+        SET_NODE_LABEL("If-else")
     }
 
     void PrintVisitor::visit(const nodes::WhileStatement* node) const {
         GET_NICE_ADDRESS
-        fout << "While_" << s << "_ -> ";
+        auto nodeId = "While_" + s;
+        fout << nodeId << " -> ";
         node->condition->accept(this);
-        fout << "While_" << s << "_ -> ";
+        fout << nodeId << " -> ";
         node->statement->accept(this);
+        SET_NODE_LABEL("While")
     }
 
     void PrintVisitor::visit(const nodes::PrintStatement* node) const {
         GET_NICE_ADDRESS
-        fout << "Print_" << s << "_ -> ";
+        auto nodeId = "Print_" + s;
+        fout << nodeId << " -> ";
         node->exp->accept(this);
+        SET_NODE_LABEL("Print")
     }
 
     void PrintVisitor::visit(const nodes::AssignStatement* node) const {
         GET_NICE_ADDRESS
-        fout << "Assign_" << s << "_ -> ";
+        auto nodeId = "Assign_" + s;
+        fout << nodeId << " -> ";
         node->id.accept(this);
-        fout << "Assign_" << s << "_ -> ";
+        fout << nodeId << " -> ";
         node->exp->accept(this);
+        SET_NODE_LABEL("Assign")
     }
 
     void PrintVisitor::visit(const nodes::ArrayAssignStatement* node) const {

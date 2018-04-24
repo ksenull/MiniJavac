@@ -3,7 +3,7 @@
 #include <iostream>
 #include <utility>
 
-#include "Node.h"
+#include "INode.h"
 
 namespace ast {
     namespace nodes {
@@ -27,6 +27,7 @@ namespace ast {
             TT_Object,
             TT_Void
         };
+
         struct Type : INode {
             Identifier id;
             TypeType tt;
@@ -37,7 +38,22 @@ namespace ast {
 
             DEFINE_PRINT_ACCEPT
 
-            const std::string& get() const;
+            std::string getTT() const {
+                switch (tt) {
+                    case TT_Array:
+                            return "int[]";
+                    case TT_Bool:
+                            return "bool";
+                    case TT_Int:
+                            return "int";
+                    case TT_Object:
+                            return id.name;
+                    case TT_Void:
+                            return "void";
+                    default:
+                            return "";
+                }
+            };
         };
 
 //        struct CExpressionList : INodeList {
