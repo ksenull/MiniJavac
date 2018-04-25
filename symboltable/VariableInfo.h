@@ -5,8 +5,12 @@
 
 
 namespace symboltable {
-    struct VariableInfo : IInfo {
+    class VariableInfo : public IInfo {
+    public:
         explicit VariableInfo(const common::Location& loc) : IInfo(loc) {}
+
         void BuildFromAst(ast::nodes::VariableDeclaration* var);
+    private:
+        ast::nodes::Type* type {};
     };
 }

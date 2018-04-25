@@ -1,15 +1,15 @@
 #pragma once
 
+#include <unordered_map>
 #include "VariableInfo.h"
 
-#include <vector>
 namespace symboltable {
-    struct MethodInfo : IInfo {
-
+    class MethodInfo : public IInfo {
+    public:
         explicit MethodInfo(const common::Location& loc) : IInfo(loc) {}
         void BuildFromAst(ast::nodes::MethodDeclaration* methodDeclaration);
-//        std::vector<VariableInfo> args;
-//        std::vector<VariableInfo> localVars;
-//        ast::nodes::Type returnType;
+    private:
+        std::unordered_map<Symbol*, VariableInfo*> vars;
+        ast::nodes::Type* returnType{};
     };
 }

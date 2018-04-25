@@ -1,24 +1,15 @@
 #pragma once
 
-#include <list>
 #include <unordered_map>
-
-#include "Symbol.h"
-#include "../ast/nodes/INode.h"
+#include "ClassInfo.h"
 
 namespace symboltable {
-
-    class Table { // for symbols in single class
+    class Table {
     public:
-        using Block = std::unordered_map<Symbol*, IInfo*>;
-
-        void BuildFromAst(ast::nodes::INode* node);
-
-        void AddBlock(ast::nodes::INode*);
-
-        void RemoveBlock();
-        
+        Table() = default;
+        void BuildFromAst(const ast::nodes::Program& program);
     private:
-        std::list<Block> blocks;
+        void checkBase(ast::nodes::ClassDeclaration* node) const;
+        std::unordered_map<Symbol*, ClassInfo*> classesTable;
     };
 }

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 for file in ./BadSamples/*.java
 do
-    cat "$file" | ./cmake-build-debug/ast/AST | grep error
+    echo "$file"
+    cat "$file" | ./cmake-build-debug/symboltable/SymbolTable | grep error
 done

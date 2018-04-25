@@ -6,6 +6,6 @@
 namespace symboltable {
 
     void VariableInfo::BuildFromAst(ast::nodes::VariableDeclaration* var) {
-
+        type = var->type;
     }
 }
