@@ -15,8 +15,9 @@ int main() {
     if (fb.open (PathPrefix + "Samples/Factorial.java",std::ios::in)) {
         std::istream in(&fb);
         auto program = Grammar::Parse(in);
+        ModuleTable moduleTable;
         try {
-            ModuleTable moduleTable(program);
+            moduleTable.BuildFromAst(program);
         }
         catch (common::MiniJavacException& e) {
             std::cerr << e.msg << std::endl;

@@ -5,7 +5,7 @@
 
 namespace symboltable {
 
-    VariableInfo::VariableInfo(ast::nodes::VariableDeclaration* var) : IInfo(var->loc) {
+    void VariableInfo::BuildFromAst(ast::nodes::VariableDeclaration* var) {
 
     }
 }

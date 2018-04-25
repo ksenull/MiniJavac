@@ -6,9 +6,12 @@
 
 namespace symboltable {
 
-    ModuleTable::ModuleTable(const ast::nodes::Program& program) {
+    void ModuleTable::BuildFromAst(const ast::nodes::Program& program) {
         auto* symbol = getIntern(program.mainClass->name.name);
-        auto classInfo = ClassInfo(program.mainClass);
+
+        auto classInfo = ClassInfo(program.mainClass->loc);
+        classInfo.BuildFromAst(program.mainClass);
+
         classesTable.emplace(std::make_pair(symbol, &classInfo));
 
         for (auto* node : program.classDeclarationList->nodes) {
@@ -18,7 +21,10 @@ namespace symboltable {
                 if (search != classesTable.end()) {
                     throw DuplicateClassError(symbol, search->second->loc, cl->loc);
                 }
-                classInfo = ClassInfo(cl);
+
+                classInfo = ClassInfo(cl->loc);
+                classInfo.BuildFromAst(cl);
+
                 classesTable.emplace(std::make_pair(symbol, &classInfo));
             }
         }

@@ -5,9 +5,9 @@
 #include "SymbolException.h"
 
 namespace symboltable {
-    ClassInfo::ClassInfo(ast::nodes::MainClass* mainClass) : IInfo(mainClass->loc) {}
+    void ClassInfo::BuildFromAst(ast::nodes::MainClass* mainClass) {}
 
-    ClassInfo::ClassInfo(ast::nodes::ClassDeclaration* node) : IInfo(node->loc) {
+    void ClassInfo::BuildFromAst(ast::nodes::ClassDeclaration* node) {
         if (node->base.name.empty()) {
             base = nullptr;
         } else {
@@ -21,7 +21,10 @@ namespace symboltable {
                 if (search != vars.end()) {
                     throw VariableAlreadyDefinedError(symbol, search->second->loc, var->loc);
                 }
-                VariableInfo variableInfo(var);
+
+                VariableInfo variableInfo(var->loc);
+                variableInfo.BuildFromAst(var);
+
                 vars.emplace(std::make_pair(symbol, &variableInfo));
             }
         }
@@ -33,7 +36,10 @@ namespace symboltable {
                 if (search != methods.end()) {
                     throw MethodAlreadyDefinedError(symbol, search->second->loc, method->loc);
                 }
-                MethodInfo methodInfo(method);
+
+                MethodInfo methodInfo(method->loc);
+                methodInfo.BuildFromAst(method);
+
                 methods.emplace(std::make_pair(symbol, &methodInfo));
             }
         }

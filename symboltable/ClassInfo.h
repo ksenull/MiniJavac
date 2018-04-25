@@ -10,12 +10,13 @@ namespace symboltable {
     public:
         using Block = std::unordered_map<Symbol*, IInfo*>;
 
-        ClassInfo(ast::nodes::MainClass*);
-        ClassInfo(ast::nodes::ClassDeclaration*);
+        explicit ClassInfo(const common::Location&)  : IInfo(loc) {};
+        void BuildFromAst(ast::nodes::MainClass*);
+        void BuildFromAst(ast::nodes::ClassDeclaration*);
 
     private:
 //        std::list<Block> scopeBlocks;
-        Symbol* base;
+        Symbol* base{};
         std::unordered_map<Symbol*, VariableInfo*> vars;
         std::unordered_map<Symbol*, MethodInfo*> methods;
     };

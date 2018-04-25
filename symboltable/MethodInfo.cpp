@@ -4,8 +4,8 @@
 #include "MethodInfo.h"
 
 namespace symboltable {
-    
-    MethodInfo::MethodInfo(ast::nodes::MethodDeclaration* methodDeclaration) : IInfo(methodDeclaration->loc) {
-        
+
+    void MethodInfo::BuildFromAst(ast::nodes::MethodDeclaration* methodDeclaration) {
+
     }
 }
