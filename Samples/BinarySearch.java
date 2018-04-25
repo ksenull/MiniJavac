@@ -129,7 +129,7 @@ class BS{
 
 	size = sz ;
 	number = new int[sz] ;
-	
+
 	j = 1 ;
 	k = size + 1 ;
 	while (j < (size)) {

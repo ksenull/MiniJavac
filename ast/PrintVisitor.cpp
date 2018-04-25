@@ -331,8 +331,8 @@ namespace ast {
     void PrintVisitor::visit(const nodes::NewArrayExpression* node) const {
         GET_NICE_ADDRESS
         auto nodeId = "New_Array_" + s;
-        fout << nodeId << " -> ";
-        node->type->accept(this);
+//        fout << nodeId << " -> ";
+//        node->type->accept(this);
         fout << nodeId << " -> ";
         node->exp->accept(this);
         SET_NODE_LABEL("new type[]")

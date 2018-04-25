@@ -286,7 +286,7 @@ Expression:
 	| BOOL_VALUE { $$ = new BoolExpression( $1, LOCATION(@$)); }
 	| ID { $$ = new IdExpression( $1, LOCATION(@$)); }
 	| THIS { $$ = new IdExpression( "this", LOCATION(@$)); }
-	| NEW Type[T] LBRACKET Expression[L] RBRACKET { $$ = new NewArrayExpression( $T, $L, LOCATION(@$)); }
+	| NEW INT[T] LBRACKET Expression[L] RBRACKET { $$ = new NewArrayExpression( $L, LOCATION(@$)); }
 	| NEW ID[T] LPAREN RPAREN { $$ = new NewObjectExpression( $T, LOCATION(@$)); }
 	| NOT Expression[E] { $$ = new NotExpression( $E, LOCATION(@$)); }
 	| LPAREN Expression[E] RPAREN { $$ = $E; }

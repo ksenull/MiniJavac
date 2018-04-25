@@ -10,7 +10,8 @@ set(NODES_CLASSES
 
 set(PARSE ../grammar/Scanner.cpp ../grammar/Parser.cpp ../grammar/parse.cpp)
 set(VISUALIZERS PrintVisitor.cpp)
-set(SOURCE_FILES main.cpp ${NODES_CLASSES} ${PARSE} ${VISUALIZERS})
+set(COMMON ../common/Located.h)
+set(SOURCE_FILES main.cpp ${NODES_CLASSES} ${PARSE} ${VISUALIZERS} ${COMMON})
 
 add_executable(AST ${SOURCE_FILES})
 

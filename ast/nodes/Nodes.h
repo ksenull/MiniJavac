@@ -316,11 +316,11 @@ namespace ast {
         };
 
         struct NewArrayExpression : IExpression {
-            Type* type;
+//            Type* type;
             IExpression* exp;
 
-            NewArrayExpression(Type* type, IExpression* exp, const Location& loc) :
-                        IExpression(loc), type(type), exp(exp) {}
+            NewArrayExpression(IExpression* exp, const Location& loc) :
+                        IExpression(loc), exp(exp) {}
 
             DEFINE_PRINT_ACCEPT
         };

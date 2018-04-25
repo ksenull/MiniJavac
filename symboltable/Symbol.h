@@ -1,14 +1,14 @@
 #pragma once
 
 #include <iostream>
-#include <unordered_map>
-#include "../ast/nodes/Nodes.h"
+#include "../common/Located.h"
 
 namespace symboltable {
 
     class Symbol {
     public:
         Symbol() = default;
+        virtual ~Symbol() = default;
 
         Symbol(const std::string& name) : name(name) {}
 
@@ -18,23 +18,17 @@ namespace symboltable {
 
 //        Symbol operator=(const Symbol&) = delete;
 
-        const std::string name;
+        std::string name; // TODO make it private and add getter
     };
 
-    Symbol* getIntern(const std::string& src) {
-        static std::unordered_map<std::string, Symbol*> allStrings;
+    Symbol* getIntern(const std::string& src);
 
-        auto cached = allStrings.find(src);
-        if (cached != allStrings.end()) {
-            return cached->second;
-        }
-
-        auto* newVal = new Symbol(src);
-        allStrings.insert({src, newVal});
-        return newVal;
-    }
-
-    struct IInfo {
+    class IInfo : common::Located {
+    public:
+        IInfo() = default;
+        IInfo(const common::Location& loc) : common::Located(loc) {}
         virtual ~IInfo() = 0;
+    private:
+        Symbol symbol;
     };
 }

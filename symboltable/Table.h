@@ -1,6 +1,8 @@
 #pragma once
 
 #include <list>
+
+#include "Symbol.h"
 namespace symboltable {
 
     class Table {

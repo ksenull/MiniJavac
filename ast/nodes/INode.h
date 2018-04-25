@@ -2,33 +2,19 @@
 
 #include <vector>
 #include "../PrintVisitor.h"
+#include "../../common/Located.h"
 
 namespace ast {
     namespace nodes {
 
-        struct Location {
-            struct Pos {
-                unsigned line;
-                unsigned col;
+        using Location = common::Location;
 
-                Pos() = default;
-                Pos(unsigned line, unsigned col) : line(line), col(col) {}
-            };
-
-            Pos begin;
-            Pos end;
-
-            Location() = default;
-            ~Location() = default;
-            Location(unsigned bl, unsigned bc, unsigned el, unsigned ec) : begin{bl, bc}, end{el, ec} {}
-        };
-
-        struct INode {
+        struct INode : common::Located {
             INode() = default;
-            INode(const Location& loc) : loc(std::move(loc)) {}
+            INode(const Location& loc) : Located(std::move(loc)) {}
             virtual ~INode() = default;
             virtual void accept(const IVisitor<void>* visitor) const = 0;
-            Location loc{};
+//            Location loc;
         };
 
         struct IStatement : public INode {
