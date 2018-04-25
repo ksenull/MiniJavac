@@ -5,7 +5,6 @@
 
 namespace symboltable {
     struct VariableInfo : IInfo {
-        Symbol id;
-        ast::nodes::Type type;
+
     };
 }

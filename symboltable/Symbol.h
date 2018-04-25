@@ -23,11 +23,11 @@ namespace symboltable {
 
     Symbol* getIntern(const std::string& src);
 
-    class IInfo : common::Located {
+    class IInfo : public common::Located {
     public:
         IInfo() = default;
         IInfo(const common::Location& loc) : common::Located(loc) {}
-        virtual ~IInfo() = 0;
+        virtual ~IInfo() = default;
     private:
         Symbol symbol;
     };

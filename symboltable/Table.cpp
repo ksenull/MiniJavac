@@ -3,3 +3,7 @@
 //
 
 #include "Table.h"
+
+namespace symboltable {
+
+}

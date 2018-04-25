@@ -138,12 +138,12 @@ namespace ast {
 
 
         struct MainClass : INode {
-            Identifier mainClass;
+            Identifier name;
             Identifier argsName;
             IStatement* st;
         public:
-            MainClass(Identifier mainClass, Identifier id, IStatement* st, const Location& loc) : INode(loc),
-                    mainClass(std::move(mainClass)), argsName(std::move(id)), st(st) {}
+            MainClass(const Identifier& name, Identifier id, IStatement* st, const Location& loc) : INode(loc),
+                    name(std::move(name)), argsName(std::move(id)), st(st) {}
 
             DEFINE_PRINT_ACCEPT
         };

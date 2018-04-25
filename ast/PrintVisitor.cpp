@@ -36,7 +36,7 @@ namespace ast {
 
     void PrintVisitor::visit(const nodes::MainClass* node) const {
         fout << "mainClass -> ";
-        node->mainClass.accept(this);
+        node->name.accept(this);
         fout << "mainClass -> ";
         node->argsName.accept(this);
         fout << "mainClass -> ";
