@@ -341,6 +341,7 @@ namespace Grammar {
       char dummy11[sizeof(MethodDeclarationList*)];
 
       // Type
+      // Void
       char dummy12[sizeof(Type*)];
 
       // VariableDeclaration
@@ -909,8 +910,8 @@ namespace Grammar {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 240,     ///< Last index in yytable_.
-      yynnts_ = 18,  ///< Number of nonterminal symbols.
+      yylast_ = 260,     ///< Last index in yytable_.
+      yynnts_ = 19,  ///< Number of nonterminal symbols.
       yyfinal_ = 5, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
@@ -996,17 +997,17 @@ namespace Grammar {
   {
       switch (other.type_get ())
     {
-      case 50: // ArgumentDeclarationList
-      case 51: // NonEmptyArgumentDeclarationList
+      case 51: // ArgumentDeclarationList
+      case 52: // NonEmptyArgumentDeclarationList
         value.copy< ArgumentDeclarationList* > (other.value);
         break;
 
-      case 55: // ArgumentsList
-      case 56: // NonEmptyArgumentsList
+      case 56: // ArgumentsList
+      case 57: // NonEmptyArgumentsList
         value.copy< ArgumentsList* > (other.value);
         break;
 
-      case 52: // StatementList
+      case 53: // StatementList
         value.copy< CStatementList* > (other.value);
         break;
 
@@ -1018,11 +1019,11 @@ namespace Grammar {
         value.copy< ClassDeclarationList* > (other.value);
         break;
 
-      case 57: // Expression
+      case 58: // Expression
         value.copy< IExpression* > (other.value);
         break;
 
-      case 54: // Statement
+      case 55: // Statement
         value.copy< IStatement* > (other.value);
         break;
 
@@ -1034,15 +1035,16 @@ namespace Grammar {
         value.copy< MainClass* > (other.value);
         break;
 
-      case 49: // MethodDeclaration
+      case 50: // MethodDeclaration
         value.copy< MethodDeclaration* > (other.value);
         break;
 
-      case 48: // MethodDeclarationList
+      case 49: // MethodDeclarationList
         value.copy< MethodDeclarationList* > (other.value);
         break;
 
       case 47: // Type
+      case 48: // Void
         value.copy< Type* > (other.value);
         break;
 
@@ -1050,7 +1052,7 @@ namespace Grammar {
         value.copy< VariableDeclaration* > (other.value);
         break;
 
-      case 53: // VariableDeclarationStatement
+      case 54: // VariableDeclarationStatement
         value.copy< VariableDeclarationStatement* > (other.value);
         break;
 
@@ -1083,17 +1085,17 @@ namespace Grammar {
     (void) v;
       switch (this->type_get ())
     {
-      case 50: // ArgumentDeclarationList
-      case 51: // NonEmptyArgumentDeclarationList
+      case 51: // ArgumentDeclarationList
+      case 52: // NonEmptyArgumentDeclarationList
         value.copy< ArgumentDeclarationList* > (v);
         break;
 
-      case 55: // ArgumentsList
-      case 56: // NonEmptyArgumentsList
+      case 56: // ArgumentsList
+      case 57: // NonEmptyArgumentsList
         value.copy< ArgumentsList* > (v);
         break;
 
-      case 52: // StatementList
+      case 53: // StatementList
         value.copy< CStatementList* > (v);
         break;
 
@@ -1105,11 +1107,11 @@ namespace Grammar {
         value.copy< ClassDeclarationList* > (v);
         break;
 
-      case 57: // Expression
+      case 58: // Expression
         value.copy< IExpression* > (v);
         break;
 
-      case 54: // Statement
+      case 55: // Statement
         value.copy< IStatement* > (v);
         break;
 
@@ -1121,15 +1123,16 @@ namespace Grammar {
         value.copy< MainClass* > (v);
         break;
 
-      case 49: // MethodDeclaration
+      case 50: // MethodDeclaration
         value.copy< MethodDeclaration* > (v);
         break;
 
-      case 48: // MethodDeclarationList
+      case 49: // MethodDeclarationList
         value.copy< MethodDeclarationList* > (v);
         break;
 
       case 47: // Type
+      case 48: // Void
         value.copy< Type* > (v);
         break;
 
@@ -1137,7 +1140,7 @@ namespace Grammar {
         value.copy< VariableDeclaration* > (v);
         break;
 
-      case 53: // VariableDeclarationStatement
+      case 54: // VariableDeclarationStatement
         value.copy< VariableDeclarationStatement* > (v);
         break;
 
@@ -1313,17 +1316,17 @@ namespace Grammar {
     // Type destructor.
     switch (yytype)
     {
-      case 50: // ArgumentDeclarationList
-      case 51: // NonEmptyArgumentDeclarationList
+      case 51: // ArgumentDeclarationList
+      case 52: // NonEmptyArgumentDeclarationList
         value.template destroy< ArgumentDeclarationList* > ();
         break;
 
-      case 55: // ArgumentsList
-      case 56: // NonEmptyArgumentsList
+      case 56: // ArgumentsList
+      case 57: // NonEmptyArgumentsList
         value.template destroy< ArgumentsList* > ();
         break;
 
-      case 52: // StatementList
+      case 53: // StatementList
         value.template destroy< CStatementList* > ();
         break;
 
@@ -1335,11 +1338,11 @@ namespace Grammar {
         value.template destroy< ClassDeclarationList* > ();
         break;
 
-      case 57: // Expression
+      case 58: // Expression
         value.template destroy< IExpression* > ();
         break;
 
-      case 54: // Statement
+      case 55: // Statement
         value.template destroy< IStatement* > ();
         break;
 
@@ -1351,15 +1354,16 @@ namespace Grammar {
         value.template destroy< MainClass* > ();
         break;
 
-      case 49: // MethodDeclaration
+      case 50: // MethodDeclaration
         value.template destroy< MethodDeclaration* > ();
         break;
 
-      case 48: // MethodDeclarationList
+      case 49: // MethodDeclarationList
         value.template destroy< MethodDeclarationList* > ();
         break;
 
       case 47: // Type
+      case 48: // Void
         value.template destroy< Type* > ();
         break;
 
@@ -1367,7 +1371,7 @@ namespace Grammar {
         value.template destroy< VariableDeclaration* > ();
         break;
 
-      case 53: // VariableDeclarationStatement
+      case 54: // VariableDeclarationStatement
         value.template destroy< VariableDeclarationStatement* > ();
         break;
 
@@ -1406,17 +1410,17 @@ namespace Grammar {
     super_type::move(s);
       switch (this->type_get ())
     {
-      case 50: // ArgumentDeclarationList
-      case 51: // NonEmptyArgumentDeclarationList
+      case 51: // ArgumentDeclarationList
+      case 52: // NonEmptyArgumentDeclarationList
         value.move< ArgumentDeclarationList* > (s.value);
         break;
 
-      case 55: // ArgumentsList
-      case 56: // NonEmptyArgumentsList
+      case 56: // ArgumentsList
+      case 57: // NonEmptyArgumentsList
         value.move< ArgumentsList* > (s.value);
         break;
 
-      case 52: // StatementList
+      case 53: // StatementList
         value.move< CStatementList* > (s.value);
         break;
 
@@ -1428,11 +1432,11 @@ namespace Grammar {
         value.move< ClassDeclarationList* > (s.value);
         break;
 
-      case 57: // Expression
+      case 58: // Expression
         value.move< IExpression* > (s.value);
         break;
 
-      case 54: // Statement
+      case 55: // Statement
         value.move< IStatement* > (s.value);
         break;
 
@@ -1444,15 +1448,16 @@ namespace Grammar {
         value.move< MainClass* > (s.value);
         break;
 
-      case 49: // MethodDeclaration
+      case 50: // MethodDeclaration
         value.move< MethodDeclaration* > (s.value);
         break;
 
-      case 48: // MethodDeclarationList
+      case 49: // MethodDeclarationList
         value.move< MethodDeclarationList* > (s.value);
         break;
 
       case 47: // Type
+      case 48: // Void
         value.move< Type* > (s.value);
         break;
 
@@ -1460,7 +1465,7 @@ namespace Grammar {
         value.move< VariableDeclaration* > (s.value);
         break;
 
-      case 53: // VariableDeclarationStatement
+      case 54: // VariableDeclarationStatement
         value.move< VariableDeclarationStatement* > (s.value);
         break;
 
@@ -1770,7 +1775,7 @@ namespace Grammar {
 
 #line 5 "parser.bison" // lalr1.cc:377
 } // Grammar
-#line 1774 "Parser.h" // lalr1.cc:377
+#line 1779 "Parser.h" // lalr1.cc:377
 
 
 

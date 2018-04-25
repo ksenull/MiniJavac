@@ -102,6 +102,7 @@ using namespace nodes;
 %type<ClassDeclarationList*> ClassDeclarationList;
 %type<ClassDeclaration*> ClassDeclaration;
 %type<Type*> Type;
+%type<Type*> Void;
 %type<MethodDeclarationList*> MethodDeclarationList;
 %type<MethodDeclaration*> MethodDeclaration;
 %type<IStatement*> Statement;
@@ -179,6 +180,10 @@ Type:
     ID { $$ = new Type(TT_Object, $1, LOCATION(@$)); }
    ;
 
+Void:
+    VOID { $$ = new Type(TT_Void, LOCATION(@$)); }
+    ;
+
 MethodDeclarationList:
     %empty { $$ = new MethodDeclarationList(); }
     |
@@ -190,6 +195,12 @@ MethodDeclarationList:
 
 MethodDeclaration:
     PUBLIC Type[rt] ID[id] LPAREN
+        ArgumentDeclarationList[a]
+    RPAREN LBRACE
+        StatementList[s]
+    RBRACE { $$ = new MethodDeclaration($id, $rt, $a, $s, LOCATION(@$)); }
+    |
+    PUBLIC Void[rt] ID[id] LPAREN
         ArgumentDeclarationList[a]
     RPAREN LBRACE
         StatementList[s]

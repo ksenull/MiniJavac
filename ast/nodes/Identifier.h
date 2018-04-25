@@ -5,14 +5,14 @@
 namespace ast {
     namespace nodes {
 
-        struct Identifier : symboltable::Symbol {
-//            std::string name;
+        struct Identifier {
+            std::string name;
 
             Identifier() = default;
 
-            /* implicit */ Identifier(std::string&& name) : Symbol(std::move(name)) {}
+            /* implicit */ Identifier(std::string&& name) : name(std::move(name)) {}
 
-            /* implicit */ Identifier(const char* name) : Symbol(name) {}
+            /* implicit */ Identifier(const char* name) : name(name) {}
 
             void accept(const IVisitor<void>* visitor) const {
                 visitor->visit(this);

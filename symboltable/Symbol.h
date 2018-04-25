@@ -21,13 +21,15 @@ namespace symboltable {
         std::string name; // TODO make it private and add getter
     };
 
-    Symbol* getIntern(const std::string& src);
+    Symbol* getIntern(const std::string& symbolName);
 
     class IInfo : public common::Located {
     public:
         IInfo() = default;
-        IInfo(const common::Location& loc) : common::Located(loc) {}
+
+        explicit IInfo(const common::Location& loc) : common::Located(loc) {}
         virtual ~IInfo() = default;
+
     private:
         Symbol symbol;
     };
