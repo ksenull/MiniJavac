@@ -5,13 +5,16 @@
 #include "SymbolException.h"
 
 namespace symboltable {
-    void ClassInfo::BuildFromAst(ast::nodes::MainClass* mainClass) {}
+    void ClassInfo::BuildFromAst(ast::nodes::MainClass* mainClass) {
+        // TODO args name and idDeclarations in main method
+    }
 
     void ClassInfo::BuildFromAst(ast::nodes::ClassDeclaration* node) {
         if (node->base.name.empty()) {
             base = nullptr;
         } else {
             auto* symbol = getIntern(node->base.name);
+            base = symbol;
         }
         for (auto* n : node->localVars->nodes) {
             if (auto* varStm = dynamic_cast<ast::nodes::VariableDeclarationStatement*>(n)) {
@@ -22,10 +25,10 @@ namespace symboltable {
                     throw VariableAlreadyDefinedError(symbol, search->second->loc, var->loc);
                 }
 
-                VariableInfo variableInfo(var->loc);
-                variableInfo.BuildFromAst(var);
+                VariableInfo* variableInfo = new VariableInfo(var->loc);
+                variableInfo->BuildFromAst(var);
 
-                vars.emplace(std::make_pair(symbol, &variableInfo));
+                vars.emplace(std::make_pair(symbol, variableInfo));
             }
         }
 
@@ -37,12 +40,25 @@ namespace symboltable {
                     throw MethodAlreadyDefinedError(symbol, search->second->loc, method->loc);
                 }
 
-                MethodInfo methodInfo(method->loc);
-                methodInfo.BuildFromAst(method);
+                MethodInfo* methodInfo = new MethodInfo(method->loc);
+                methodInfo->BuildFromAst(method);
 
-                methods.emplace(std::make_pair(symbol, &methodInfo));
+                methods.emplace(std::make_pair(symbol, methodInfo));
             }
         }
 
+    }
+
+    Symbol* ClassInfo::getBase() const {
+        return base;
+    }
+
+    ClassInfo::~ClassInfo() {
+        for (auto&& var : vars) {
+            delete var.second;
+        }
+        for (auto&& method : methods) {
+            delete method.second;
+        }
     }
 }

@@ -9,10 +9,10 @@ namespace symboltable {
     void Table::BuildFromAst(const ast::nodes::Program& program) {
         auto* symbol = getIntern(program.mainClass->name.name);
 
-        auto classInfo = ClassInfo(program.mainClass->loc);
-        classInfo.BuildFromAst(program.mainClass);
+        auto* classInfo = new ClassInfo(program.mainClass->loc);
+        classInfo->BuildFromAst(program.mainClass);
 
-        classesTable.emplace(std::make_pair(symbol, &classInfo));
+        classesTable.emplace(std::make_pair(symbol, classInfo));
 
         for (auto* node : program.classDeclarationList->nodes) {
             if (auto cl = dynamic_cast<ast::nodes::ClassDeclaration*>(node)) {
@@ -22,10 +22,10 @@ namespace symboltable {
                     throw DuplicateClassError(symbol, search->second->loc, cl->loc);
                 }
 
-                classInfo = ClassInfo(cl->loc);
-                classInfo.BuildFromAst(cl);
+                classInfo = new ClassInfo(cl->loc);
+                classInfo->BuildFromAst(cl);
 
-                classesTable.emplace(std::make_pair(symbol, &classInfo));
+                classesTable.emplace(std::make_pair(symbol, classInfo));
             }
         }
 
@@ -43,5 +43,17 @@ namespace symboltable {
                 throw CantFindSymbolError(symbol, node->loc);
             }
         }
+    }
+
+    ClassInfo* Table::getClassInfo(Symbol* classSymbol) const {
+        auto&& search = classesTable.find(classSymbol);
+        return (search == classesTable.end()) ? nullptr : search->second;
+    }
+
+    Table::~Table() {
+        for (auto&& classInfo : classesTable) {
+//            delete classInfo.second;
+        }
+
     }
 }

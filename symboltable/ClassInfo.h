@@ -8,11 +8,13 @@
 namespace symboltable {
     class ClassInfo : public IInfo {
     public:
-        using Block = std::unordered_map<Symbol*, IInfo*>;
 
         explicit ClassInfo(const common::Location&)  : IInfo(loc) {};
+        ~ClassInfo();
         void BuildFromAst(ast::nodes::MainClass*);
         void BuildFromAst(ast::nodes::ClassDeclaration*);
+
+        Symbol* getBase() const;
 
     private:
 //        std::list<Block> scopeBlocks;

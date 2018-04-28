@@ -7,13 +7,14 @@
 namespace symboltable {
 
 #define ADD_VARINFO_OR_THROW(var)\
-    auto* symbol = getIntern(var->id.name);\
+    auto* symbol = getIntern((var)->id.name);\
     auto search = vars.find(symbol);\
     if (search != vars.end()) {\
-        throw VariableAlreadyDefinedError(symbol, search->second->loc, var->loc);\
+        throw VariableAlreadyDefinedError(symbol, search->second->loc, (var)->loc);\
     }\
-    VariableInfo variableInfo(var->loc);\
-    variableInfo.BuildFromAst(var);
+    VariableInfo* variableInfo = new VariableInfo((var)->loc);\
+    variableInfo->BuildFromAst(var);\
+    vars.emplace(std::make_pair(symbol, variableInfo));
 
     void MethodInfo::BuildFromAst(ast::nodes::MethodDeclaration* methodDeclaration) {
         for (auto* node : methodDeclaration->args->nodes) {

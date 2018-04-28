@@ -30,4 +30,10 @@ namespace symboltable {
                 BaseException(loc, "Method " + symbol->name + "() is already defined here: " + oldLoc.str()) {}
     };
 
+    struct CyclicInheritanceError : BaseException {
+        CyclicInheritanceError(Symbol* symbol, const Location& cycleRootLoc, const Location& loc) :
+                BaseException(loc, "Cyclic Inheritance Error in class " + symbol->name +
+                        " with root defined here: " + cycleRootLoc.str()) {}
+    };
+
 }
