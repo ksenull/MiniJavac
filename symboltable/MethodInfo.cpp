@@ -6,6 +6,9 @@
 
 namespace symboltable {
 
+#define ADD_ARG_TO_ARGLIST \
+    args.emplace_back(std::make_pair(symbol, variableInfo));
+
 #define ADD_VARINFO_OR_THROW(var)\
     auto* symbol = getIntern((var)->id.name);\
     auto search = vars.find(symbol);\
@@ -20,6 +23,7 @@ namespace symboltable {
         for (auto* node : methodDeclaration->args->nodes) {
             if (auto* arg = dynamic_cast<ast::nodes::VariableDeclaration*>(node)) {
                 ADD_VARINFO_OR_THROW(arg)
+                ADD_ARG_TO_ARGLIST
             }
         }
 
@@ -31,5 +35,9 @@ namespace symboltable {
         }
 
         returnType = methodDeclaration->returnType;
+    }
+
+    MethodInfo::ArgsList MethodInfo::getArgsList() {
+        return args;
     }
 }

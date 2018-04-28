@@ -27,6 +27,8 @@ namespace symboltable {
 
     void TypeCheckVisitor::visit(const ast::nodes::ClassDeclaration* node) const {
         checkCyclicClasses(node);
+        node->localVars->accept(this);
+        node->methods->accept(this);
     }
 
     void TypeCheckVisitor::visit(const ast::nodes::ClassDeclarationList* node) const {
@@ -36,15 +38,24 @@ namespace symboltable {
     }
 
     void TypeCheckVisitor::visit(const ast::nodes::VariableDeclarationStatementList* node) const {
-
+        for (auto&& v : node->nodes) {
+            v->accept(this);
+        }
     }
 
     void TypeCheckVisitor::visit(const ast::nodes::VariableDeclarationStatement* node) const {
-
+        node->var->accept(this);
     }
 
     void TypeCheckVisitor::visit(const ast::nodes::VariableDeclaration* node) const {
-
+        auto&& type = *node->type;
+        if (type.tt == ast::nodes::TT_Object) {
+            Symbol* objSymbol = getIntern(node->type->id.name);
+            auto* search = symbolTable.getClassInfo(objSymbol);
+            if (search == nullptr) {
+                throw CantFindSymbolError(objSymbol, node->loc);
+            }
+        }
     }
 
     void TypeCheckVisitor::visit(const ast::nodes::Type* node) const {

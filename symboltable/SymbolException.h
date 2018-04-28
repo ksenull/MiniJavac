@@ -36,4 +36,23 @@ namespace symboltable {
                         " with root defined here: " + cycleRootLoc.str()) {}
     };
 
+    struct TypeError : BaseException {
+        TypeError(Symbol* symbol, const ast::nodes::Type& type, const Location& loc) :
+                BaseException(loc, "Type Error: " + symbol->name +
+                        " should be of type " + type.getTT() + ": " + loc.str()) {}
+    };
+
+    struct ExpressionTypeError : BaseException {
+        ExpressionTypeError(Symbol* symbol, const ast::nodes::Type& leftType,
+                            const ast::nodes::Type& rightType, const Location& loc) :
+                BaseException(loc, "TypeError: Expression operands should be of same type. Having: " +
+                leftType.getTT() + " and " + rightType.getTT() + " here: " + loc.str()) {}
+    };
+
+    struct MethodCantbeAppliedError : BaseException {
+        MethodCantbeAppliedError(Symbol* methodName, MethodInfo* methodInfo) :
+                BaseException(methodInfo->loc, "Method " + methodName->name + "() cannot be applied. Operands type mismatch: "
+                                   + methodInfo->loc.str()) {}
+    };
+
 }
