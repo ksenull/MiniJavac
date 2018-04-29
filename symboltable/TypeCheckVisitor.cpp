@@ -73,6 +73,9 @@ namespace symboltable {
     }
 
     void TypeCheckVisitor::visit(const AN::MethodDeclaration* node) const {
+        curMethod = getIntern(node->id.name);
+
+        // check if return type exists
         if (node->returnType->tt == AN::TT_Object) {
             Symbol* retSymbol = getIntern(node->returnType->id.name);
             ClassInfo* classInfo = symbolTable.getClassInfo(retSymbol);
@@ -81,7 +84,14 @@ namespace symboltable {
             }
         }
 
-        curMethod = getIntern(node->id.name);
+        // check if return exp is of type ret exp
+        if (node->returnExp) {
+            auto&& retExpType = getExpressionType(node->returnExp);
+            if (!retExpType.first || retExpType.second.tt != node->returnType->tt) {
+                throw TypeError("Return expression", *node->returnType, node->returnExp->loc);
+            }
+        }
+
         node->statementList->accept(this);
         node->args->accept(this);
         if (node->returnExp) {
@@ -127,7 +137,11 @@ namespace symboltable {
     }
 
     void TypeCheckVisitor::visit(const AN::AssignStatement* node) const {
-        checkIfSameType(getIntern(node->id.name), node->exp);
+        auto&& typeLeft = getIdType(node->id);
+        auto&& typeRight = getExpressionType(node->exp);
+        if (!typeLeft.first || !typeRight.first || areTypesDifferent(typeRight.second, typeLeft.second)) {
+            throw ExpressionTypeError(getIntern(node->id.name), typeLeft.second, typeRight.second, node->loc);
+        }
 
         node->exp->accept(this);
     }
@@ -182,7 +196,7 @@ namespace symboltable {
     void TypeCheckVisitor::visit(const AN::ArrayLengthExpression* node) const {
         auto&& type = getExpressionType(node->arr);
         auto correctType = AN::Type(AN::TT_Array, {});
-        if (areTypesDifferent(type, correctType)) {
+        if (!type.first || areTypesDifferent(type.second, correctType)) {
             throw TypeError("Array expression", correctType, node->loc);
         }
 
@@ -194,18 +208,36 @@ namespace symboltable {
         Symbol* classSymbol;
         ClassInfo* classInfo;
         // only NewObjectExp and IdExp can be obj, NewObj will be checked after visiting it
-        if (auto* idExp = dynamic_cast<const AN::IdExpression*>(node)) {
-            classSymbol = getIntern(idExp->id.name);
-            classInfo = symbolTable.getClassInfo(classSymbol);
+        if (auto* idExp = dynamic_cast<const AN::IdExpression*>(node->obj)) {
+            if (idExp->isThis) {
+                classSymbol = currentClass;
+            }
+            else {
+                auto* idSymbol = getIntern(idExp->id.name);
+                auto* curClassInfo = symbolTable.getClassInfo(currentClass);
+                auto* varInfo = curClassInfo->getVariableInfo(idSymbol);
+                if (varInfo == nullptr) {
+                    auto* methodInfo = curClassInfo->getMethodInfo(curMethod);
+                    varInfo = methodInfo->getVariableInfo(idSymbol);
+                    if (varInfo == nullptr) {
+                        throw CantFindSymbolError(idSymbol, node->obj->loc);
+                    }
+                }
+                if (varInfo->getType()->tt != AN::TT_Object) {
+                    throw TypeError("Object of call", AN::Type(AN::TT_Object, "", {}), node->loc);
+                }
+                classSymbol = getIntern(varInfo->getType()->id.name);
+            }
+            classInfo = symbolTable.getClassInfo(classSymbol); // classInfo for next check
             if (classInfo == nullptr) {
-                throw CantFindSymbolError(classSymbol, classInfo->loc);
+                throw CantFindSymbolError(classSymbol, node->obj->loc);
             }
         }
-        else if (auto* newObjExp = dynamic_cast<const AN::NewObjectExpression*>(node)) {
+        else if (auto* newObjExp = dynamic_cast<const AN::NewObjectExpression*>(node->obj)) {
             classSymbol = getIntern(newObjExp->id.name);
             classInfo = symbolTable.getClassInfo(classSymbol);
             if (classInfo == nullptr) {
-                throw CantFindSymbolError(classSymbol, classInfo->loc);
+                throw CantFindSymbolError(classSymbol, node->obj->loc);
             }
         }
         else {
@@ -224,7 +256,7 @@ namespace symboltable {
         size_t correctArgsCount = correctArgsList.size();
         size_t argsCount = node->args->nodes.size();
         if (correctArgsCount != argsCount) {
-            throw MethodCantbeAppliedError(methodSymbol, methodInfo);
+            throw MethodCantbeAppliedError(methodSymbol, methodInfo, node->loc);
         }
         for (int i = 0; i < argsCount; i++) { // arg - expression
             auto* arg =node->args->nodes[i];
@@ -233,7 +265,7 @@ namespace symboltable {
                 std::pair<Symbol*, VariableInfo*> correctArg = methodInfo->getArgsList()[i];
                 auto* correctType = correctArg.second->getType();
                 auto&& type = getExpressionType(exp);
-                if (areTypesDifferent(type, *correctType)) {
+                if (!type.first || areTypesDifferent(type.second, *correctType)) {
                     throw MethodCantbeAppliedError(methodSymbol, methodInfo);
                 }
             }
@@ -252,7 +284,19 @@ namespace symboltable {
     }
 
     void TypeCheckVisitor::visit(const AN::IdExpression* node) const {
-        /* nothing to check */
+        if (node->isThis) {
+            return;
+        }
+        auto* curClassInfo = symbolTable.getClassInfo(currentClass);
+        auto* idSymbol = getIntern(node->id.name);
+        auto* varInfo = curClassInfo->getVariableInfo(idSymbol);
+        if (varInfo == nullptr) {
+            auto* methodInfo = curClassInfo->getMethodInfo(curMethod);
+            varInfo = methodInfo->getVariableInfo(idSymbol);
+            if (varInfo == nullptr) {
+                throw CantFindSymbolError(idSymbol, node->loc);
+            }
+        }
     }
 
     void TypeCheckVisitor::visit(const AN::NewArrayExpression* node) const {
@@ -298,80 +342,88 @@ namespace symboltable {
     }
 
     void TypeCheckVisitor::checkBooleanConvertibility(const AN::IExpression* exp) const {
-        // according to grammar all expression ar eboolean convertible except void Call()
-        if (auto* call = dynamic_cast<const AN::CallExpression*>(exp)) {
-            if (auto* callClass = dynamic_cast<AN::IdExpression*>(call->obj)) {
-                auto* callClassSymbol = getIntern(callClass->id.name);
-                auto* callClassInfo = symbolTable.getClassInfo(callClassSymbol);
-
-                auto* callMethodSymbol = getIntern(call->method.name);
-                auto* methodInfo = callClassInfo->getMethodInfo(callMethodSymbol);
-//                if (methodInfo == nullptr) {
-//                    throw CantFindSymbolError()
+//        // according to grammar all expression ar eboolean convertible except void Call()
+//        if (auto* call = dynamic_cast<const AN::CallExpression*>(exp)) {
+//            if (auto* callClass = dynamic_cast<AN::IdExpression*>(call->obj)) {
+//                auto* callClassSymbol = getIntern(callClass->id.name);
+//                auto* callClassInfo = symbolTable.getClassInfo(callClassSymbol);
+//
+//                auto* callMethodSymbol = getIntern(call->method.name);
+//                auto* methodInfo = callClassInfo->getMethodInfo(callMethodSymbol);
+////                if (methodInfo == nullptr) {
+////                    throw CantFindSymbolError()
+////                }
+//                auto* type = methodInfo->getReturnType();
+//                if (type->tt == AN::TT_Void) {
+//                    throw TypeError(callMethodSymbol, *type, methodInfo->loc);
 //                }
-                auto* type = methodInfo->getReturnType();
-                if (type->tt == AN::TT_Void) {
-                    throw TypeError(callMethodSymbol, *type, methodInfo->loc);
-                }
-            }
-
+//            }
+//
+//        }
+        auto&& expType = getExpressionType(exp);
+        if (!expType.first || expType.second.tt != AN::TT_Bool) {
+            throw TypeError("Condition", expType.second, exp->loc);
         }
     }
 
     void TypeCheckVisitor::checkIfInt(const AN::IExpression* exp) const {
-        if (dynamic_cast<const AN::ConstExpression*>(exp)) {
-            return;
+        auto&& type = getExpressionType(exp);
+        if (!type.first || type.second.tt != AN::TT_Int) {
+            throw TypeError(getIntern("Expression "), AN::Type(AN::TT_Int, {}), exp->loc);
         }
-        if (auto* binop = dynamic_cast<const AN::BinopExpression*>(exp)) {
-            if (binop->type == AN::BOT_Plus || binop->type == AN::BOT_Minus
-                || binop->type == AN::BOT_Multiply) {
-                checkIfInt(binop->left);
-                checkIfInt(binop->right);
-                return;
-            }
-            else {
-                throw TypeError(getIntern("Expression "), AN::Type(AN::TT_Int, {}), exp->loc);
-            }
-        }
-        if (auto* arrItem = dynamic_cast<const AN::ArrayItemExpression*>(exp)) {
-            return;
-        }
-        if (auto* arrLength = dynamic_cast<const AN::ArrayLengthExpression*>(exp)) {
-            return;
-        }
-        if (auto* idExp = dynamic_cast<const AN::IdExpression*>(exp)) {
-            Symbol* symbol = getIntern(idExp->id.name);
-
-            if (idExp->isThis) {
-                throw TypeError(getIntern("Expression "), AN::Type(AN::TT_Int, {}), exp->loc);
-            }
-
-            auto* classInfo = symbolTable.getClassInfo(currentClass);
-
-            auto* search = classInfo->getVariableInfo(symbol);
-            if (search != nullptr) {
-                auto* type = search->getType();
-                if (type->tt != AN::TT_Int) {
-                    throw TypeError(getIntern("Expression "), AN::Type(AN::TT_Int, {}), exp->loc);
-                }
-                else {
-                    return;
-                }
-            }
-
-            if (curMethod != nullptr) {
-                auto* curMethodInfo = classInfo->getMethodInfo(curMethod);
-                search = curMethodInfo->getVariableInfo(symbol);
-
-                if (search != nullptr) {
-                    auto* type = search->getType();
-                    if (type->tt != AN::TT_Int) {
-                        throw TypeError(getIntern("Expression "), AN::Type(AN::TT_Int, {}),
-                                        exp->loc);
-                    }
-                }
-            }
-        }
+//        if (dynamic_cast<const AN::ConstExpression*>(exp)) {
+//            return;
+//        }
+//        if (auto* binop = dynamic_cast<const AN::BinopExpression*>(exp)) {
+//            if (binop->type == AN::BOT_Plus || binop->type == AN::BOT_Minus
+//                || binop->type == AN::BOT_Multiply) {
+//                checkIfInt(binop->left);
+//                checkIfInt(binop->right);
+//                return;
+//            }
+//            else {
+//                throw TypeError(getIntern("Expression "), AN::Type(AN::TT_Int, {}), exp->loc);
+//            }
+//        }
+//        if (auto* arrItem = dynamic_cast<const AN::ArrayItemExpression*>(exp)) {
+//            return;
+//        }
+//        if (auto* arrLength = dynamic_cast<const AN::ArrayLengthExpression*>(exp)) {
+//            return;
+//        }
+//        if (auto* idExp = dynamic_cast<const AN::IdExpression*>(exp)) {
+//            Symbol* symbol = getIntern(idExp->id.name);
+//
+//            if (idExp->isThis) {
+//                throw TypeError(getIntern("Expression "), AN::Type(AN::TT_Int, {}), exp->loc);
+//            }
+//
+//            auto* classInfo = symbolTable.getClassInfo(currentClass);
+//
+//            auto* search = classInfo->getVariableInfo(symbol);
+//            if (search != nullptr) {
+//                auto* type = search->getType();
+//                if (type->tt != AN::TT_Int) {
+//                    throw TypeError(getIntern("Expression "), AN::Type(AN::TT_Int, {}), exp->loc);
+//                }
+//                else {
+//                    return;
+//                }
+//            }
+//
+//            if (curMethod != nullptr) {
+//                auto* curMethodInfo = classInfo->getMethodInfo(curMethod);
+//                search = curMethodInfo->getVariableInfo(symbol);
+//
+//                if (search != nullptr) {
+//                    auto* type = search->getType();
+//                    if (type->tt != AN::TT_Int) {
+//                        throw TypeError(getIntern("Expression "), AN::Type(AN::TT_Int, {}),
+//                                        exp->loc);
+//                    }
+//                }
+//            }
+//        }
     }
 
     bool TypeCheckVisitor::areTypesDifferent(const AN::Type& type, const AN::Type& correctType) const {
@@ -379,69 +431,141 @@ namespace symboltable {
                                               getIntern(type.id.name) != getIntern(correctType.id.name)));
     }
 
-    void TypeCheckVisitor::checkIfSameType(Symbol* left, AN::IExpression* exp) const {
-        if (symbolTable.getClassInfo(left) != nullptr) {
-            if (auto* idExp = dynamic_cast<AN::IdExpression*>(exp)) {
-                if (idExp->isThis) return;
+//    void TypeCheckVisitor::checkIfSameType(Symbol* left, AN::IExpression* exp) const {
+//        if (symbolTable.getClassInfo(left) != nullptr) {
+//            if (auto* idExp = dynamic_cast<AN::IdExpression*>(exp)) {
+//                if (idExp->isThis) return;
+//
+//                auto* rightSymbol = getIntern(idExp->id.name);
+//                auto* rightClassInfo = symbolTable.getClassInfo(rightSymbol);
+//                if (rightClassInfo == nullptr) {
+//                    throw ExpressionTypeError(rightSymbol, left, exp->loc);
+//                }
+//                return;
+//            }
+//            if (auto* newObjExp = dynamic_cast<AN::NewObjectExpression*>(exp)) {
+//                auto* symb = getIntern(newObjExp->id.name); // TODO also could be base
+//                auto* rightClassInfo = symbolTable.getClassInfo(symb);
+//                if (rightClassInfo == nullptr) {
+//                    throw ExpressionTypeError(symb, left, exp->loc);
+//                }
+//                return;
+//            }
+//            throw ExpressionTypeError(left, exp->loc);
+//        }
+//
+//        auto* curClassInfo = symbolTable.getClassInfo(currentClass);
+//
+//        auto* leftInfo = curClassInfo->getVariableInfo(left);
+//        if (left == nullptr) {
+//            assert(curMethod != nullptr);
+//            auto* curMethodInfo = curClassInfo->getMethodInfo(curMethod);
+//            leftInfo = curMethodInfo->getVariableInfo(left);
+//            auto* leftType = leftInfo->getType();
+//        }
+//        // TODO int
+//        // int array
+//        // boolean convertible
+//    }
 
-                auto* rightSymbol = getIntern(idExp->id.name);
-                auto* rightClassInfo = symbolTable.getClassInfo(rightSymbol);
-                if (rightClassInfo == nullptr) {
-                    throw ExpressionTypeError(rightSymbol, left, exp->loc);
-                }
-                return;
+
+    std::pair<bool, AN::Type> TypeCheckVisitor::getExpressionType(const AN::IExpression* exp) const {
+        if (dynamic_cast<const AN::ConstExpression*>(exp)) {
+            return std::make_pair(true, AN::Type(AN::TT_Int, {}));
+        }
+        if (dynamic_cast<const AN::BoolExpression*>(exp)) {
+            return std::make_pair(true, AN::Type(AN::TT_Bool, {}));
+        }
+        if (dynamic_cast<const AN::ArrayItemExpression*>(exp)) {
+            return std::make_pair(true, AN::Type(AN::TT_Int, {}));
+        }
+        if (dynamic_cast<const AN::ArrayLengthExpression*>(exp)) {
+            return std::make_pair(true, AN::Type(AN::TT_Int, {}));
+        }
+        if (dynamic_cast<const AN::NewArrayExpression*>(exp)) {
+            return std::make_pair(true, AN::Type(AN::TT_Array, {}));
+        }
+        if (auto* obj = dynamic_cast<const AN::NewObjectExpression*>(exp)) {
+            return std::make_pair(true, AN::Type(AN::TT_Object, obj->id, {}));
+        }
+        if (auto* binop = dynamic_cast<const AN::BinopExpression*>(exp)) {
+            if (binop->type == AN::BOT_Plus || binop->type == AN::BOT_Minus || binop->type == AN::BOT_Multiply) {
+                auto&& leftType = getExpressionType(binop->left);
+                auto&& rightType = getExpressionType(binop->right);
+                return std::make_pair(leftType.first && rightType.first &&
+                                              leftType.second.tt == AN::TT_Int &&
+                                              rightType.second.tt == AN::TT_Int, AN::Type(AN::TT_Int, {}));
             }
-            if (auto* newObjExp = dynamic_cast<AN::NewObjectExpression*>(exp)) {
-                auto* symb = getIntern(newObjExp->id.name); // TODO also could be base
-                auto* rightClassInfo = symbolTable.getClassInfo(symb);
-                if (rightClassInfo == nullptr) {
-                    throw ExpressionTypeError(symb, left, exp->loc);
-                }
-                return;
+            if (binop->type == AN::BOT_Less || binop->type == AN::BOT_Equal) {
+                auto&& leftType = getExpressionType(binop->left);
+                auto&& rightType = getExpressionType(binop->right);
+                return std::make_pair(leftType.first && rightType.first &&
+                                      leftType.second.tt == AN::TT_Int &&
+                                      rightType.second.tt == AN::TT_Int, AN::Type(AN::TT_Bool, {}));
             }
-            throw ExpressionTypeError(left, exp->loc);
+            if (binop->type == AN::BOT_And) {
+                auto&& leftType = getExpressionType(binop->left);
+                auto&& rightType = getExpressionType(binop->right);
+                return std::make_pair(leftType.first && rightType.first &&
+                                      leftType.second.tt == AN::TT_Int &&
+                                      rightType.second.tt == AN::TT_Int, AN::Type(AN::TT_Bool, {}));
+            }
+            else {
+                return std::make_pair(false, AN::Type(AN::TT_Int, {}));
+            }
         }
 
-        auto* curClassInfo = symbolTable.getClassInfo(currentClass);
-
-        auto* leftInfo = curClassInfo->getVariableInfo(left);
-        if (left == nullptr) {
-            assert(curMethod != nullptr);
-            auto* curMethodInfo = curClassInfo->getMethodInfo(curMethod);
-            leftInfo = curMethodInfo->getVariableInfo(left);
-            auto* leftType = leftInfo->getType();
+        if (auto* callExp = dynamic_cast<const AN::CallExpression*>(exp)) {
+            std::pair<bool, AN::Type> objType = getExpressionType(callExp->obj);
+            if (objType.first && objType.second.tt == AN::TT_Object) {
+                auto* objSymbol = getIntern(objType.second.id.name);
+                auto* objInfo = symbolTable.getClassInfo(objSymbol);
+                if (objInfo == nullptr) {
+                    return std::make_pair(false, AN::Type(AN::TT_Int, {}));
+                }
+                auto* methodSymbol = getIntern(callExp->method.name);
+                auto* methodInfo = objInfo->getMethodInfo(methodSymbol);
+                if (methodInfo == nullptr) {
+                    return std::make_pair(false, AN::Type(AN::TT_Int, {}));
+                }
+                return std::make_pair(true, *methodInfo->getReturnType());
+            }
+            else {
+                return std::make_pair(false, AN::Type(AN::TT_Int, {}));
+            }
         }
-        // TODO int
-        // int array
-        // boolean convertible
+
+        if (auto* idExp = dynamic_cast<const AN::IdExpression*>(exp)) {
+            if (idExp->isThis) {
+                return std::make_pair(true, AN::Type(AN::TT_Object, currentClass->name, {}));
+            }
+            return getIdType(idExp->id);
+        }
+
+        if (auto* notExp = dynamic_cast<const AN::NotExpression*>(exp)) {
+            std::pair<bool, AN::Type> innerExpType = getExpressionType(notExp->exp);
+            return std::make_pair(innerExpType.first && innerExpType.second.tt != AN::TT_Void, AN::Type(AN::TT_Bool, {}));
+        }
+
+        return std::make_pair(false, AN::Type(AN::TT_Int, {}));
     }
 
-
-    AN::Type TypeCheckVisitor::getExpressionType(AN::IExpression* exp) const {
-        if (dynamic_cast<AN::ConstExpression*>(exp)) {
-            return AN::Type(AN::TT_Int, {});
-        }
-        if (dynamic_cast<AN::BoolExpression*>(exp)) {
-            return AN::Type(AN::TT_Bool, {});
-        }
-        if (dynamic_cast<AN::ArrayItemExpression*>(exp)) {
-            return AN::Type(AN::TT_Int, {});
-        }
-        if (dynamic_cast<AN::ArrayLengthExpression*>(exp)) {
-            return AN::Type(AN::TT_Int, {});
-        }
-        if (dynamic_cast<AN::NewArrayExpression*>(exp)) {
-            return AN::Type(AN::TT_Array, {});
-        }
-        if (auto* obj = dynamic_cast<AN::NewObjectExpression*>(exp)) {
-            return AN::Type(AN::TT_Object, obj->id, {});
-        }
-        if (auto* binop = dynamic_cast<AN::BinopExpression*>(exp)) {
-            if (binop->type == AN::BOT_Plus || binop->type == AN::BOT_Minus || binop->type == AN::BOT_Multiply) {
-                // TODO
+    std::pair<bool, ast::nodes::Type> TypeCheckVisitor::getIdType(const ast::nodes::Identifier& id) const {
+        auto* curClassInfo = symbolTable.getClassInfo(currentClass);
+        auto* idSymbol = getIntern(id.name);
+        auto* varInfo = curClassInfo->getVariableInfo(idSymbol);
+        if (varInfo == nullptr) {
+            if (curMethod == nullptr) {
+                return std::make_pair(false, AN::Type(AN::TT_Int, {}));
             }
+            auto* methodInfo = curClassInfo->getMethodInfo(curMethod);
+            varInfo = methodInfo->getVariableInfo(idSymbol);
+            if (varInfo == nullptr) {
+                return std::make_pair(false, AN::Type(AN::TT_Int, {}));
+            }
+            return std::make_pair(true, *varInfo->getType());
         }
-        return AN::Type(AN::TT_Int, {});
+        return std::make_pair(true, *varInfo->getType());
     }
 
 }

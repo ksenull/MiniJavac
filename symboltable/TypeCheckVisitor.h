@@ -63,9 +63,11 @@ namespace symboltable {
 
         bool areTypesDifferent(const ast::nodes::Type& type, const ast::nodes::Type& correctType) const;
 
-        void checkIfSameType(Symbol* left, ast::nodes::IExpression* exp) const;
+//        void checkIfSameType(Symbol* left, ast::nodes::IExpression* exp) const;
 
-        ast::nodes::Type getExpressionType(ast::nodes::IExpression* exp) const;
+        std::pair<bool, ast::nodes::Type> getExpressionType(const ast::nodes::IExpression* exp) const;
+        std::pair<bool, ast::nodes::Type> getIdType(const ast::nodes::Identifier&) const;
+
 
         Table symbolTable;
         mutable Symbol* currentClass;

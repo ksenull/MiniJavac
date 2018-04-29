@@ -10,6 +10,8 @@ namespace ast {
 
             Identifier() = default;
 
+            /* implicit */ Identifier(const std::string& name) : name(name) {}
+
             /* implicit */ Identifier(std::string&& name) : name(std::move(name)) {}
 
             /* implicit */ Identifier(const char* name) : name(name) {}

@@ -312,7 +312,7 @@ namespace ast {
 
         struct IdExpression : IExpression {
             Identifier id;
-            bool isThis; //TODO
+            bool isThis = false;
 
             explicit IdExpression(const std::string& s, const Location& loc) : IExpression(loc), isThis(true) {}
             explicit IdExpression(Identifier& id, const Location& loc) : IExpression(loc), id(id) {}

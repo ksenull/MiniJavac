@@ -62,9 +62,11 @@ namespace symboltable {
     };
 
     struct MethodCantbeAppliedError : BaseException {
+        MethodCantbeAppliedError(Symbol* methodName, MethodInfo* methodInfo, const Location& loc) :
+                BaseException(loc, "Method " + methodName->name + "() cannot be applied. Operands type mismatch: "
+                                               + loc.str()) {}
         MethodCantbeAppliedError(Symbol* methodName, MethodInfo* methodInfo) :
-                BaseException(methodInfo->loc, "Method " + methodName->name + "() cannot be applied. Operands type mismatch: "
-                                   + methodInfo->loc.str()) {}
+                MethodCantbeAppliedError(methodName, methodInfo, methodInfo->loc) {}
     };
 
 }

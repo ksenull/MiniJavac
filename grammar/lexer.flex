@@ -128,8 +128,8 @@ String        { PROCESS_TOKEN(STRING) }
 System.out.println { PROCESS_TOKEN(PRINT) }
 
 
+{BOOL_VALUE}    { PROCESS_VALUE_TOKEN(BOOL_VALUE, strcmp(yytext, "false")) }
 {ID}            { PROCESS_VALUE_TOKEN(ID, yytext ) }
-{BOOL_VALUE}    { PROCESS_VALUE_TOKEN(BOOL_VALUE, strcmp(yytext, "false")) } // TODO RULE CANNOT BE MATCHED
 {INTEGER}       { PROCESS_VALUE_TOKEN(INTEGER, std::stoi(yytext)) }
 
 <<EOF>>         { PROCESS_TOKEN(END) }
