@@ -56,4 +56,8 @@ namespace symboltable {
         }
 
     }
+
+    const std::unordered_map<Symbol*, ClassInfo*>& Table::getClassesTable() const {
+        return classesTable;
+    }
 }

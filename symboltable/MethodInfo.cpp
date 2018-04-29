@@ -40,4 +40,13 @@ namespace symboltable {
     MethodInfo::ArgsList MethodInfo::getArgsList() {
         return args;
     }
+
+    ast::nodes::Type* MethodInfo::getReturnType() const {
+        return returnType;
+    }
+
+    VariableInfo* MethodInfo::getVariableInfo(Symbol* varSymbol) const {
+        auto&& search = vars.find(varSymbol);
+        return (search != vars.end()) ? search->second : nullptr;
+    }
 }

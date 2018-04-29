@@ -8,4 +8,8 @@ namespace symboltable {
     void VariableInfo::BuildFromAst(ast::nodes::VariableDeclaration* var) {
         type = var->type;
     }
+
+    ast::nodes::Type* VariableInfo::getType() const {
+        return type;
+    }
 }

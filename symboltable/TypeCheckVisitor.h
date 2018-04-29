@@ -57,6 +57,16 @@ namespace symboltable {
     private:
         void checkCyclicClasses(const ast::nodes::ClassDeclaration* classDeclaration) const;
 
+        void checkBooleanConvertibility(const ast::nodes::IExpression* exp) const;
+
+        void checkIfInt(const ast::nodes::IExpression* exp) const;
+
+        void checkIfSameType(Symbol* left, ast::nodes::IExpression* exp) const;
+
+        ast::nodes::Type getExpressionType(ast::nodes::IExpression* exp) const;
+
         Table symbolTable;
+        mutable Symbol* currentClass;
+        mutable Symbol* curMethod;
     };
 }

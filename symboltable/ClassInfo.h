@@ -16,6 +16,14 @@ namespace symboltable {
 
         Symbol* getBase() const;
 
+        MethodInfo* getMethodInfo(Symbol* methodName) const;
+
+        VariableInfo* getVariableInfo(Symbol* varSymbol) const;
+
+        std::unordered_map<Symbol*, VariableInfo*> getVars() const;
+
+        std::unordered_map<Symbol*, MethodInfo*> getMethods() const;
+
     private:
 //        std::list<Block> scopeBlocks;
         Symbol* base{};

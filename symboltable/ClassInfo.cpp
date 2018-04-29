@@ -61,4 +61,23 @@ namespace symboltable {
             delete method.second;
         }
     }
+
+    MethodInfo* ClassInfo::getMethodInfo(Symbol* methodName) const {
+        auto&& search = methods.find(methodName);
+        return (search == methods.end()) ? nullptr : search->second;
+    }
+
+    std::unordered_map<Symbol*, VariableInfo*> ClassInfo::getVars() const {
+        return vars;
+    }
+
+    std::unordered_map<Symbol*, MethodInfo*> ClassInfo::getMethods() const {
+        return methods;
+    }
+
+    VariableInfo* ClassInfo::getVariableInfo(Symbol* varSymbol) const {
+        auto&& search = vars.find(varSymbol);
+        return (search == vars.end()) ? nullptr : search->second;
+    }
+
 }

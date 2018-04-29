@@ -47,6 +47,14 @@ namespace symboltable {
                             const ast::nodes::Type& rightType, const Location& loc) :
                 BaseException(loc, "TypeError: Expression operands should be of same type. Having: " +
                 leftType.getTT() + " and " + rightType.getTT() + " here: " + loc.str()) {}
+
+        ExpressionTypeError(Symbol* right, Symbol* leftClass, const Location& loc) :
+                BaseException(loc, "Type mismatch: Right symbol " + right->name + "should be of type " + leftClass->name +
+                ": " + loc.str()) {}
+
+        ExpressionTypeError(Symbol* left, const Location& loc) :
+                BaseException(loc, "Type mismatch: Right symbol should be whether of type " + left->name +
+                        "whether new " + left->name + "(): " + loc.str()){}
     };
 
     struct MethodCantbeAppliedError : BaseException {

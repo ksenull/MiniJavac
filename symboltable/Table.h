@@ -11,6 +11,8 @@ namespace symboltable {
         void BuildFromAst(const ast::nodes::Program& program);
 
         ClassInfo* getClassInfo(Symbol* classSymbol) const;
+
+        const std::unordered_map<Symbol*, ClassInfo*>& getClassesTable() const;
     private:
         void checkBase(ast::nodes::ClassDeclaration* node) const;
         std::unordered_map<Symbol*, ClassInfo*> classesTable;

@@ -14,6 +14,9 @@ namespace symboltable {
         void BuildFromAst(ast::nodes::MethodDeclaration* methodDeclaration);
 
         ArgsList getArgsList();
+        ast::nodes::Type* getReturnType() const;
+
+        VariableInfo* getVariableInfo(Symbol* varSymbol) const;
     private:
         ArgsList args;
         std::unordered_map<Symbol*, VariableInfo*> vars;

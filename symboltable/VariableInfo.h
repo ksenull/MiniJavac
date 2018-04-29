@@ -10,6 +10,8 @@ namespace symboltable {
         explicit VariableInfo(const common::Location& loc) : IInfo(loc) {}
 
         void BuildFromAst(ast::nodes::VariableDeclaration* var);
+
+        ast::nodes::Type* getType() const;
     private:
         ast::nodes::Type* type {};
     };
