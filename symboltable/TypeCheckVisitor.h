@@ -61,6 +61,8 @@ namespace symboltable {
 
         void checkIfInt(const ast::nodes::IExpression* exp) const;
 
+        bool areTypesDifferent(const ast::nodes::Type& type, const ast::nodes::Type& correctType) const;
+
         void checkIfSameType(Symbol* left, ast::nodes::IExpression* exp) const;
 
         ast::nodes::Type getExpressionType(ast::nodes::IExpression* exp) const;

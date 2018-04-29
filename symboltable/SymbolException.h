@@ -40,6 +40,10 @@ namespace symboltable {
         TypeError(Symbol* symbol, const ast::nodes::Type& type, const Location& loc) :
                 BaseException(loc, "Type Error: " + symbol->name +
                         " should be of type " + type.getTT() + ": " + loc.str()) {}
+
+        TypeError(const std::string& objectDescription, const ast::nodes::Type& type, const Location& loc) :
+                BaseException(loc, "Type Error: " + objectDescription +
+                " should be of type " + type.getTT() + ": " + loc.str()) {}
     };
 
     struct ExpressionTypeError : BaseException {

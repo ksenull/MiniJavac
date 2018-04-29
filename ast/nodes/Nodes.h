@@ -36,7 +36,12 @@ namespace ast {
                     case TT_Int:
                             return "int";
                     case TT_Object:
+                        if (id.name.empty()) {
+                            return "object";
+                        }
+                        else {
                             return id.name;
+                        }
                     case TT_Void:
                             return "void";
                     default:

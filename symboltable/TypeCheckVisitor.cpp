@@ -13,8 +13,9 @@
 namespace symboltable {
     namespace AN = ast::nodes;
 
+#define COMPARE_TYPES
     void TypeCheckVisitor::visit(const AN::Identifier* node) const {
-
+        /* nothing to check */
     }
 
     void TypeCheckVisitor::visit(const AN::Program* node) const {
@@ -62,7 +63,7 @@ namespace symboltable {
     }
 
     void TypeCheckVisitor::visit(const AN::Type* node) const {
-
+        /* nothing to check */
     }
 
     void TypeCheckVisitor::visit(const AN::MethodDeclarationList* node) const {
@@ -140,7 +141,9 @@ namespace symboltable {
     }
 
     void TypeCheckVisitor::visit(const AN::ArgumentsList* node) const {
-
+        for (auto* e : node->nodes) {
+            e->accept(this);
+        }
     }
 
     void TypeCheckVisitor::visit(const AN::BinopExpression* node) const {
@@ -177,35 +180,99 @@ namespace symboltable {
     }
 
     void TypeCheckVisitor::visit(const AN::ArrayLengthExpression* node) const {
+        auto&& type = getExpressionType(node->arr);
+        auto correctType = AN::Type(AN::TT_Array, {});
+        if (areTypesDifferent(type, correctType)) {
+            throw TypeError("Array expression", correctType, node->loc);
+        }
 
+        node->arr->accept(this);
     }
 
     void TypeCheckVisitor::visit(const AN::CallExpression* node) const {
+        // check the obj of call is a class
+        Symbol* classSymbol;
+        ClassInfo* classInfo;
+        // only NewObjectExp and IdExp can be obj, NewObj will be checked after visiting it
+        if (auto* idExp = dynamic_cast<const AN::IdExpression*>(node)) {
+            classSymbol = getIntern(idExp->id.name);
+            classInfo = symbolTable.getClassInfo(classSymbol);
+            if (classInfo == nullptr) {
+                throw CantFindSymbolError(classSymbol, classInfo->loc);
+            }
+        }
+        else if (auto* newObjExp = dynamic_cast<const AN::NewObjectExpression*>(node)) {
+            classSymbol = getIntern(newObjExp->id.name);
+            classInfo = symbolTable.getClassInfo(classSymbol);
+            if (classInfo == nullptr) {
+                throw CantFindSymbolError(classSymbol, classInfo->loc);
+            }
+        }
+        else {
+            throw TypeError("Object of call", AN::Type(AN::TT_Object, "", {}), node->loc);
+        }
 
+        // check that the class has such method
+        auto* methodSymbol = getIntern(node->method.name);
+        auto* methodInfo = classInfo->getMethodInfo(methodSymbol);
+        if (methodInfo == nullptr) {
+            throw CantFindSymbolError(methodSymbol, node->loc);
+        }
+
+        // check if args are compatible with signature
+        auto&& correctArgsList = methodInfo->getArgsList();
+        size_t correctArgsCount = correctArgsList.size();
+        size_t argsCount = node->args->nodes.size();
+        if (correctArgsCount != argsCount) {
+            throw MethodCantbeAppliedError(methodSymbol, methodInfo);
+        }
+        for (int i = 0; i < argsCount; i++) { // arg - expression
+            auto* arg =node->args->nodes[i];
+            if (auto* exp = dynamic_cast<AN::IExpression*>(arg)) {
+
+                std::pair<Symbol*, VariableInfo*> correctArg = methodInfo->getArgsList()[i];
+                auto* correctType = correctArg.second->getType();
+                auto&& type = getExpressionType(exp);
+                if (areTypesDifferent(type, *correctType)) {
+                    throw MethodCantbeAppliedError(methodSymbol, methodInfo);
+                }
+            }
+        }
+
+        node->obj->accept(this);
+        node->args->accept(this);
     }
 
     void TypeCheckVisitor::visit(const AN::ConstExpression* node) const {
-
+        /* nothing to check */
     }
 
     void TypeCheckVisitor::visit(const AN::BoolExpression* node) const {
-
+        /* nothing to check */
     }
 
     void TypeCheckVisitor::visit(const AN::IdExpression* node) const {
-
+        /* nothing to check */
     }
 
     void TypeCheckVisitor::visit(const AN::NewArrayExpression* node) const {
+        checkIfInt(node->exp);
 
+        node->exp->accept(this);
     }
 
     void TypeCheckVisitor::visit(const AN::NewObjectExpression* node) const {
-
+        auto* symbol = getIntern(node->id.name);
+        auto* classInfo = symbolTable.getClassInfo(symbol);
+        if (classInfo == nullptr) {
+            throw CantFindSymbolError(symbol, node->loc);
+        }
     }
 
     void TypeCheckVisitor::visit(const AN::NotExpression* node) const {
+        checkBooleanConvertibility(node->exp);
 
+        node->exp->accept(this);
     }
 
     void TypeCheckVisitor::checkCyclicClasses(const AN::ClassDeclaration* classDeclaration) const {
@@ -305,6 +372,11 @@ namespace symboltable {
                 }
             }
         }
+    }
+
+    bool TypeCheckVisitor::areTypesDifferent(const AN::Type& type, const AN::Type& correctType) const {
+        return (type.tt != correctType.tt || (type.tt == AN::TT_Object && correctType.tt == AN::TT_Object &&
+                                              getIntern(type.id.name) != getIntern(correctType.id.name)));
     }
 
     void TypeCheckVisitor::checkIfSameType(Symbol* left, AN::IExpression* exp) const {
