@@ -1,6 +1,6 @@
 #pragma once
 
-#include <unordered_map>
+#include <map>
 #include "IFrame.h"
 #include "X86TypeSpec.h"
 
@@ -34,14 +34,16 @@ namespace frames {
 
         void AddReturnType(const ST::TypeInfo& info) override;
 
+        void PrettyPrint() const;
+
     private:
         int stackPointer;
         int framePointer;
 
         std::vector<IAccess*> formalsList;
 
-        std::unordered_map<const Symbol*, IAccess*> formals;
-        std::unordered_map<const Symbol*, IAccess*> locals;
+        std::map<const Symbol*, IAccess*> formals;
+        std::map<const Symbol*, IAccess*> locals;
 
         IAccess* returnAddress;
         IAccess* returnValue;

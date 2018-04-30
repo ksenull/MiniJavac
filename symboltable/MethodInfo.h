@@ -12,6 +12,7 @@ namespace symboltable {
 
         explicit MethodInfo(const common::Location& loc) : IInfo(loc) {}
         void BuildFromAst(ast::nodes::MethodDeclaration* methodDeclaration);
+        void BuildFromAst(ast::nodes::MainClass* main);
 
         ArgsList getArgsList();
         ArgsList getLocalVarsList();

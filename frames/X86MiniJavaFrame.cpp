@@ -60,4 +60,20 @@ namespace frames {
         auto* inFrameAccess = new CInFrameAccess(RT_ReturnValue, 0, typeSpec->getTypeSize(info.type));
         returnValue = inFrameAccess;
     }
+
+    void CX86MiniJavaFrame::PrettyPrint() const {
+        std::cout << std::endl;
+        std::cout << "------------------------" << std::endl;
+        std::cout << returnAddress->str() << std::endl;
+        for (auto&& formal : formals) {
+            std::cout << formal.first->name << "#" << formal.second->str() << std::endl;
+        }
+        for (auto&& local : formals) {
+            std::cout << local.first->name << "#" << local.second->str() << std::endl;
+        }
+        if (returnValue) {
+            std::cout << returnValue << std::endl;
+        }
+        std::cout << "------------------------" << std::endl;
+    }
 }

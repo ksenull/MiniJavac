@@ -21,5 +21,7 @@ namespace frames {
 
         virtual void AddReturnAddress() = 0;
         virtual void AddReturnType(const ST::TypeInfo&) = 0;
+        virtual void PrettyPrint() const = 0;
+
     };
 }

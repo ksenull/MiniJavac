@@ -13,7 +13,6 @@ namespace frames {
     class TempReg {
     public:
         TempReg(int num) : num(num) {}
-    private:
         int num;
     };
 }

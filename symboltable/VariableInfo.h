@@ -10,6 +10,7 @@ namespace symboltable {
         VT_IntArray,
         VT_Boolean,
         VT_Object,
+        VT_Void,
         VT_Unknown
     };
 

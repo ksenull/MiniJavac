@@ -41,6 +41,9 @@ namespace symboltable {
                     classname = symbol;
                 }
                 break;
+            case AN::TT_Void:
+                type = VT_Void;
+                break;
             default:
                 type = VT_Unknown;
         }

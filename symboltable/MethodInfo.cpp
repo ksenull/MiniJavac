@@ -55,4 +55,8 @@ namespace symboltable {
         auto&& search = vars.find(varSymbol);
         return (search != vars.end()) ? search->second : nullptr;
     }
+
+    void MethodInfo::BuildFromAst(ast::nodes::MainClass* main) {
+        returnType = TypeInfo(VT_Void);
+    }
 }
