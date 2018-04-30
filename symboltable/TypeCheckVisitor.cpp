@@ -356,11 +356,6 @@ namespace symboltable {
         }
     }
 
-//    bool TypeCheckVisitor::areTypesDifferent(const AN::Type& type, const AN::Type& correctType) const {
-//        return (type.tt != correctType.tt || (type.tt == AN::TT_Object && correctType.tt == AN::TT_Object &&
-//                                              getIntern(type.id.name) != getIntern(correctType.id.name)));
-//    }
-
     std::pair<bool, TypeInfo> TypeCheckVisitor::getExpressionType(const AN::IExpression* exp) const {
         if (dynamic_cast<const AN::ConstExpression*>(exp)) {
             return std::make_pair(true, TypeInfo(VT_Int));
@@ -418,7 +413,7 @@ namespace symboltable {
                 if (methodInfo == nullptr) {
                     return std::make_pair(false, TypeInfo{});
                 }
-                return std::make_pair(true, TypeInfo(methodInfo->getReturnType()));
+                return std::make_pair(true, methodInfo->getReturnType());
             }
             else {
                 return std::make_pair(false, TypeInfo{});

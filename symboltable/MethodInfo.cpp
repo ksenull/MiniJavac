@@ -36,7 +36,7 @@ namespace symboltable {
             }
         }
 
-        returnType = methodDeclaration->returnType;
+        returnType = TypeInfo(methodDeclaration->returnType);
     }
 
     MethodInfo::ArgsList MethodInfo::getArgsList() { // TODO save and pass it efficiently
@@ -47,7 +47,7 @@ namespace symboltable {
         return localVars;
     }
 
-    ast::nodes::Type* MethodInfo::getReturnType() const {
+    TypeInfo MethodInfo::getReturnType() const {
         return returnType;
     }
 
