@@ -5,18 +5,15 @@
 namespace frames {
     class Temp {
     public:
-        Temp(int offset, int address) : offset(offset), address(address) {}
-        Temp(int offset = 0) : Temp(offset, 0) {}
-
-        int getAddress() const {
-            return address + offset;
-        }
-        Temp AtAddress(int _address) const {
-            return Temp(offset, _address + address);
-        }
-        std::string str() const;
+        Temp(int offset) : offset(offset) {}
     private:
         const int offset;
-        int address;
+    };
+
+    class TempReg {
+    public:
+        TempReg(int num) : num(num) {}
+    private:
+        int num;
     };
 }

@@ -1,9 +1,51 @@
 #pragma once
 
+#include <unordered_map>
 #include "IFrame.h"
+#include "X86TypeSpec.h"
+
 namespace frames {
 
-    struct CX86MiniJavaFrame : IFrame {
+    using Symbol = ST::Symbol;
 
+    struct CX86MiniJavaFrame : public IFrame {
+    public:
+        CX86MiniJavaFrame(ITypeSpec* typeSpec, int sp, int fp) : typeSpec(typeSpec), stackPointer(sp), framePointer(fp) {}
+
+        void AddFormal(ST::Symbol* varName, const ST::VariableInfo& var) override;
+
+        void AddLocal(ST::Symbol* varName, const ST::VariableInfo& var) override;
+
+        int FormalsCount() const override;
+
+        const IAccess* Formal(int index) const override;
+
+        const IAccess* FindLocalOrFormal(const ST::Symbol* name) const override;
+
+        const Temp FramePointer() const override;
+
+        const Temp StackPointer() const override;
+
+        const IAccess* ReturnAddress() const override;
+
+        const IAccess* ReturnValue() const override;
+
+        void AddReturnAddress() override;
+
+        void AddReturnType(const ST::TypeInfo& info) override;
+
+    private:
+        int stackPointer;
+        int framePointer;
+
+        std::vector<IAccess*> formalsList;
+
+        std::unordered_map<const Symbol*, IAccess*> formals;
+        std::unordered_map<const Symbol*, IAccess*> locals;
+
+        IAccess* returnAddress;
+        IAccess* returnValue;
+
+        ITypeSpec* typeSpec;
     };
 }

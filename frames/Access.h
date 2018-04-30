@@ -9,31 +9,31 @@ namespace frames {
         RT_Local,
         RT_FramePointer,
         RT_StackPointer,
-        RT_AddressExit,
-        RT_AddressReturnValue
+        RT_ReturnAddress,
+        RT_ReturnValue
     };
 
     struct IAccess {
-        virtual ~IAccess() = 0;
-        virtual const RecordType GetRecordType() = 0;
+        virtual ~IAccess() = default;
     };
 
     class CInRegAccess : public IAccess {
     public:
-        CInRegAccess(RecordType type, int reg) : recType(type), reg(reg) {}
+        CInRegAccess(RecordType type, int reg, int size) : recType(type), reg(reg), size(size) {}
+        ~CInRegAccess() = default;
     private:
         const RecordType recType;
-        int reg;
+        TempReg reg;
+        const int size;
     };
 
     class CInFrameAccess : public IAccess {
     public:
-        CInFrameAccess(RecordType type, int offset) : recType(type), address(offset) {}
-        const Temp& Offset() const {
-            return address;
-        }
+        CInFrameAccess(RecordType type, int offset, int size) : recType(type), offset(offset), size(size) {}
+        ~CInFrameAccess() = default;
     private:
         const RecordType recType;
-        const Temp address;
+        const int offset; // offset from the FP
+        const int size;
     };
 }

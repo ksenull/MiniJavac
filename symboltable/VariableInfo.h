@@ -21,21 +21,23 @@ namespace symboltable {
         explicit TypeInfo(ast::nodes::Type* astType);
         TypeInfo(const TypeInfo& other) = default;
         TypeInfo& operator=(const TypeInfo& other) = default;
-
+        
         bool operator==(const TypeInfo& other) const;
-
+        
         bool isInt() { return type == VT_Int; }
         bool isBool() { return type == VT_Boolean; }
-
+        
         std::string str() const;
-
+        
         VariableType type;
         Symbol* classname;
     };
-
+    
     class VariableInfo : public IInfo {
     public:
         explicit VariableInfo(const common::Location& loc) : IInfo(loc) {}
+        
+        VariableInfo(const common::Location& loc, const TypeInfo& type) : IInfo(loc), typeInfo(type) {} // for frames
 
         void BuildFromAst(ast::nodes::VariableDeclaration* var);
 
