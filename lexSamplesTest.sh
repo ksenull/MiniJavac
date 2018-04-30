@@ -2,6 +2,6 @@
 for file in ./Samples/*.java
 do
     echo "$file"
-    cat "$file" | ./cmake-build-debug/ast/AST | grep error
+    cat "$file" | ./cmake-build-debug/symboltable/SymbolTable | grep error
 
 done

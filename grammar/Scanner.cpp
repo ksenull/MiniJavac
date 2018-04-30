@@ -1154,7 +1154,7 @@ YY_RULE_SETUP
 case 38:
 YY_RULE_SETUP
 #line 131 "lexer.flex"
-{ PROCESS_VALUE_TOKEN(BOOL_VALUE, strcmp(yytext, "false")) } // TODO RULE CANNOT BE MATCHED
+{ PROCESS_VALUE_TOKEN(BOOL_VALUE, strcmp(yytext, "false")) }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP

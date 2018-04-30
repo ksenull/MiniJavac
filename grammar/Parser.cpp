@@ -937,97 +937,97 @@ namespace Grammar {
 
   case 39:
 #line 286 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_Plus, LOCATION(yylhs.location)); }
+    { yylhs.value.as< IExpression* > () = new NotExpression( yystack_[0].value.as< IExpression* > (), LOCATION(yylhs.location)); }
 #line 942 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 40:
 #line 287 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_Minus, LOCATION(yylhs.location)); }
+    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_Plus, LOCATION(yylhs.location)); }
 #line 948 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 41:
 #line 288 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_Multiply, LOCATION(yylhs.location)); }
+    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_Minus, LOCATION(yylhs.location)); }
 #line 954 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 42:
 #line 289 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_And, LOCATION(yylhs.location)); }
+    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_Multiply, LOCATION(yylhs.location)); }
 #line 960 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 43:
 #line 290 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_Equal, LOCATION(yylhs.location)); }
+    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_And, LOCATION(yylhs.location)); }
 #line 966 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 44:
 #line 291 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_Less, LOCATION(yylhs.location)); }
+    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_Equal, LOCATION(yylhs.location)); }
 #line 972 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 45:
-#line 293 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new ArrayItemExpression( yystack_[3].value.as< IExpression* > (), yystack_[1].value.as< IExpression* > (), LOCATION(yylhs.location)); }
+#line 292 "parser.bison" // lalr1.cc:859
+    { yylhs.value.as< IExpression* > () = new BinopExpression( yystack_[2].value.as< IExpression* > (), yystack_[0].value.as< IExpression* > (), BOT_Less, LOCATION(yylhs.location)); }
 #line 978 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 46:
 #line 294 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new ArrayLengthExpression( yystack_[2].value.as< IExpression* > (), LOCATION(yylhs.location)); }
+    { yylhs.value.as< IExpression* > () = new ArrayItemExpression( yystack_[3].value.as< IExpression* > (), yystack_[1].value.as< IExpression* > (), LOCATION(yylhs.location)); }
 #line 984 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 47:
 #line 295 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new CallExpression( yystack_[5].value.as< IExpression* > (), yystack_[3].value.as< Identifier > (), yystack_[1].value.as< ArgumentsList* > (), LOCATION(yylhs.location)); }
+    { yylhs.value.as< IExpression* > () = new ArrayLengthExpression( yystack_[2].value.as< IExpression* > (), LOCATION(yylhs.location)); }
 #line 990 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 48:
 #line 296 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new ConstExpression( yystack_[0].value.as< int > (), LOCATION(yylhs.location)); }
+    { yylhs.value.as< IExpression* > () = new CallExpression( yystack_[5].value.as< IExpression* > (), yystack_[3].value.as< Identifier > (), yystack_[1].value.as< ArgumentsList* > (), LOCATION(yylhs.location)); }
 #line 996 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 49:
 #line 297 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new BoolExpression( yystack_[0].value.as< bool > (), LOCATION(yylhs.location)); }
+    { yylhs.value.as< IExpression* > () = new ConstExpression( yystack_[0].value.as< int > (), LOCATION(yylhs.location)); }
 #line 1002 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 50:
 #line 298 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new IdExpression( yystack_[0].value.as< Identifier > (), LOCATION(yylhs.location)); }
+    { yylhs.value.as< IExpression* > () = new BoolExpression( yystack_[0].value.as< bool > (), LOCATION(yylhs.location)); }
 #line 1008 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 51:
 #line 299 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new IdExpression( "this", LOCATION(yylhs.location)); }
+    { yylhs.value.as< IExpression* > () = new IdExpression( yystack_[0].value.as< Identifier > (), LOCATION(yylhs.location)); }
 #line 1014 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 52:
 #line 300 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new NewArrayExpression( yystack_[1].value.as< IExpression* > (), LOCATION(yylhs.location)); }
+    { yylhs.value.as< IExpression* > () = new IdExpression( "this", LOCATION(yylhs.location)); }
 #line 1020 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 53:
 #line 301 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new NewObjectExpression( yystack_[2].value.as< Identifier > (), LOCATION(yylhs.location)); }
+    { yylhs.value.as< IExpression* > () = new NewArrayExpression( yystack_[1].value.as< IExpression* > (), LOCATION(yylhs.location)); }
 #line 1026 "Parser.cpp" // lalr1.cc:859
     break;
 
   case 54:
 #line 302 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< IExpression* > () = new NotExpression( yystack_[0].value.as< IExpression* > (), LOCATION(yylhs.location)); }
+    { yylhs.value.as< IExpression* > () = new NewObjectExpression( yystack_[2].value.as< Identifier > (), LOCATION(yylhs.location)); }
 #line 1032 "Parser.cpp" // lalr1.cc:859
     break;
 
@@ -1239,13 +1239,13 @@ namespace Grammar {
        0,    22,     0,     0,     0,     0,     0,     0,    24,    25,
       25,    25,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,    18,     0,    14,    27,
-      26,    19,    29,     0,     0,    51,     0,    49,    48,    50,
+      26,    19,    29,     0,     0,    52,     0,    50,    49,    51,
        0,     0,     0,     0,     0,     3,     0,     0,     0,     0,
-      54,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+      39,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,    33,     0,    55,     0,     0,     0,     0,
-      46,     0,    43,    44,    42,    39,    40,    41,    31,    32,
-       0,    20,     0,    53,    45,     0,    35,     0,    52,    30,
-       0,    36,    37,    34,    47,     0,    38
+      47,     0,    44,    45,    43,    40,    41,    42,    31,    32,
+       0,    20,     0,    54,    46,     0,    35,     0,    53,    30,
+       0,    36,    37,    34,    48,     0,    38
   };
 
   const short int
@@ -1363,9 +1363,9 @@ namespace Grammar {
        0,     2,     2,    17,     0,     2,     6,     8,     0,     2,
        2,     3,     1,     1,     1,     1,     0,     2,     9,     9,
       12,     0,     1,     1,     3,     0,     2,     2,     2,     3,
-       7,     5,     5,     4,     7,     0,     1,     1,     3,     3,
-       3,     3,     3,     3,     3,     4,     3,     6,     1,     1,
-       1,     1,     5,     4,     2,     3
+       7,     5,     5,     4,     7,     0,     1,     1,     3,     2,
+       3,     3,     3,     3,     3,     3,     4,     3,     6,     1,
+       1,     1,     1,     5,     4,     3
   };
 
 
@@ -1397,7 +1397,7 @@ namespace Grammar {
      170,   174,   176,   178,   180,   184,   188,   190,   197,   203,
      209,   218,   220,   224,   226,   233,   235,   240,   247,   251,
      255,   260,   262,   264,   266,   271,   273,   277,   279,   286,
-     287,   288,   289,   290,   291,   293,   294,   295,   296,   297,
+     287,   288,   289,   290,   291,   292,   294,   295,   296,   297,
      298,   299,   300,   301,   302,   303
   };
 

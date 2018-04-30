@@ -544,7 +544,7 @@ namespace symboltable {
 
         if (auto* notExp = dynamic_cast<const AN::NotExpression*>(exp)) {
             std::pair<bool, AN::Type> innerExpType = getExpressionType(notExp->exp);
-            return std::make_pair(innerExpType.first && innerExpType.second.tt != AN::TT_Void, AN::Type(AN::TT_Bool, {}));
+            return std::make_pair(innerExpType.first && innerExpType.second.tt == AN::TT_Bool, AN::Type(AN::TT_Bool, {}));
         }
 
         return std::make_pair(false, AN::Type(AN::TT_Int, {}));

@@ -283,7 +283,8 @@ NonEmptyArgumentsList:
     ;
 
 Expression:
-	Expression[L] PLUS Expression[R] { $$ = new BinopExpression( $L, $R, BOT_Plus, LOCATION(@$)); }
+    NOT Expression[E] { $$ = new NotExpression( $E, LOCATION(@$)); }
+	| Expression[L] PLUS Expression[R] { $$ = new BinopExpression( $L, $R, BOT_Plus, LOCATION(@$)); }
 	| Expression[L] MINUS Expression[R] { $$ = new BinopExpression( $L, $R, BOT_Minus, LOCATION(@$)); }
 	| Expression[L] MULT Expression[R] { $$ = new BinopExpression( $L, $R, BOT_Multiply, LOCATION(@$)); }
 	| Expression[L] AND Expression[R] { $$ = new BinopExpression( $L, $R, BOT_And, LOCATION(@$)); }
@@ -299,7 +300,6 @@ Expression:
 	| THIS { $$ = new IdExpression( "this", LOCATION(@$)); }
 	| NEW INT[T] LBRACKET Expression[L] RBRACKET { $$ = new NewArrayExpression( $L, LOCATION(@$)); }
 	| NEW ID[T] LPAREN RPAREN { $$ = new NewObjectExpression( $T, LOCATION(@$)); }
-	| NOT Expression[E] { $$ = new NotExpression( $E, LOCATION(@$)); }
 	| LPAREN Expression[E] RPAREN { $$ = $E; }
 ;
 
