@@ -3,6 +3,7 @@
 #include "../common/Exception.h"
 #include "Symbol.h"
 #include "../ast/nodes/Nodes.h"
+#include "ClassInfo.h"
 
 namespace symboltable {
 
@@ -11,7 +12,7 @@ namespace symboltable {
 
     struct DuplicateClassError : BaseException {
         DuplicateClassError(Symbol* symbol, const Location& oldLoc, const Location& duplicateLoc) : BaseException(
-                duplicateLoc, "Duplicate Error: " + duplicateLoc.str() + ". Class " + symbol->name +
+                duplicateLoc, "Duplicate Class Error: " + duplicateLoc.str() + ". Class " + symbol->name +
                               " previously declared here: " + oldLoc.str()) {}
     };
 
@@ -37,20 +38,20 @@ namespace symboltable {
     };
 
     struct TypeError : BaseException {
-        TypeError(Symbol* symbol, const ast::nodes::Type& type, const Location& loc) :
+        TypeError(Symbol* symbol, const TypeInfo& type, const Location& loc) :
                 BaseException(loc, "Type Error: " + symbol->name +
-                        " should be of type " + type.getTT() + ": " + loc.str()) {}
+                        " should be of type " + type.str() + ": " + loc.str()) {}
 
-        TypeError(const std::string& objectDescription, const ast::nodes::Type& type, const Location& loc) :
+        TypeError(const std::string& objectDescription, const TypeInfo& type, const Location& loc) :
                 BaseException(loc, "Type Error: " + objectDescription +
-                " should be of type " + type.getTT() + ": " + loc.str()) {}
+                " should be of type " + type.str() + ": " + loc.str()) {}
     };
 
     struct ExpressionTypeError : BaseException {
-        ExpressionTypeError(Symbol* symbol, const ast::nodes::Type& leftType,
-                            const ast::nodes::Type& rightType, const Location& loc) :
+        ExpressionTypeError(Symbol* symbol, const TypeInfo& leftType,
+                            const TypeInfo& rightType, const Location& loc) :
                 BaseException(loc, "TypeError: Expression operands should be of same type. Having: " +
-                leftType.getTT() + " and " + rightType.getTT() + " here: " + loc.str()) {}
+                leftType.str() + " and " + rightType.str() + " here: " + loc.str()) {}
 
         ExpressionTypeError(Symbol* right, Symbol* leftClass, const Location& loc) :
                 BaseException(loc, "Type mismatch: Right symbol " + right->name + "should be of type " + leftClass->name +

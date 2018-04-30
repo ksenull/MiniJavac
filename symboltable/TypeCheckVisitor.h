@@ -4,6 +4,7 @@
 #include "../ast/nodes/Nodes.h"
 #include "Table.h"
 
+
 namespace symboltable {
     class TypeCheckVisitor : public  ast::IVisitor<void> {
     public:
@@ -61,12 +62,12 @@ namespace symboltable {
 
         void checkIfInt(const ast::nodes::IExpression* exp) const;
 
-        bool areTypesDifferent(const ast::nodes::Type& type, const ast::nodes::Type& correctType) const;
+//        bool areTypesDifferent(const ast::nodes::Type& type, const ast::nodes::Type& correctType) const;
 
 //        void checkIfSameType(Symbol* left, ast::nodes::IExpression* exp) const;
 
-        std::pair<bool, ast::nodes::Type> getExpressionType(const ast::nodes::IExpression* exp) const;
-        std::pair<bool, ast::nodes::Type> getIdType(const ast::nodes::Identifier&) const;
+        std::pair<bool, TypeInfo> getExpressionType(const ast::nodes::IExpression* exp) const;
+        std::pair<bool, TypeInfo> getIdType(const ast::nodes::Identifier&) const;
 
 
         Table symbolTable;

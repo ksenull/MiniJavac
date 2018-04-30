@@ -6,8 +6,8 @@
 
 namespace symboltable {
 
-#define ADD_ARG_TO_ARGLIST \
-    args.emplace_back(std::make_pair(symbol, variableInfo));
+#define ADD_VAR_TO_VARLIST(vars) \
+    (vars).emplace_back(std::make_pair(symbol, variableInfo));
 
 #define ADD_VARINFO_OR_THROW(var)\
     auto* symbol = getIntern((var)->id.name);\
@@ -20,10 +20,11 @@ namespace symboltable {
     vars.emplace(std::make_pair(symbol, variableInfo));
 
     void MethodInfo::BuildFromAst(ast::nodes::MethodDeclaration* methodDeclaration) {
+
         for (auto* node : methodDeclaration->args->nodes) {
             if (auto* arg = dynamic_cast<ast::nodes::VariableDeclaration*>(node)) {
                 ADD_VARINFO_OR_THROW(arg)
-                ADD_ARG_TO_ARGLIST
+                ADD_VAR_TO_VARLIST(args)
             }
         }
 
@@ -31,14 +32,19 @@ namespace symboltable {
             if (auto* varStm = dynamic_cast<ast::nodes::VariableDeclarationStatement*>(node)) {
                 auto* var = varStm->var;
                 ADD_VARINFO_OR_THROW(var)
+                ADD_VAR_TO_VARLIST(localVars)
             }
         }
 
         returnType = methodDeclaration->returnType;
     }
 
-    MethodInfo::ArgsList MethodInfo::getArgsList() {
+    MethodInfo::ArgsList MethodInfo::getArgsList() { // TODO save and pass it efficiently
         return args;
+    }
+
+    MethodInfo::ArgsList MethodInfo::getLocalVarsList() {
+        return localVars;
     }
 
     ast::nodes::Type* MethodInfo::getReturnType() const {
