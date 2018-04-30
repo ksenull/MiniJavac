@@ -2,7 +2,7 @@
 
 #include "Temp.h"
 
-namespace frames {
+namespace ir {
 
     enum RecordType {
         RT_Formal,

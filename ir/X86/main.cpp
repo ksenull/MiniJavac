@@ -1,17 +1,16 @@
 #include <iostream>
 #include <fstream>
 
-#include "../ast/nodes/Nodes.h"
-#include "../grammar/parse.h"
-#include "../symboltable/Table.h"
-#include "../symboltable/TypeCheckVisitor.h"
-#include "../common/Exception.h"
+#include "../../ast/nodes/Nodes.h"
+#include "../../grammar/parse.h"
+#include "../../symboltable/Table.h"
+#include "../../common/Exception.h"
 #include "FrameBuilder.h"
 
 static const std::string PathPrefix = "/home/ksenull/workspace/test/minijavac_17/";
 
 using namespace symboltable;
-using namespace frames;
+using namespace ir;
 int main() {
     std::filebuf fb;
     if (fb.open (PathPrefix + "Samples/Factorial.java",std::ios::in)) {
@@ -21,8 +20,6 @@ int main() {
         Table table;
         try {
             table.BuildFromAst(program);
-            TypeCheckVisitor visitor(table);
-            program.accept(&visitor);
         }
         catch (common::MiniJavacException& e) {
             std::cerr << e.msg << std::endl;

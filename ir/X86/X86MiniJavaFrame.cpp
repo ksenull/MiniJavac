@@ -3,7 +3,7 @@
 //
 #include "X86MiniJavaFrame.h"
 
-namespace frames {
+namespace ir {
 
     void CX86MiniJavaFrame::AddFormal(ST::Symbol* varName, const ST::VariableInfo& var) {
         auto* inRegAccess = new CInRegAccess(RT_Formal, 0, typeSpec->getTypeSize(var.getType().type));
@@ -35,11 +35,11 @@ namespace frames {
         return search->second;
     }
 
-    const Temp CX86MiniJavaFrame::FramePointer() const {
+    int CX86MiniJavaFrame::FramePointer() const {
         return framePointer;
     }
 
-    const Temp CX86MiniJavaFrame::StackPointer() const {
+    int CX86MiniJavaFrame::StackPointer() const {
         return stackPointer;
     }
 

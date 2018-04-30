@@ -1,8 +1,8 @@
 #pragma once
 
-#include "IFrame.h"
-#include "../symboltable/Table.h"
-namespace frames {
+#include "../IFrame.h"
+#include "../../symboltable/Table.h"
+namespace ir {
     namespace AN = ast::nodes;
     namespace ST = symboltable;
 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ITypeSpec.h"
+#include "../ITypeSpec.h"
 
-namespace frames {
+namespace ir {
     class X86MiniJavaTypeSpec : public ITypeSpec {
     public:
         int getTypeSize(ST::VariableType type) const override;

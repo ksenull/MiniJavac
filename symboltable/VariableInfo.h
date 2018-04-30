@@ -38,7 +38,7 @@ namespace symboltable {
     public:
         explicit VariableInfo(const common::Location& loc) : IInfo(loc) {}
         
-        VariableInfo(const common::Location& loc, const TypeInfo& type) : IInfo(loc), typeInfo(type) {} // for frames
+        VariableInfo(const common::Location& loc, const TypeInfo& type) : IInfo(loc), typeInfo(type) {} // for ir
 
         void BuildFromAst(ast::nodes::VariableDeclaration* var);
 

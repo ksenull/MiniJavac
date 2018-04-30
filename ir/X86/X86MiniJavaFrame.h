@@ -1,10 +1,10 @@
 #pragma once
 
 #include <map>
-#include "IFrame.h"
+#include "../IFrame.h"
 #include "X86TypeSpec.h"
 
-namespace frames {
+namespace ir {
 
     using Symbol = ST::Symbol;
 
@@ -22,9 +22,9 @@ namespace frames {
 
         const IAccess* FindLocalOrFormal(const ST::Symbol* name) const override;
 
-        const Temp FramePointer() const override;
+        int FramePointer() const override;
 
-        const Temp StackPointer() const override;
+        int StackPointer() const override;
 
         const IAccess* ReturnAddress() const override;
 

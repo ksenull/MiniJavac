@@ -5,7 +5,7 @@
 
 #include "X86MiniJavaFrame.h"
 
-namespace frames {
+namespace ir {
     using TypeInfo = ST::TypeInfo;
 
     IFrame* FrameBuilder::BuildFromST(Symbol* caller, ST::Symbol* classSymbol, ST::Symbol* methodSymbol) {

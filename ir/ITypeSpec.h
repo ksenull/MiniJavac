@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../symboltable/VariableInfo.h"
-namespace frames {
+namespace ir {
     namespace ST = symboltable;
 
     struct ITypeSpec {

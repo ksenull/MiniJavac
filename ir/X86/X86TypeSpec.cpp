@@ -4,7 +4,7 @@
 #include <cassert>
 #include "X86TypeSpec.h"
 
-namespace frames {
+namespace ir {
     static const int WORD_SIZE = 4;
     static const int intSize = 1 * WORD_SIZE;
     static const int booleanSize = 1 * WORD_SIZE;
