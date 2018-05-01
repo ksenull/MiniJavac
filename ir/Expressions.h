@@ -34,33 +34,49 @@ namespace tree {
     };
 
     struct ConstExpression : IExpression {
+        explicit ConstExpression(int i) : i(i) {}
+
         int i;
     };
 
     struct NameExpression : IExpression {
+        explicit NameExpression(const Label& label) : label(label) {}
+        explicit NameExpression(const std::string& str) : label(str) {}
+
         Label label;
     };
 
     struct TempExpressioin : IExpression {
+        explicit TempExpressioin(const TempReg& reg) : reg(reg) {}
+
         TempReg reg;
     };
 
     struct BinopExpression : IExpression {
+        BinopExpression(IExpression* left, BinaryOperation op, IExpression* right) :
+        left(left), op(op), right(right) {}
+
         IExpression* left;
         BinaryOperation op;
         IExpression* right;
     };
 
     struct MemExpression : IExpression { // content of wordSize bytes from addr
+        explicit MemExpression(IExpression* addr) : addr(addr) {}
+
         IExpression* addr;
     };
 
     struct CallExpression : IExpression {
+        CallExpression(const Label& func, CExpressionList* args) : func(func), args(args) {}
+
         Label func;
         CExpressionList* args;
     };
 
     struct EseqExpression : IExpression { //stm evaluated for side effects, then e evalutes for a result
+        EseqExpression(IStatement* stm, IExpression* exp) : stm(stm), exp(exp) {}
+
         IStatement* stm;
         IExpression* exp;
     };

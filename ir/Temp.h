@@ -8,11 +8,14 @@ namespace ir {
 
     class TempReg {
     public:
-        TempReg(int num) : num(num) {}
+        explicit TempReg(int num) : num(num) {}
         int num;
     };
 
     struct Label {
+        explicit Label(ST::Symbol* symbol) : name(symbol) {}
+        explicit Label(const std::string& str) : name(ST::getIntern(str)) {}
+
         ST::Symbol* name;
     };
 }
