@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Temp.h"
+#include "tree/Expressions.h"
 
 namespace ir {
 
@@ -27,6 +28,8 @@ namespace ir {
     struct IAccess {
         virtual ~IAccess() = default;
         virtual std::string str() const = 0;
+
+        virtual tree::IExpression* getExp(tree::IExpression* source) const = 0;
     };
 
     class CInRegAccess : public IAccess {
@@ -39,6 +42,10 @@ namespace ir {
             return recordTypeToString(recType) + ss.str();
         }
         ~CInRegAccess() = default;
+
+        tree::IExpression* getExp(tree::IExpression*) const override {
+            return new tree::TempExpression(reg);
+        }
     private:
         const RecordType recType;
         TempReg reg;
@@ -55,6 +62,10 @@ namespace ir {
             return recordTypeToString(recType) + ss.str();
         }
         ~CInFrameAccess() = default;
+
+        tree::IExpression* getExp(tree::IExpression* framePtr) const override {
+            return new tree::MemExpression(new tree::BinopExpression(framePtr, tree::BO_Plus, new tree::ConstExpression(offset)));
+        }
     private:
         const RecordType recType;
         const int offset; // offset from the FP

@@ -1,6 +1,6 @@
 project(frames)
 
-add_subdirectory(X86)
+#add_subdirectory(X86)
 
 set(PARSE ../grammar/Scanner.cpp ../grammar/Parser.cpp ../grammar/parse.cpp)
 set(SYMBOLTABLE  ../symboltable/Table.h ../symboltable/Table.cpp
@@ -11,9 +11,10 @@ set(SYMBOLTABLE  ../symboltable/Table.h ../symboltable/Table.cpp
         ../symboltable/TypeCheckVisitor.h ../symboltable/TypeCheckVisitor.cpp)
 set(ACCESS Access.h Temp.h)
 set(FRAME IFrame.h ITypeSpec.h)
-set(TREE Expressions.h Statements.h)
-set(TRANSLATE TranslateVisitor.h TranslateVisitor.cpp NodeConverter.h NodeConverter.cpp)
-set(SOURCE_FILES main.cpp ${PARSE} ${SYMBOLTABLE} ${ACCESS} ${FRAME} ${TREE} ${TRANSLATE})
+set(TREE tree/Expressions.h tree/Statements.h tree/IVisitor.h tree/PrintVisitor.h tree/PrintVisitor.cpp)
+set(TRANSLATE translate/TranslateVisitor.h translate/TranslateVisitor.cpp translate/NodeConverter.h translate/NodeConverter.cpp Translate.h Translate.cpp)
+set(AST ../ast/nodes/INode.h ../ast/nodes/Nodes.h ../ast/IVisitor.h)
+set(SOURCE_FILES main.cpp ${PARSE} ${SYMBOLTABLE} ${ACCESS} ${FRAME} ${TREE} ${TRANSLATE} ${AST})
 
 add_executable(IR ${SOURCE_FILES})
 

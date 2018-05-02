@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Statements.h"
+#include "../tree/Statements.h"
 
 namespace ir {
     namespace translate {
@@ -47,18 +47,33 @@ namespace ir {
 
         class CCondStmConverter : public ISubtreeWrapper {
         public:
-            explicit CCondStmConverter(tree::CondJumpStatement* condStm) : condStm(condStm) {}
-
             ~CCondStmConverter() override = default;
 
             tree::IExpression* ToExp() const override;
 
             tree::IStatement* ToStm() const override;
 
-            tree::IStatement* ToConditional(const Label& ifLabel, const Label& elseLabel) const override;
+        };
 
+        // shorten conditions
+        class CFromAndConverter : public CCondStmConverter {
+        public:
+            CFromAndConverter(tree::IExpression* left, tree::IExpression* right) : left(left), right(right) {}
+
+            tree::CondJumpStatement* ToConditional(const Label& ifLabel, const Label& elseLabel) const override;
         private:
-            tree::CondJumpStatement* condStm;
+            tree::IExpression* left;
+            tree::IExpression* right;
+        };
+
+        class CFromOrConverter : public CCondStmConverter {
+        public:
+            CFromOrConverter(tree::IExpression* left, tree::IExpression* right) : left(left), right(right) {}
+
+            tree::CondJumpStatement* ToConditional(const Label& ifLabel, const Label& elseLabel) const override;
+        private:
+            tree::IExpression* left;
+            tree::IExpression* right;
         };
     }
 }

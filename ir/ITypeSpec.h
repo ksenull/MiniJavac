@@ -9,5 +9,6 @@ namespace ir {
 
         virtual int getTypeSize(ST::VariableType type) const = 0;
         virtual int getRefSize() const = 0;
+        virtual int getWordSize() const = 0;
     };
 }

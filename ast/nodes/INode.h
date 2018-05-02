@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "../PrintVisitor.h"
+#include "../../ir/translate/TranslateVisitor.h"
 #include "../../common/Located.h"
 
 namespace ast {
@@ -14,6 +15,7 @@ namespace ast {
             INode(const Location& loc) : Located(std::move(loc)) {}
             virtual ~INode() = default;
             virtual void accept(const IVisitor<void>* visitor) const = 0;
+            virtual ir::translate::ISubtreeWrapper* accept(const IVisitor<ir::translate::ISubtreeWrapper*>* visitor) const = 0;
 //            Location loc;
         };
 
@@ -38,6 +40,12 @@ namespace ast {
         void accept(const IVisitor<void>* visitor) const { \
             visitor->visit(this); \
         }
+
+#define DEFINE_IRTRANSLATE_ACCEPT \
+        ir::translate::ISubtreeWrapper* accept(const IVisitor<ir::translate::ISubtreeWrapper*>* visitor) const { \
+            visitor->visit(this); \
+        }
+
 
     }
 }

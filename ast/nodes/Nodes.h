@@ -26,6 +26,7 @@ namespace ast {
             explicit Type(const TypeType& tt, const Location& loc) : Type(tt, Identifier{}, loc){}
 
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
 
             std::string getTT() const {
                 switch (tt) {
@@ -56,6 +57,7 @@ namespace ast {
 
         struct CStatementList : INodeList {
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct VariableDeclaration : INode {
@@ -64,6 +66,7 @@ namespace ast {
             VariableDeclaration(Type* type, const Identifier& id, const Location& loc) : INode(loc), type(type), id(std::move(id)) {}
 
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct ArgumentDeclarationList : INodeList { // list of VariableDeclarations
@@ -72,6 +75,7 @@ namespace ast {
                     nodes = {var};
             };
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct ArgumentsList : INodeList { // list of expressions
@@ -80,6 +84,7 @@ namespace ast {
                     nodes = {exp};
             };
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct VariableDeclarationStatement : IStatement {
@@ -88,11 +93,13 @@ namespace ast {
             explicit VariableDeclarationStatement(VariableDeclaration* var, const Location& loc) : IStatement(loc), var(var) {}
 
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct VariableDeclarationStatementList : INodeList { //TODO нельзя  ли заменить на statemetntsList
         public:
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct MethodDeclaration : INode {
@@ -112,11 +119,12 @@ namespace ast {
                     MethodDeclaration(id, returnType , nullptr, args, statementList1, loc) {}
 
             DEFINE_PRINT_ACCEPT
-
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct MethodDeclarationList : INodeList {
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct ClassDeclaration : INode {
@@ -135,10 +143,12 @@ namespace ast {
                              MethodDeclarationList* methods, const Location& loc) :
                     ClassDeclaration(id, {}, localVars, methods, loc) {}
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct ClassDeclarationList : INodeList {
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
 
@@ -151,6 +161,7 @@ namespace ast {
                     name(std::move(name)), argsName(std::move(id)), st(st) {}
 
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
 
@@ -164,6 +175,7 @@ namespace ast {
                     INode(loc), mainClass(mainClass), classDeclarationList(cdl) {}
 
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct NestedStatement : public IStatement {
@@ -173,6 +185,7 @@ namespace ast {
                     IStatement(loc), statementList(statementList1) {}
 
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct IfStatement : IStatement {
@@ -185,6 +198,7 @@ namespace ast {
                 condition(condition), ifStatement(ifStatement), elseStatement(elseStatement) {}
 
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct WhileStatement : IStatement {
@@ -196,6 +210,7 @@ namespace ast {
                     condition(condition), statement(statement) {}
 
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct PrintStatement : IStatement {
@@ -204,6 +219,7 @@ namespace ast {
             explicit PrintStatement(IExpression* exp, const Location& loc) : IStatement(loc), exp(exp) {}
 
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct AssignStatement : IStatement {
@@ -213,6 +229,7 @@ namespace ast {
             AssignStatement(Identifier& id, IExpression* exp, const Location& loc) : IStatement(loc), id(id), exp(exp) {}
 
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct ArrayAssignStatement : IStatement {
@@ -224,6 +241,7 @@ namespace ast {
                     IStatement(loc), id(id), arrExp(arrExp), exp(exp) {}
 
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         enum BinOpType {
@@ -244,6 +262,7 @@ namespace ast {
                     IExpression(loc), left(left), right(right), type(type) {}
 
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
 
             std::string binOpTypeToStr() const {
                 switch (type) {
@@ -273,6 +292,7 @@ namespace ast {
                     IExpression(loc), arr(arr), ind(ind) {}
 
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct ArrayLengthExpression : IExpression {
@@ -281,6 +301,7 @@ namespace ast {
             explicit ArrayLengthExpression(IExpression* arr, const Location& loc) : IExpression(loc), arr(arr) {}
 
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct CallExpression : IExpression {
@@ -292,6 +313,7 @@ namespace ast {
                     IExpression(loc), obj(obj), method(method), args(args) {}
 
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct ConstExpression : IExpression {
@@ -300,6 +322,7 @@ namespace ast {
             explicit ConstExpression(int value, const Location& loc) : IExpression(loc), value(value) {}
 
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct BoolExpression : IExpression {
@@ -308,6 +331,7 @@ namespace ast {
             explicit BoolExpression(bool value, const Location& loc) : IExpression(loc), value(value) {}
 
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct IdExpression : IExpression {
@@ -318,6 +342,7 @@ namespace ast {
             explicit IdExpression(Identifier& id, const Location& loc) : IExpression(loc), id(id) {}
 
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct NewArrayExpression : IExpression {
@@ -328,6 +353,7 @@ namespace ast {
                         IExpression(loc), exp(exp) {}
 
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct NewObjectExpression : IExpression {
@@ -336,6 +362,7 @@ namespace ast {
             explicit NewObjectExpression(Identifier& id, const Location& loc) : IExpression(loc), id(id) {}
 
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct NotExpression : IExpression {
@@ -344,6 +371,7 @@ namespace ast {
             explicit NotExpression(IExpression* exp, const Location& loc) : IExpression(loc), exp(exp) {}
 
             DEFINE_PRINT_ACCEPT
+            DEFINE_IRTRANSLATE_ACCEPT
         };
     }
 }

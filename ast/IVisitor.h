@@ -3,6 +3,8 @@
 namespace ast {
 
     namespace nodes {
+        class INode;
+
         class Identifier;
         
         class Program;

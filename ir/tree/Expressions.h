@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "Temp.h"
+#include "../Temp.h"
 
 namespace ir {
 namespace tree {
@@ -27,7 +27,7 @@ namespace tree {
     };
 
     struct IExpression {
-        virtual ~IExpression() = 0;
+        virtual ~IExpression() = default;
     };
 
     struct CExpressionList : INodeList {
@@ -46,8 +46,8 @@ namespace tree {
         Label label;
     };
 
-    struct TempExpressioin : IExpression {
-        explicit TempExpressioin(const TempReg& reg) : reg(reg) {}
+    struct TempExpression : IExpression {
+        explicit TempExpression(const TempReg& reg) : reg(reg) {}
 
         TempReg reg;
     };
