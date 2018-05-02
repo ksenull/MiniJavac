@@ -47,9 +47,9 @@ namespace tree {
     };
 
     struct TempExpression : IExpression {
-        explicit TempExpression(const TempReg& reg) : reg(reg) {}
+        explicit TempExpression(IReg* reg) : reg(reg) {}
 
-        TempReg reg;
+        IReg* reg;
     };
 
     struct BinopExpression : IExpression {

@@ -19,7 +19,7 @@ int main() {
 //        auto program = Grammar::ParseCin();
         Table table;
         try {
-            table.BuildFromAst(program);
+            table.BuildFromAst(&program);
             TypeCheckVisitor visitor(table);
             program.accept(&visitor);
         }

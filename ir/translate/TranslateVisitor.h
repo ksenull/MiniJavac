@@ -11,8 +11,10 @@ namespace ir {
 
         class IRTranslateVisitor : public ast::IVisitor<ISubtreeWrapper*> {
         public:
-            IRTranslateVisitor(IFrame* frame) : frame(frame) {}
-            
+            IRTranslateVisitor(symboltable::Table* table, symboltable::Symbol* classSymbol, IFrame* frame) :
+                    table(table), classSymbol(classSymbol), frame(frame) {
+               classInfo = table->getClassInfo(classSymbol);
+            }
             ISubtreeWrapper* visit(const AN::Identifier* node) const override;
 
             ISubtreeWrapper* visit(const AN::Program* node) const override;
@@ -75,6 +77,9 @@ namespace ir {
 
         private:
             IFrame* frame{};
+            symboltable::Table* table;
+            symboltable::Symbol* classSymbol;
+            symboltable::ClassInfo* classInfo;
         };
 
     }

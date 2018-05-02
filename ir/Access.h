@@ -9,7 +9,9 @@ namespace ir {
         RT_Formal,
         RT_Local,
         RT_ReturnAddress,
-        RT_ReturnValue
+        RT_ReturnValue,
+        RT_FramePointer,
+        RT_StackPointer
     };
 
     inline std::string recordTypeToString(RecordType type) {
@@ -22,6 +24,8 @@ namespace ir {
                 return "#return_address#";
             case RT_ReturnValue:
                 return "#return_value";
+            case RT_FramePointer:break;
+            case RT_StackPointer:break;
         }
     }
 
@@ -29,26 +33,32 @@ namespace ir {
         virtual ~IAccess() = default;
         virtual std::string str() const = 0;
 
-        virtual tree::IExpression* getExp(tree::IExpression* source) const = 0;
+        virtual tree::IExpression* getExp() const = 0;
     };
 
     class CInRegAccess : public IAccess {
     public:
-        CInRegAccess(RecordType type, int reg, int size) : recType(type), reg(reg), size(size) {}
+        CInRegAccess(RecordType type, int size, int initialValue) : recType(type), size(size) {
+            reg = new SpecialReg(initialValue);
+        }
+        CInRegAccess(RecordType type, int size) : recType(type), size(size) {
+            reg = new TempReg();
+        }
         std::string str() const override {
             std::stringstream ss;
-            ss << "reg##" << reg.num << "##";
+            ss << "reg##";
             ss << " - " << size << " bytes";
             return recordTypeToString(recType) + ss.str();
         }
         ~CInRegAccess() = default;
 
-        tree::IExpression* getExp(tree::IExpression*) const override {
+        tree::IExpression* getExp() const override {
             return new tree::TempExpression(reg);
         }
+
+        IReg* reg;
     private:
         const RecordType recType;
-        TempReg reg;
         const int size;
     };
 
@@ -63,8 +73,8 @@ namespace ir {
         }
         ~CInFrameAccess() = default;
 
-        tree::IExpression* getExp(tree::IExpression* framePtr) const override {
-            return new tree::MemExpression(new tree::BinopExpression(framePtr, tree::BO_Plus, new tree::ConstExpression(offset)));
+        tree::IExpression* getExp() const override {
+            return new tree::ConstExpression(offset);
         }
     private:
         const RecordType recType;

@@ -8,7 +8,7 @@ namespace symboltable {
     public:
         Table() = default;
         ~Table();
-        void BuildFromAst(const ast::nodes::Program& program);
+        void BuildFromAst(const ast::nodes::Program* program);
 
         ClassInfo* getClassInfo(Symbol* classSymbol) const;
 

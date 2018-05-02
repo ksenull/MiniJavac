@@ -6,15 +6,15 @@
 
 namespace symboltable {
 
-    void Table::BuildFromAst(const ast::nodes::Program& program) {
-        auto* symbol = getIntern(program.mainClass->name.name);
+    void Table::BuildFromAst(const ast::nodes::Program* program) {
+        auto* symbol = getIntern(program->mainClass->name.name);
 
-        auto* classInfo = new ClassInfo(program.mainClass->loc);
-        classInfo->BuildFromAst(program.mainClass);
+        auto* classInfo = new ClassInfo(program->mainClass->loc);
+        classInfo->BuildFromAst(program->mainClass);
 
         classesTable.emplace(std::make_pair(symbol, classInfo));
 
-        for (auto* node : program.classDeclarationList->nodes) {
+        for (auto* node : program->classDeclarationList->nodes) {
             if (auto cl = dynamic_cast<ast::nodes::ClassDeclaration*>(node)) {
                 symbol = getIntern(cl->id.name);
                 auto search = classesTable.find(symbol);
@@ -29,7 +29,7 @@ namespace symboltable {
             }
         }
 
-        for (auto* node : program.classDeclarationList->nodes) { // Optimize me!(
+        for (auto* node : program->classDeclarationList->nodes) { // Optimize me!(
             if (auto cl = dynamic_cast<ast::nodes::ClassDeclaration*>(node)) {
                 checkBase(cl);
             }

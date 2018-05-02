@@ -1,7 +1,17 @@
 #pragma once
 
 #include "Symbol.h"
-#include "../ast/nodes/Nodes.h"
+
+namespace ast {
+    namespace nodes {
+        struct Type;
+        struct VariableDeclaration;
+        struct MethodDeclaration;
+        struct MainClass;
+        struct ClassDeclaration;
+        struct Program;
+    }
+}
 
 
 namespace symboltable {

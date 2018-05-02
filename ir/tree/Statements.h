@@ -44,9 +44,10 @@ namespace tree {
     };
 
     struct SeqStatement : IStatement {
-        SeqStatement(StatementList* stms) : stms(stms) {}
+        SeqStatement(IStatement* left, IStatement* right) : left(left), right(right) {}
 
-        StatementList* stms;
+        IStatement* left;
+        IStatement* right;
     };
 
     struct LabelStatement : IStatement { // like label in asm

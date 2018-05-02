@@ -4,6 +4,7 @@
 #include "../ast/nodes/Nodes.h"
 #include "../grammar/parse.h"
 #include "../common/Exception.h"
+
 #include "Translate.h"
 #include "tree/PrintVisitor.h"
 
@@ -17,7 +18,7 @@ int main() {
 //        auto program = Grammar::ParseCin();
         symboltable::Table table;
         try {
-            table.BuildFromAst(program);
+            table.BuildFromAst(&program);
         }
         catch (common::MiniJavacException& e) {
             std::cerr << e.msg << std::endl;
@@ -27,6 +28,9 @@ int main() {
         auto* classDeclaration = dynamic_cast<ast::nodes::ClassDeclaration*>(program.classDeclarationList->nodes[0]);
         auto* methodDeclaration = dynamic_cast<ast::nodes::MethodDeclaration*>(classDeclaration->methods->nodes[0]);
         auto* irt = translator.getIRT(classDeclaration, methodDeclaration);
+
+//        ir::tree::PrintVisitor visitor;
+//        irt->accept(visitor);
     }
 
     return 0;

@@ -4,18 +4,27 @@
 #include "../symboltable/Symbol.h"
 
 namespace ir {
-    namespace ST = symboltable;
 
-    class TempReg {
+    struct IReg {
+        virtual ~IReg() = default;
+    };
+
+    class TempReg : public IReg {
     public:
-        explicit TempReg(int num) : num(num) {}
-        int num;
+        TempReg() : num(counter) {
+            counter++;
+        }
+        int num{};
+    private:
+        static int counter;
     };
 
-    struct Label {
-        explicit Label(ST::Symbol* symbol) : name(symbol) {}
-        explicit Label(const std::string& str) : name(ST::getIntern(str)) {}
-
-        ST::Symbol* name;
+    class SpecialReg : public IReg {
+    public:
+        explicit SpecialReg(int addr) : addr(addr) {}
+        int addr;
     };
+
+
+    using Label = symboltable::Symbol;
 }

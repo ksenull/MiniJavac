@@ -9,13 +9,10 @@ namespace ir {
         public:
             explicit Translator(symboltable::Table* table) : table(table) {}
 
-            ISubtreeWrapper* getIRT(ast::nodes::ClassDeclaration* classDeclaration, ast::nodes::MethodDeclaration* methodDeclaration);
+            tree::IStatement* getIRT(ast::nodes::ClassDeclaration* classDeclaration, ast::nodes::MethodDeclaration* methodDeclaration);
 
         private:
             symboltable::Table* table;
-            IFrame* frame;
-            ast::nodes::ClassDeclaration* classDeclaration;
-            ast::nodes::MethodDeclaration* methodDeclaration;
         };
     }
 }

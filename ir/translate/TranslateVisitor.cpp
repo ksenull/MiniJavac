@@ -2,28 +2,24 @@
 // Created by ksenull on 5/1/18.
 //
 #include "TranslateVisitor.h"
+#include "NodeConverter.h"
+#include "../../common/Exception.h"
 #include "../../ast/nodes/Nodes.h"
-#include "../IFrame.h"
+
+using BaseException = common::MiniJavacException;
+
+struct CantBuildIrtError : BaseException {
+    CantBuildIrtError() : BaseException("Trying to build IR tree from non-method node") {}
+};
 
 namespace ir {
     namespace translate {
         namespace IRT = tree;
         namespace AST = AN;
-        namespace STable = ST;
-        
-        ISubtreeWrapper* getIRT(AST::ClassDeclaration* classDeclaration, AST::MethodDeclaration* methodDeclaration) {
-            auto* classSymbol = STable::getIntern(classDeclaration->id.name);
-
-
-            IRTranslateVisitor visitor;
-            IFrame frame;
-            ST::getIntern(node->id.name);
-        }
+        namespace ST = symboltable;
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::Program* node) const {
-            auto* classesSubtree = node->classDeclarationList->accept(this);
-            auto* mainSubtree = node->mainClass->accept(this);
-            return nullptr;
+            throw CantBuildIrtError();
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::MainClass* node) const {
@@ -31,15 +27,11 @@ namespace ir {
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::ClassDeclaration* node) const {
-            auto* methodsSubtree = node->methods->accept(this);
-            return nullptr;
+            throw CantBuildIrtError();
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::ClassDeclarationList* node) const {
-            for (auto* n : node->nodes) {
-                auto* classSubtree = n->accept(this);
-            }
-            return nullptr;
+            throw CantBuildIrtError();
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::VariableDeclarationStatementList* node) const {
@@ -47,11 +39,11 @@ namespace ir {
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::VariableDeclarationStatement* node) const {
-            return nullptr;
+            return node->var->accept(this);
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::VariableDeclaration* node) const {
-            return nullptr;
+            return new CStmConverter(new IRT::MoveStatement(nullptr, nullptr));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::Type* node) const {
@@ -59,22 +51,59 @@ namespace ir {
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::MethodDeclarationList* node) const {
-            for (auto* n : node->nodes) {
-                auto* methodSubtree = n->accept(this);
-            }
-            return nullptr;
+            throw CantBuildIrtError();
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::MethodDeclaration* node) const {
-            Symbol node->id.name
+            ST::TypeInfo classType(ST::VT_Object, classSymbol);
+            ST::VariableInfo thisInfo({}, classType); // TODO save class vars somewhere
+            Label* label = ST::getIntern("this");
+            frame->AddFormal(label, thisInfo);
+
+            auto* methodLabel = ST::getIntern(node->id.name);
+            auto* methodInfo = classInfo->getMethodInfo(methodLabel);
+
+            for (auto&& arg : methodInfo->getArgsList()) {
+                frame->AddFormal(arg.first, *arg.second);
+            }
+
+            for (auto&& local : methodInfo->getLocalVarsList()) {
+                frame->AddLocal(local.first, *local.second);
+            }
+
+            if (node->statementList != nullptr && !node->statementList->nodes.empty()) {
+                auto* bodySubtree = node->statementList->accept(this);
+
+                if (node->returnExp != nullptr) {
+                    auto* returnExpSubtree = node->returnExp->accept(this);
+
+                    return new CStmConverter(new IRT::SeqStatement(bodySubtree->ToStm(), new IRT::MoveStatement(
+                            frame->ReturnValue()->getExp(),
+                            returnExpSubtree->ToExp())));
+                }
+
+                return bodySubtree;
+            }
+            return nullptr;
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::ArgumentDeclarationList* node) const {
             return nullptr;
         }
 
+//        ISubtreeWrapper* IRTranslateVisitor::visit(const AST::INodeList::Iterator& it) {
+//            return it->accept(this);
+//        }
+
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::CStatementList* node) const {
-            return nullptr;
+            auto&& nodes = node->nodes;
+
+            if (nodes.size() == 1) {
+                return nodes[0]->accept(this);
+            }
+            else {
+                return nodes[0]->accept(this);
+            }
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::NestedStatement* node) const {
@@ -130,7 +159,10 @@ namespace ir {
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::IdExpression* node) const {
-            return nullptr;
+            auto* fp = frame->FramePointer();
+            auto* offset = frame->FindLocalOrFormal(ST::getIntern(node->id.name))->getExp();
+            auto* addr = new IRT::BinopExpression(fp, IRT::BO_Plus, offset);
+            return new CExpConverter(new IRT::MemExpression(addr));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::NewArrayExpression* node) const {
@@ -148,6 +180,6 @@ namespace ir {
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::Identifier* node) const {
             return nullptr;
         }
-        
+
     }
 }
