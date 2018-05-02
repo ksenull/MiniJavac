@@ -1,7 +1,9 @@
 #pragma once
 
 #include <vector>
+
 #include "../Temp.h"
+#include "IVisitor.h"
 
 namespace ir {
 namespace tree {
@@ -18,7 +20,13 @@ namespace tree {
 
     struct INode {
         virtual ~INode() = default;
+        virtual void accept(const IVisitor<void>* visitor) const = 0;
     };
+
+#define DEFINE_PRINT_ACCEPT \
+        void accept(const IVisitor<void>* visitor) const override { \
+            visitor->visit(this); \
+        }
 
     struct INodeList : public INode {
         INodeList() = default;
@@ -28,6 +36,7 @@ namespace tree {
 
     struct IExpression {
         virtual ~IExpression() = default;
+        virtual void accept(const IVisitor<void>* visitor) const = 0;
     };
 
     struct CExpressionList : INodeList {
@@ -35,6 +44,7 @@ namespace tree {
 
     struct ConstExpression : IExpression {
         explicit ConstExpression(int i) : i(i) {}
+        DEFINE_PRINT_ACCEPT
 
         int i;
     };
@@ -42,12 +52,14 @@ namespace tree {
     struct NameExpression : IExpression {
         explicit NameExpression(const Label& label) : label(label) {}
         explicit NameExpression(const std::string& str) : label(str) {}
+        DEFINE_PRINT_ACCEPT
 
         Label label;
     };
 
     struct TempExpression : IExpression {
         explicit TempExpression(IReg* reg) : reg(reg) {}
+        DEFINE_PRINT_ACCEPT
 
         IReg* reg;
     };
@@ -55,6 +67,7 @@ namespace tree {
     struct BinopExpression : IExpression {
         BinopExpression(IExpression* left, BinaryOperation op, IExpression* right) :
         left(left), op(op), right(right) {}
+        DEFINE_PRINT_ACCEPT
 
         IExpression* left;
         BinaryOperation op;
@@ -63,12 +76,14 @@ namespace tree {
 
     struct MemExpression : IExpression { // content of wordSize bytes from addr
         explicit MemExpression(IExpression* addr) : addr(addr) {}
+        DEFINE_PRINT_ACCEPT
 
         IExpression* addr;
     };
 
     struct CallExpression : IExpression {
         CallExpression(const Label& func, CExpressionList* args) : func(func), args(args) {}
+        DEFINE_PRINT_ACCEPT
 
         Label func;
         CExpressionList* args;
@@ -76,6 +91,7 @@ namespace tree {
 
     struct EseqExpression : IExpression { //stm evaluated for side effects, then e evalutes for a result
         EseqExpression(IStatement* stm, IExpression* exp) : stm(stm), exp(exp) {}
+        DEFINE_PRINT_ACCEPT
 
         IStatement* stm;
         IExpression* exp;

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 
+#include "tree/Statements.h"
 #include "../ast/nodes/Nodes.h"
 #include "../grammar/parse.h"
 #include "../common/Exception.h"
@@ -29,8 +30,9 @@ int main() {
         auto* methodDeclaration = dynamic_cast<ast::nodes::MethodDeclaration*>(classDeclaration->methods->nodes[0]);
         auto* irt = translator.getIRT(classDeclaration, methodDeclaration);
 
-//        ir::tree::PrintVisitor visitor;
-//        irt->accept(visitor);
+        ir::tree::PrintVisitor visitor(PathPrefix + "ir/graph.dot");
+        irt->accept(&visitor);
+        visitor.finish();
     }
 
     return 0;

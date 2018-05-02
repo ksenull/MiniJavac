@@ -1,4 +1,4 @@
-project(ASTGraph)
+project(Graph)
 
 set(SOURCE_FILES main.cpp GraphV.cpp)
 
