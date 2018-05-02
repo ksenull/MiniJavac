@@ -32,6 +32,12 @@ namespace ir {
         }
 
         void PrintVisitor::visit(const ConstExpression* node) const {
+            GET_NICE_ADDRESS
+            auto nodeId = "CONST_" + s;
+            fout << nodeId << ";" << std::endl;
+            std::stringstream itoass;
+            itoass << node->i;
+            SET_NODE_LABEL(itoass.str())
         }
 
         void PrintVisitor::visit(const NameExpression* node) const {
@@ -46,7 +52,49 @@ namespace ir {
         }
 
         void PrintVisitor::visit(const BinopExpression* node) const {
-
+            GET_NICE_ADDRESS
+            auto nodeId = "BINOP_" + s;
+            if (node->left == nullptr && node->right == nullptr) {
+                fout << nodeId << ";" << std::endl;
+            }
+            if (node->left != nullptr) {
+                fout << nodeId << " -> ";
+                node->left->accept(this);
+            }
+            if (node->right != nullptr) {
+                fout << nodeId << " -> ";
+                node->right->accept(this);
+            }
+            switch (node->op) {
+                case BO_Plus:
+                    SET_NODE_LABEL("+")
+                    break;
+                case BO_Minus:
+                    SET_NODE_LABEL("-")
+                    break;
+                case BO_Mul:
+                    SET_NODE_LABEL("*")
+                    break;
+                case BO_Div:
+                    SET_NODE_LABEL("%")
+                    break;
+                case BO_And:
+                    SET_NODE_LABEL("&&")
+                    break;
+                case BO_Or:
+                    SET_NODE_LABEL("||")
+                    break;
+                case BO_Lshift:
+                    SET_NODE_LABEL("<<")
+                    break;
+                case BO_Rshift:
+                    SET_NODE_LABEL(">>")
+                    break;
+                case BO_Arshift:
+                case BO_Xor:
+                    SET_NODE_LABEL("^")
+                    break;
+            }
         }
 
         void PrintVisitor::visit(const MemExpression* node) const {
