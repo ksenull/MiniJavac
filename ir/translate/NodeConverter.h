@@ -47,12 +47,20 @@ namespace ir {
 
         class CCondStmConverter : public ISubtreeWrapper {
         public:
+            CCondStmConverter() = default;
+            CCondStmConverter(tree::RelationalOperation op, tree::IExpression* left, tree::IExpression* right) :
+            op(op), left(left), right(right) {}
             ~CCondStmConverter() override = default;
 
             tree::IExpression* ToExp() const override;
 
             tree::IStatement* ToStm() const override;
 
+            tree::IStatement* ToConditional(const Label& ifLabel, const Label& elseLabel) const override;
+        private:
+            tree::RelationalOperation op;
+            tree::IExpression* left;
+            tree::IExpression* right;
         };
 
         // shorten conditions

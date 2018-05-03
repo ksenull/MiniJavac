@@ -17,6 +17,16 @@ namespace ast {
             TT_Void
         };
 
+#define DEFINE_PRINT_ACCEPT \
+        void accept(const IVisitor<void>* visitor) const { \
+            visitor->visit(this); \
+        }
+
+#define DEFINE_IRTRANSLATE_ACCEPT \
+        ir::translate::ISubtreeWrapper* accept(const IVisitor<ir::translate::ISubtreeWrapper*>* visitor) const { \
+            visitor->visit(this); \
+        }
+
         struct Type : INode {
             Identifier id;
             TypeType tt;
@@ -338,8 +348,12 @@ namespace ast {
             Identifier id;
             bool isThis = false;
 
-            explicit IdExpression(const std::string& s, const Location& loc) : IExpression(loc), isThis(true) {}
-            explicit IdExpression(Identifier& id, const Location& loc) : IExpression(loc), id(id) {}
+//            explicit IdExpression(const std::string& s, const Location& loc) : IExpression(loc), isThis(true) {}
+            explicit IdExpression(const Identifier& id, const Location& loc) : IExpression(loc), id(id) {
+                if (id.name == "this") {
+                    isThis = true;
+                }
+            }
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
@@ -373,5 +387,8 @@ namespace ast {
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
+
+#undef DEFINE_PRINT_ACCEPT
+#undef DEFINE_IRTRANSLATE_ACCEPT
     }
 }

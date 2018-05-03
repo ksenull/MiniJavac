@@ -41,7 +41,10 @@ namespace ir {
         }
 
         void PrintVisitor::visit(const NameExpression* node) const {
-
+            GET_NICE_ADDRESS
+            auto nodeId = "NAME_" + s;
+            fout << nodeId << ";" << std::endl;
+            SET_NODE_LABEL("NAME " + node->label.name)
         }
 
         void PrintVisitor::visit(const TempExpression* node) const {
@@ -111,15 +114,36 @@ namespace ir {
         }
 
         void PrintVisitor::visit(const CallExpression* node) const {
-
+            GET_NICE_ADDRESS
+            auto nodeId = "CALL_" + s;
+            if (node->args != nullptr) {
+                fout << nodeId << " -> ";
+                node->args->accept(this);
+            }
+            else {
+                fout << nodeId << ";" << std::endl;
+            }
+            SET_NODE_LABEL("CALL: " + node->func.name + "()")
         }
 
         void PrintVisitor::visit(const EseqExpression* node) const {
-
+            GET_NICE_ADDRESS
+            auto nodeId = "ESEQ_" + s;
+            if (node->stm == nullptr && node->exp == nullptr) {
+                fout << nodeId << ";" << std::endl;
+            }
+            if (node->stm != nullptr) {
+                fout << nodeId << " -> ";
+                node->stm->accept(this);
+            }
+            if (node->exp != nullptr) {
+                fout << nodeId << " -> ";
+                node->exp->accept(this);
+            }
+            SET_NODE_LABEL("ESEQ")
         }
 
         void PrintVisitor::visit(const StatementList* node) const {
-
         }
 
         void PrintVisitor::visit(const MoveStatement* node) const {
@@ -140,29 +164,94 @@ namespace ir {
         }
 
         void PrintVisitor::visit(const ExpStatement* node) const {
-
+            GET_NICE_ADDRESS
+            auto nodeId = "EXP_" + s;
+            if (node->exp != nullptr) {
+                fout << nodeId << " -> ";
+                node->exp->accept(this);
+            }
+            else {
+                fout << nodeId << ";"  << std::endl;
+            }
+            SET_NODE_LABEL("EXP")
         }
 
         void PrintVisitor::visit(const JumpStatement* node) const {
-
+            GET_NICE_ADDRESS
+            auto nodeId = "JUMP_" + s;
+            fout << nodeId << ";"  << std::endl;
+            SET_NODE_LABEL("JUMP " + node->target.name)
         }
 
         void PrintVisitor::visit(const CondJumpStatement* node) const {
+            GET_NICE_ADDRESS
+            auto nodeId = "CJUMP_" + s;
+            if (node->left == nullptr && node->right == nullptr) {
+                fout << nodeId << ";"  << std::endl;
+            }
+            if (node->left != nullptr) {
+                fout << nodeId << " -> ";
+                node->left->accept(this);
+            }
+            if (node->right != nullptr) {
+                fout << nodeId << " -> ";
+                node->right->accept(this);
+            }
+            fout << nodeId << " -> ";
+            LabelStatement(node->ifTarget).accept(this);
 
+            fout << nodeId << " -> ";
+            LabelStatement(node->elseTarget).accept(this);
+            
+            switch (node->op) {
+                case RO_Eq:
+                    SET_NODE_LABEL("CJUMP ==")
+                    break;
+                case RO_Ne:
+                    SET_NODE_LABEL("CJUMP !=")
+                    break;
+                case RO_Lt:
+                    SET_NODE_LABEL("CJUMP <")
+                    break;
+                case RO_Gt:
+                    SET_NODE_LABEL("CJUMP >")
+                    break;
+                case RO_Le:
+                    SET_NODE_LABEL("CJUMP <=")
+                    break;
+                case RO_Ge:
+                    SET_NODE_LABEL("CJUMP >=")
+                    break;
+                case RO_Ult:
+                case RO_Ugt:
+                case RO_Ule:
+                case RO_Uge:
+                    SET_NODE_LABEL("CJUMP")
+            }
         }
 
         void PrintVisitor::visit(const SeqStatement* node) const {
             GET_NICE_ADDRESS
             auto nodeId = "SEQ_" + s;
-            fout << nodeId << " -> ";
-            node->left->accept(this);
-            fout << nodeId << " -> ";
-            node->right->accept(this);
+            if (node->left == nullptr && node->right == nullptr) {
+                fout << nodeId << ";" << std::endl;
+            }
+            if (node->left != nullptr) {
+                fout << nodeId << " -> ";
+                node->left->accept(this);
+            }
+            if (node->right != nullptr) {
+                fout << nodeId << " -> ";
+                node->right->accept(this);
+            }
             SET_NODE_LABEL("SEQ")
         }
 
         void PrintVisitor::visit(const LabelStatement* node) const {
-
+            GET_NICE_ADDRESS
+            auto nodeId = "LABEL_" + s;
+            fout << nodeId << ";" << std::endl;
+            SET_NODE_LABEL("LABEL " + node->label.name);
         }
     }
 }

@@ -81,6 +81,10 @@ namespace ir {
             return nullptr;
         }
 
+        tree::IStatement* CCondStmConverter::ToConditional(const Label& ifLabel, const Label& elseLabel) const {
+            return nullptr;
+        }
+
         tree::CondJumpStatement* CFromAndConverter::ToConditional(const Label& ifLabel, const Label& elseLabel) const {
             return nullptr;
         }

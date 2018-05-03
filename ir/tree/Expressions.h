@@ -82,11 +82,13 @@ namespace tree {
     };
 
     struct CallExpression : IExpression {
-        CallExpression(const Label& func, CExpressionList* args) : func(func), args(args) {}
+        CallExpression(const Label& func, IStatement* args) : func(func), args(args) {}
+        
         DEFINE_PRINT_ACCEPT
 
         Label func;
-        CExpressionList* args;
+//        CExpressionList* args;
+        IStatement* args;
     };
 
     struct EseqExpression : IExpression { //stm evaluated for side effects, then e evalutes for a result
@@ -96,5 +98,7 @@ namespace tree {
         IStatement* stm;
         IExpression* exp;
     };
+
+#undef DEFINE_PRINT_ACCEPT
 }
 }

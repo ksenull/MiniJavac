@@ -4,6 +4,11 @@
 
 namespace ir {
 namespace tree {
+    
+#define DEFINE_PRINT_ACCEPT \
+        void accept(const IVisitor<void>* visitor) const override { \
+            visitor->visit(this); \
+        }
 
     struct IStatement : INode {
         virtual void accept(const IVisitor<void>* visitor) const = 0;
@@ -62,5 +67,7 @@ namespace tree {
 
         Label label;
     };
+
+#undef DEFINE_PRINT_ACCEPT
 }
 }

@@ -38,16 +38,5 @@ namespace ast {
         };
 
 
-#define DEFINE_PRINT_ACCEPT \
-        void accept(const IVisitor<void>* visitor) const { \
-            visitor->visit(this); \
-        }
-
-#define DEFINE_IRTRANSLATE_ACCEPT \
-        ir::translate::ISubtreeWrapper* accept(const IVisitor<ir::translate::ISubtreeWrapper*>* visitor) const { \
-            visitor->visit(this); \
-        }
-
-
     }
 }
