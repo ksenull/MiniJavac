@@ -15,8 +15,8 @@ namespace ir {
 
         tree::IStatement* translate::Translator::getIRT(AST::ClassDeclaration* classDeclaration,
                                                        AST::MethodDeclaration* methodDeclaration) {
-            auto* classSymbol = getIntern(classDeclaration->id.name);
-            auto* methodSymbol = getIntern(methodDeclaration->id.name);
+            auto* classSymbol = getIntern(classDeclaration->id->name);
+            auto* methodSymbol = getIntern(methodDeclaration->id->name);
 
             auto* classInfo = table->getClassInfo(classSymbol);
             auto* methodInfo = classInfo->getMethodInfo(methodSymbol);

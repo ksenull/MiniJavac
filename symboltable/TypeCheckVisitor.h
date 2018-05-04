@@ -67,7 +67,7 @@ namespace symboltable {
 //        void checkIfSameType(Symbol* left, ast::nodes::IExpression* exp) const;
 
         std::pair<bool, TypeInfo> getExpressionType(const ast::nodes::IExpression* exp) const;
-        std::pair<bool, TypeInfo> getIdType(const ast::nodes::Identifier&) const;
+        std::pair<bool, TypeInfo> getIdType(const ast::nodes::Identifier*) const;
 
 
         Table symbolTable;

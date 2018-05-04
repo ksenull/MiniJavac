@@ -47,10 +47,10 @@ namespace ast {
 
     void PrintVisitor::visit(const nodes::MainClass* node) const {
         fout << "mainClass -> ";
-        node->name.accept(this);
+        node->name->accept(this);
 
         fout << "mainClass -> ";
-        node->argsName.accept(this);
+        node->argsName->accept(this);
 
         fout << "mainClass -> ";
         node->st->accept(this);
@@ -60,11 +60,11 @@ namespace ast {
         auto&& nodeId = declareNodeId(node, "class");
 
         fout << nodeId << " -> ";
-        node->id.accept(this);
+        node->id->accept(this);
 
-        if (!node->base.name.empty()) {
+        if (node->base) {
             fout << nodeId << " -> ";
-            node->base.accept(this);
+            node->base->accept(this);
         }
         if (!node->localVars->nodes.empty()) {
             fout << nodeId << " -> ";
@@ -74,7 +74,7 @@ namespace ast {
             fout << nodeId << " -> ";
             node->methods->accept(this);
         }
-        SET_NODE_LABEL("Class " + node->id.name)
+        SET_NODE_LABEL("Class " + node->id->name)
     }
 
     void PrintVisitor::visit(const nodes::ClassDeclarationList* node) const {
@@ -112,9 +112,9 @@ namespace ast {
         auto&& nodeId = declareNodeId(node, "var");
 
         fout << nodeId << " -> ";
-        node->id.accept(this);
+        node->id->accept(this);
 
-        SET_NODE_LABEL(node->id.name + " : " + node->type->getTT())
+        SET_NODE_LABEL(node->id->name + " : " + node->type->getTT())
     }
 
     void PrintVisitor::visit(const nodes::Type* node) const {
@@ -141,7 +141,7 @@ namespace ast {
             case nodes::TT_Object: {
                 auto&& nodeId = declareNodeId(node, "user_type");
                 fout << nodeId << " -> ";
-                node->id.accept(this);
+                node->id->accept(this);
                 SET_NODE_LABEL("User type");
                 break;
             }
@@ -174,7 +174,7 @@ namespace ast {
         node->returnType->accept(this);
 
         fout << nodeId << " -> ";
-        node->id.accept(this);
+        node->id->accept(this);
 
         if (!node->args->nodes.empty()) {
             fout << nodeId << " -> ";
@@ -188,7 +188,7 @@ namespace ast {
             fout << nodeId << " -> ";
             node->returnExp->accept(this);
         }
-        SET_NODE_LABEL("Method " + node->id.name)
+        SET_NODE_LABEL("Method " + node->id->name)
     }
 
     void PrintVisitor::visit(const nodes::ArgumentDeclarationList* node) const {
@@ -261,7 +261,7 @@ namespace ast {
         auto&& nodeId = declareNodeId(node, "assign_");
 
         fout << nodeId << " -> ";
-        node->id.accept(this);
+        node->id->accept(this);
 
         fout << nodeId << " -> ";
         node->exp->accept(this);
@@ -273,7 +273,7 @@ namespace ast {
         auto&& nodeId = declareNodeId(node, "arr_assign");
 
         fout << nodeId << " -> ";
-        node->id.accept(this);
+        node->id->accept(this);
 
         fout << nodeId << " -> ";
         node->arrExp->accept(this);
@@ -356,14 +356,14 @@ namespace ast {
         node->obj->accept(this);
 
         fout << nodeId << " -> ";
-        node->method.accept(this);
+        node->method->accept(this);
 
         if (!node->args->nodes.empty()) {
             fout << nodeId << " -> ";
             node->args->accept(this);
         }
 
-        SET_NODE_LABEL(node->method.name + "()");
+        SET_NODE_LABEL(node->method->name + "()");
     }
 
     void PrintVisitor::visit(const nodes::ConstExpression* node) const {
@@ -394,7 +394,7 @@ namespace ast {
             SET_NODE_LABEL("this");
         } else {
             fout << " -> ";
-            node->id.accept(this);
+            node->id->accept(this);
 
             SET_NODE_LABEL("id");
         }
@@ -413,7 +413,7 @@ namespace ast {
         auto&& nodeId = declareNodeId(node, "new_obj");
 
         fout << nodeId << " -> ";
-        node->id.accept(this);
+        node->id->accept(this);
 
         SET_NODE_LABEL("new Obj");
     }

@@ -24,13 +24,15 @@ namespace symboltable {
     }
 
     void TypeCheckVisitor::visit(const AN::MainClass* node) const {
-        currentClass = getIntern(node->name.name);
+        currentClass = getIntern(node->name->name);
         node->st->accept(this);
     }
 
     void TypeCheckVisitor::visit(const AN::ClassDeclaration* node) const {
-        checkCyclicClasses(node);
-        currentClass = getIntern(node->id.name);
+        if (node->base) {
+            checkCyclicClasses(node);
+        }
+        currentClass = getIntern(node->id->name);
         node->localVars->accept(this);
         node->methods->accept(this);
     }
@@ -54,7 +56,7 @@ namespace symboltable {
     void TypeCheckVisitor::visit(const AN::VariableDeclaration* node) const {
         auto&& type = *node->type;
         if (type.tt == AN::TT_Object) {
-            Symbol* objSymbol = getIntern(node->type->id.name);
+            Symbol* objSymbol = getIntern(node->type->id->name);
             auto* search = symbolTable.getClassInfo(objSymbol);
             if (search == nullptr) {
                 throw CantFindSymbolError(objSymbol, node->getLoc());
@@ -73,11 +75,11 @@ namespace symboltable {
     }
 
     void TypeCheckVisitor::visit(const AN::MethodDeclaration* node) const {
-        curMethod = getIntern(node->id.name);
+        curMethod = getIntern(node->id->name);
 
         // check if return type exists
         if (node->returnType->tt == AN::TT_Object) {
-            Symbol* retSymbol = getIntern(node->returnType->id.name);
+            Symbol* retSymbol = getIntern(node->returnType->id->name);
             ClassInfo* classInfo = symbolTable.getClassInfo(retSymbol);
             if (classInfo == nullptr) {
                 throw CantFindSymbolError(retSymbol, node->getLoc());
@@ -141,7 +143,7 @@ namespace symboltable {
         auto&& typeLeft = getIdType(node->id);
         auto&& typeRight = getExpressionType(node->exp);
         if (!typeLeft.first || !typeRight.first || !(typeRight.second == typeLeft.second)) {
-            throw ExpressionTypeError(getIntern(node->id.name), typeLeft.second, typeRight.second, node->getLoc());
+            throw ExpressionTypeError(getIntern(node->id->name), typeLeft.second, typeRight.second, node->getLoc());
         }
 
         node->exp->accept(this);
@@ -214,7 +216,7 @@ namespace symboltable {
                 classSymbol = currentClass;
             }
             else {
-                auto* idSymbol = getIntern(idExp->id.name);
+                auto* idSymbol = getIntern(idExp->id->name);
                 auto* curClassInfo = symbolTable.getClassInfo(currentClass);
                 auto* varInfo = curClassInfo->getVariableInfo(idSymbol);
                 if (varInfo == nullptr) {
@@ -235,7 +237,7 @@ namespace symboltable {
             }
         }
         else if (auto* newObjExp = dynamic_cast<const AN::NewObjectExpression*>(node->obj)) {
-            classSymbol = getIntern(newObjExp->id.name);
+            classSymbol = getIntern(newObjExp->id->name);
             classInfo = symbolTable.getClassInfo(classSymbol);
             if (classInfo == nullptr) {
                 throw CantFindSymbolError(classSymbol, node->obj->getLoc());
@@ -246,7 +248,7 @@ namespace symboltable {
         }
 
         // check that the class has such method
-        auto* methodSymbol = getIntern(node->method.name);
+        auto* methodSymbol = getIntern(node->method->name);
         auto* methodInfo = classInfo->getMethodInfo(methodSymbol);
         if (methodInfo == nullptr) {
             throw CantFindSymbolError(methodSymbol, node->getLoc());
@@ -289,7 +291,7 @@ namespace symboltable {
             return;
         }
         auto* curClassInfo = symbolTable.getClassInfo(currentClass);
-        auto* idSymbol = getIntern(node->id.name);
+        auto* idSymbol = getIntern(node->id->name);
         auto* varInfo = curClassInfo->getVariableInfo(idSymbol);
         if (varInfo == nullptr) {
             auto* methodInfo = curClassInfo->getMethodInfo(curMethod);
@@ -307,7 +309,7 @@ namespace symboltable {
     }
 
     void TypeCheckVisitor::visit(const AN::NewObjectExpression* node) const {
-        auto* symbol = getIntern(node->id.name);
+        auto* symbol = getIntern(node->id->name);
         auto* classInfo = symbolTable.getClassInfo(symbol);
         if (classInfo == nullptr) {
             throw CantFindSymbolError(symbol, node->getLoc());
@@ -321,11 +323,13 @@ namespace symboltable {
     }
 
     void TypeCheckVisitor::checkCyclicClasses(const AN::ClassDeclaration* classDeclaration) const {
-        Symbol* baseSymbol = getIntern(classDeclaration->base.name);
+        assert(classDeclaration->base);
+
+        auto* baseSymbol = getIntern(classDeclaration->base->name);
 
         std::set<Symbol*> visited;
 
-        while (not baseSymbol->name.empty()) {
+        while (baseSymbol) {
             auto* baseInfo = symbolTable.getClassInfo(baseSymbol);
             if (baseInfo == nullptr) {
                 return;
@@ -336,9 +340,7 @@ namespace symboltable {
             }
             visited.emplace(baseSymbol);
 
-            if (auto* base = baseInfo->getBase()) {
-                baseSymbol = getIntern(base->name);
-            }
+            baseSymbol = baseInfo->getBase();
         }
     }
 
@@ -373,7 +375,7 @@ namespace symboltable {
             return std::make_pair(true, TypeInfo(VT_IntArray));
         }
         if (auto* obj = dynamic_cast<const AN::NewObjectExpression*>(exp)) {
-            return std::make_pair(true, TypeInfo(VT_Object, getIntern(obj->id.name)));
+            return std::make_pair(true, TypeInfo(VT_Object, getIntern(obj->id->name)));
         }
         if (auto* binop = dynamic_cast<const AN::BinopExpression*>(exp)) {
             if (binop->type == AN::BOT_Plus || binop->type == AN::BOT_Minus || binop->type == AN::BOT_Multiply) {
@@ -408,7 +410,7 @@ namespace symboltable {
                 if (objInfo == nullptr) {
                     return std::make_pair(false, TypeInfo{});
                 }
-                auto* methodSymbol = getIntern(callExp->method.name);
+                auto* methodSymbol = getIntern(callExp->method->name);
                 auto* methodInfo = objInfo->getMethodInfo(methodSymbol);
                 if (methodInfo == nullptr) {
                     return std::make_pair(false, TypeInfo{});
@@ -435,9 +437,9 @@ namespace symboltable {
         return std::make_pair(false, TypeInfo{});
     }
 
-    std::pair<bool, TypeInfo> TypeCheckVisitor::getIdType(const ast::nodes::Identifier& id) const {
+    std::pair<bool, TypeInfo> TypeCheckVisitor::getIdType(const ast::nodes::Identifier* id) const {
         auto* curClassInfo = symbolTable.getClassInfo(currentClass);
-        auto* idSymbol = getIntern(id.name);
+        auto* idSymbol = getIntern(id->name);
         auto* varInfo = curClassInfo->getVariableInfo(idSymbol);
         if (varInfo == nullptr) {
             if (curMethod == nullptr) {

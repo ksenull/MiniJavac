@@ -115,8 +115,9 @@ using namespace nodes;
 %type<ArgumentsList*> ArgumentsList;
 %type<ArgumentsList*> NonEmptyArgumentsList;
 %type<IExpression*> Expression;
+//%type<Identifier*> Identifier
 
-%token<Identifier> ID
+%token<std::string> ID
 
 %%
 
@@ -133,7 +134,7 @@ MainClass:
         LBRACE
             Statement[s]
         RBRACE
-    RBRACE { $$ = new MainClass($mainClass, $id, $s, LOCATION(@$)); }
+    RBRACE { $$ = new MainClass(new Identifier($mainClass), new Identifier($id), $s, LOCATION(@$)); }
     ;
 
 ClassDeclarationList:
@@ -149,12 +150,12 @@ ClassDeclaration:
     CLASS ID[id] LBRACE
         VariableDeclarationStatementList[v]
         MethodDeclarationList[m]
-    RBRACE { $$ = new ClassDeclaration($id, $v, $m, LOCATION(@$)); }
+    RBRACE { $$ = new ClassDeclaration(new Identifier($id), $v, $m, LOCATION(@$)); }
     |
     CLASS ID[id] EXTENDS ID[b] LBRACE
         VariableDeclarationStatementList[v]
         MethodDeclarationList[m]
-    RBRACE { $$ = new ClassDeclaration($id, $b, $v, $m, LOCATION(@$)); }
+    RBRACE { $$ = new ClassDeclaration(new Identifier($id), new Identifier($b), $v, $m, LOCATION(@$)); }
     ;
 
 VariableDeclarationStatementList:
@@ -167,7 +168,7 @@ VariableDeclarationStatementList:
     ;
 
 VariableDeclaration:
-    Type ID[y] { $$ = new VariableDeclaration($1, $2, LOCATION(@$)); }
+    Type ID[y] { $$ = new VariableDeclaration($1, new Identifier($y), LOCATION(@$)); }
     ;
 
 Type:
@@ -177,7 +178,7 @@ Type:
     |
     INT { $$ = new Type(TT_Int, LOCATION(@$)); }
     |
-    ID { $$ = new Type(TT_Object, $1, LOCATION(@$)); }
+    ID { $$ = new Type(TT_Object, new Identifier($1), LOCATION(@$)); }
    ;
 
 Void:
@@ -198,20 +199,20 @@ MethodDeclaration:
         ArgumentDeclarationList[a]
     RPAREN LBRACE
         StatementList[s]
-    RBRACE { $$ = new MethodDeclaration($id, $rt, $a, $s, LOCATION(@$)); }
+    RBRACE { $$ = new MethodDeclaration(new Identifier($id), $rt, $a, $s, LOCATION(@$)); }
     |
     PUBLIC Void[rt] ID[id] LPAREN
         ArgumentDeclarationList[a]
     RPAREN LBRACE
         StatementList[s]
-    RBRACE { $$ = new MethodDeclaration($id, $rt, $a, $s, LOCATION(@$)); }
+    RBRACE { $$ = new MethodDeclaration(new Identifier($id), $rt, $a, $s, LOCATION(@$)); }
     |
     PUBLIC Type[rt] ID[id] LPAREN
         ArgumentDeclarationList[a]
     RPAREN LBRACE
         StatementList[s]
         RETURN Expression[e] SEMICOLON
-    RBRACE { $$ = new MethodDeclaration($id, $rt, $e, $a, $s, LOCATION(@$)); }
+    RBRACE { $$ = new MethodDeclaration(new Identifier($id), $rt, $e, $a, $s, LOCATION(@$)); }
     ;
 
 ArgumentDeclarationList:
@@ -261,9 +262,10 @@ Statement:
     |
     PRINT LPAREN Expression[e] RPAREN SEMICOLON { $$ = new PrintStatement($e, LOCATION(@$)); }
     |
-    ID[id] ASSIGN Expression[e] SEMICOLON { $$ = new AssignStatement($id, $e, LOCATION(@$)); }
+    ID[id] ASSIGN Expression[e] SEMICOLON { $$ = new AssignStatement(new Identifier($id), $e, LOCATION(@$)); }
     |
-    ID[id] LBRACKET Expression[ae] RBRACKET ASSIGN Expression[e] SEMICOLON { $$ = new ArrayAssignStatement($id, $ae, $e, LOCATION(@$)); }
+    ID[id] LBRACKET Expression[ae] RBRACKET ASSIGN Expression[e] SEMICOLON { $$ = new ArrayAssignStatement(
+    new Identifier($id), $ae, $e, LOCATION(@$)); }
     ;
 
 
@@ -293,13 +295,13 @@ Expression:
 
 	| Expression[A] LBRACKET Expression[N] RBRACKET{ $$ = new ArrayItemExpression( $A, $N, LOCATION(@$)); }
 	| Expression[A] DOT LENGTH { $$ = new ArrayLengthExpression( $A, LOCATION(@$)); }
-	| Expression[O] DOT ID[M] LPAREN ArgumentsList[A] RPAREN { $$ = new CallExpression( $O, $M, $A, LOCATION(@$)); }
+	| Expression[O] DOT ID[M] LPAREN ArgumentsList[A] RPAREN { $$ = new CallExpression( $O, new Identifier($M), $A, LOCATION(@$)); }
 	| INTEGER { $$ = new ConstExpression( $1, LOCATION(@$)); }
 	| BOOL_VALUE { $$ = new BoolExpression( $1, LOCATION(@$)); }
-	| ID { $$ = new IdExpression( $1, LOCATION(@$)); }
-	| THIS { $$ = new IdExpression( "this", LOCATION(@$)); }
+	| ID { $$ = new IdExpression( new Identifier($1), LOCATION(@$)); }
+	| THIS { $$ = new IdExpression( new Identifier("this"), LOCATION(@$)); }
 	| NEW INT[T] LBRACKET Expression[L] RBRACKET { $$ = new NewArrayExpression( $L, LOCATION(@$)); }
-	| NEW ID[T] LPAREN RPAREN { $$ = new NewObjectExpression( $T, LOCATION(@$)); }
+	| NEW ID[T] LPAREN RPAREN { $$ = new NewObjectExpression( new Identifier($T), LOCATION(@$)); }
 	| LPAREN Expression[E] RPAREN { $$ = $E; }
 ;
 

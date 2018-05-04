@@ -10,8 +10,8 @@ namespace symboltable {
 
     void VariableInfo::BuildFromAst(ast::nodes::VariableDeclaration* var) {
         typeInfo = TypeInfo(var->type);
-        if (typeInfo.type == VT_Unknown) {
-                throw CantFindSymbolError(getIntern(var->type->id.name), var->getLoc());
+        if (var->type->tt == AN::TT_Object && typeInfo.type == VT_Unknown) {
+                throw CantFindSymbolError(getIntern(var->type->id->name), var->getLoc());
         }
     }
 
@@ -37,7 +37,7 @@ namespace symboltable {
             case AN::TT_Object:
                 type = VT_Object;
                 {
-                    auto* symbol = getIntern(astType->id.name);
+                    auto* symbol = getIntern(astType->id->name);
                     classname = symbol;
                 }
                 break;

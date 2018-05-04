@@ -26,7 +26,7 @@ namespace symboltable {
 
     private:
 //        std::list<Block> scopeBlocks;
-        Symbol* base{};
+        Symbol* base;
         std::unordered_map<Symbol*, VariableInfo*> vars;
         std::unordered_map<Symbol*, MethodInfo*> methods;
     };

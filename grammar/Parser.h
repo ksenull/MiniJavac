@@ -328,36 +328,36 @@ namespace Grammar {
       // Statement
       char dummy7[sizeof(IStatement*)];
 
-      // ID
-      char dummy8[sizeof(Identifier)];
-
       // MainClass
-      char dummy9[sizeof(MainClass*)];
+      char dummy8[sizeof(MainClass*)];
 
       // MethodDeclaration
-      char dummy10[sizeof(MethodDeclaration*)];
+      char dummy9[sizeof(MethodDeclaration*)];
 
       // MethodDeclarationList
-      char dummy11[sizeof(MethodDeclarationList*)];
+      char dummy10[sizeof(MethodDeclarationList*)];
 
       // Type
       // Void
-      char dummy12[sizeof(Type*)];
+      char dummy11[sizeof(Type*)];
 
       // VariableDeclaration
-      char dummy13[sizeof(VariableDeclaration*)];
+      char dummy12[sizeof(VariableDeclaration*)];
 
       // VariableDeclarationStatement
-      char dummy14[sizeof(VariableDeclarationStatement*)];
+      char dummy13[sizeof(VariableDeclarationStatement*)];
 
       // VariableDeclarationStatementList
-      char dummy15[sizeof(VariableDeclarationStatementList*)];
+      char dummy14[sizeof(VariableDeclarationStatementList*)];
 
       // BOOL_VALUE
-      char dummy16[sizeof(bool)];
+      char dummy15[sizeof(bool)];
 
       // INTEGER
-      char dummy17[sizeof(int)];
+      char dummy16[sizeof(int)];
+
+      // ID
+      char dummy17[sizeof(std::string)];
 };
 
     /// Symbol semantic values.
@@ -469,8 +469,6 @@ namespace Grammar {
 
   basic_symbol (typename Base::kind_type t, const IStatement* v, const location_type& l);
 
-  basic_symbol (typename Base::kind_type t, const Identifier v, const location_type& l);
-
   basic_symbol (typename Base::kind_type t, const MainClass* v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const MethodDeclaration* v, const location_type& l);
@@ -488,6 +486,8 @@ namespace Grammar {
   basic_symbol (typename Base::kind_type t, const bool v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const int v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const std::string v, const location_type& l);
 
 
       /// Constructor for symbols with semantic value.
@@ -706,7 +706,7 @@ namespace Grammar {
 
     static inline
     symbol_type
-    make_ID (const Identifier& v, const location_type& l);
+    make_ID (const std::string& v, const location_type& l);
 
 
     /// Build a parser object.
@@ -1027,10 +1027,6 @@ namespace Grammar {
         value.copy< IStatement* > (other.value);
         break;
 
-      case 39: // ID
-        value.copy< Identifier > (other.value);
-        break;
-
       case 42: // MainClass
         value.copy< MainClass* > (other.value);
         break;
@@ -1066,6 +1062,10 @@ namespace Grammar {
 
       case 38: // INTEGER
         value.copy< int > (other.value);
+        break;
+
+      case 39: // ID
+        value.copy< std::string > (other.value);
         break;
 
       default:
@@ -1115,10 +1115,6 @@ namespace Grammar {
         value.copy< IStatement* > (v);
         break;
 
-      case 39: // ID
-        value.copy< Identifier > (v);
-        break;
-
       case 42: // MainClass
         value.copy< MainClass* > (v);
         break;
@@ -1154,6 +1150,10 @@ namespace Grammar {
 
       case 38: // INTEGER
         value.copy< int > (v);
+        break;
+
+      case 39: // ID
+        value.copy< std::string > (v);
         break;
 
       default:
@@ -1215,13 +1215,6 @@ namespace Grammar {
 
   template <typename Base>
   Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const IStatement* v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
-  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const Identifier v, const location_type& l)
     : Base (t)
     , value (v)
     , location (l)
@@ -1290,6 +1283,13 @@ namespace Grammar {
     , location (l)
   {}
 
+  template <typename Base>
+  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::string v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
 
   template <typename Base>
   inline
@@ -1346,10 +1346,6 @@ namespace Grammar {
         value.template destroy< IStatement* > ();
         break;
 
-      case 39: // ID
-        value.template destroy< Identifier > ();
-        break;
-
       case 42: // MainClass
         value.template destroy< MainClass* > ();
         break;
@@ -1385,6 +1381,10 @@ namespace Grammar {
 
       case 38: // INTEGER
         value.template destroy< int > ();
+        break;
+
+      case 39: // ID
+        value.template destroy< std::string > ();
         break;
 
       default:
@@ -1440,10 +1440,6 @@ namespace Grammar {
         value.move< IStatement* > (s.value);
         break;
 
-      case 39: // ID
-        value.move< Identifier > (s.value);
-        break;
-
       case 42: // MainClass
         value.move< MainClass* > (s.value);
         break;
@@ -1479,6 +1475,10 @@ namespace Grammar {
 
       case 38: // INTEGER
         value.move< int > (s.value);
+        break;
+
+      case 39: // ID
+        value.move< std::string > (s.value);
         break;
 
       default:
@@ -1767,7 +1767,7 @@ namespace Grammar {
   }
 
   Parser::symbol_type
-  Parser::make_ID (const Identifier& v, const location_type& l)
+  Parser::make_ID (const std::string& v, const location_type& l)
   {
     return symbol_type (token::ID, v, l);
   }

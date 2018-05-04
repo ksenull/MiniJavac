@@ -60,7 +60,7 @@ namespace ir {
             Label* label = ST::getIntern("this");
             frame->AddFormal(label, thisInfo);
 
-            auto* methodLabel = ST::getIntern(node->id.name);
+            auto* methodLabel = ST::getIntern(node->id->name);
             auto* methodInfo = classInfo->getMethodInfo(methodLabel);
 
             for (auto&& arg : methodInfo->getArgsList()) {
@@ -225,7 +225,7 @@ namespace ir {
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::IdExpression* node) const {
             auto* fp = frame->FramePointer();
-            auto* offset = frame->FindLocalOrFormal(ST::getIntern(node->id.name))->getExp();
+            auto* offset = frame->FindLocalOrFormal(ST::getIntern(node->id->name))->getExp();
             auto* addr = new IRT::BinopExpression(fp, IRT::BO_Plus, offset);
             return new CExpConverter(new IRT::MemExpression(addr));
         }

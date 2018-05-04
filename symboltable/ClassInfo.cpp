@@ -13,7 +13,7 @@ namespace symboltable {
                     VariableInfo* variableInfo = new VariableInfo(varDecl->var->getLoc());
                     variableInfo->BuildFromAst(varDecl->var);
 
-                    auto* symbol = getIntern(varDecl->var->id.name);
+                    auto* symbol = getIntern(varDecl->var->id->name);
                     vars.emplace(std::make_pair(symbol, variableInfo));
                 }
             }
@@ -29,16 +29,16 @@ namespace symboltable {
     }
 
     void ClassInfo::BuildFromAst(ast::nodes::ClassDeclaration* node) {
-        if (node->base.name.empty()) {
-            base = nullptr;
-        } else {
-            auto* symbol = getIntern(node->base.name);
+        if (node->base) {
+            auto* symbol = getIntern(node->base->name);
             base = symbol;
+        } else {
+            base = nullptr;
         }
         for (auto* n : node->localVars->nodes) {
             if (auto* varStm = dynamic_cast<ast::nodes::VariableDeclarationStatement*>(n)) {
                 auto* var = varStm->var;
-                auto* symbol = getIntern(var->id.name);
+                auto* symbol = getIntern(var->id->name);
                 auto search = vars.find(symbol);
                 if (search != vars.end()) {
                     throw VariableAlreadyDefinedError(symbol, search->second->getLoc(), var->getLoc());
@@ -53,7 +53,7 @@ namespace symboltable {
 
         for (auto* n : node->methods->nodes) {
             if (auto* method = dynamic_cast<ast::nodes::MethodDeclaration*>(n)) {
-                auto* symbol = getIntern(method->id.name);
+                auto* symbol = getIntern(method->id->name);
                 auto search = methods.find(symbol); // overloads aren't supported
                 if (search != methods.end()) {
                     throw MethodAlreadyDefinedError(symbol, search->second->getLoc(), method->getLoc());

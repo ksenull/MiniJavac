@@ -7,7 +7,7 @@
 namespace symboltable {
 
     void Table::BuildFromAst(const ast::nodes::Program* program) {
-        auto* symbol = getIntern(program->mainClass->name.name);
+        auto* symbol = getIntern(program->mainClass->name->name);
 
         auto* classInfo = new ClassInfo(program->mainClass->getLoc());
         classInfo->BuildFromAst(program->mainClass);
@@ -16,7 +16,7 @@ namespace symboltable {
 
         for (auto* node : program->classDeclarationList->nodes) {
             if (auto cl = dynamic_cast<ast::nodes::ClassDeclaration*>(node)) {
-                symbol = getIntern(cl->id.name);
+                symbol = getIntern(cl->id->name);
                 auto search = classesTable.find(symbol);
                 if (search != classesTable.end()) {
                     throw DuplicateClassError(symbol, search->second->getLoc(), cl->getLoc());
@@ -36,8 +36,8 @@ namespace symboltable {
         }
     }
     void Table::checkBase(ast::nodes::ClassDeclaration* node) const {
-        if (node != nullptr && !node->base.name.empty()) {
-            auto* symbol = getIntern(node->base.name);
+        if (node != nullptr && node->base) {
+            auto* symbol = getIntern(node->base->name);
             auto search = classesTable.find(symbol);
             if (search == classesTable.end()) {
                 throw CantFindSymbolError(symbol, node->getLoc());

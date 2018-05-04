@@ -28,12 +28,12 @@ namespace ast {
         }
 
         struct Type : INode {
-            Identifier id;
+            Identifier* id;
             TypeType tt;
 
-            Type(const TypeType& tt, const Identifier& id, const Location& loc) : INode(loc), tt(tt), id(std::move(id)) {}
+            Type(const TypeType& tt, Identifier* id, const Location& loc) : INode(loc), tt(tt), id(std::move(id)) {}
 
-            explicit Type(const TypeType& tt, const Location& loc) : Type(tt, Identifier{}, loc){}
+            explicit Type(const TypeType& tt, const Location& loc) : Type(tt, nullptr, loc){}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
@@ -47,11 +47,11 @@ namespace ast {
                     case TT_Int:
                             return "int";
                     case TT_Object:
-                        if (id.name.empty()) {
+                        if (id->name.empty()) {
                             return "object";
                         }
                         else {
-                            return id.name;
+                            return id->name;
                         }
                     case TT_Void:
                             return "void";
@@ -73,8 +73,8 @@ namespace ast {
 
         struct VariableDeclaration : INode {
             Type* type;
-            Identifier id;
-            VariableDeclaration(Type* type, const Identifier& id, const Location& loc) : INode(loc), type(type), id(std::move(id)) {}
+            Identifier* id;
+            VariableDeclaration(Type* type, Identifier* id, const Location& loc) : INode(loc), type(type), id(std::move(id)) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
@@ -115,18 +115,18 @@ namespace ast {
         };
 
         struct MethodDeclaration : INode {
-            Identifier id;
+            Identifier* id;
             Type* returnType;
             IExpression* returnExp;
             ArgumentDeclarationList* args;
             CStatementList* statementList;
 
-            MethodDeclaration(const Identifier& id, Type* returnType,
+            MethodDeclaration(Identifier* id, Type* returnType,
                               IExpression* retExp, ArgumentDeclarationList* args,
                               CStatementList* statementList1, const Location& loc) :
                     INode(loc), id(id), returnType(returnType), returnExp(retExp),
                     args(args), statementList(statementList1) {}
-            MethodDeclaration(const Identifier& id, Type* returnType,
+            MethodDeclaration(Identifier* id, Type* returnType,
                               ArgumentDeclarationList* args, CStatementList* statementList1, const Location& loc) :
                     MethodDeclaration(id, returnType , nullptr, args, statementList1, loc) {}
 
@@ -141,17 +141,17 @@ namespace ast {
         };
 
         struct ClassDeclaration : INode {
-            Identifier id;
-            Identifier base;
+            Identifier* id;
+            Identifier* base;
             VariableDeclarationStatementList* localVars;
             MethodDeclarationList* methods;
 
-            ClassDeclaration(const Identifier& id, const Identifier& base,
+            ClassDeclaration(Identifier* id, Identifier* base,
                              VariableDeclarationStatementList* localVars,
                              MethodDeclarationList* methods, const Location& loc) :
                     INode(loc), id(id), base(base), localVars(localVars), methods(methods) {}
 
-            ClassDeclaration(const Identifier& id,
+            ClassDeclaration(Identifier* id,
                              VariableDeclarationStatementList* localVars,
                              MethodDeclarationList* methods, const Location& loc) :
                     ClassDeclaration(id, {}, localVars, methods, loc) {}
@@ -167,12 +167,12 @@ namespace ast {
 
 
         struct MainClass : INode {
-            Identifier name;
-            Identifier argsName;
+            Identifier* name;
+            Identifier* argsName;
             IStatement* st;
         public:
-            MainClass(const Identifier& name, Identifier id, IStatement* st, const Location& loc) : INode(loc),
-                    name(std::move(name)), argsName(std::move(id)), st(st) {}
+            MainClass(Identifier* name, Identifier* id, IStatement* st, const Location& loc) : INode(loc),
+                    name(name), argsName(std::move(id)), st(st) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
@@ -237,21 +237,21 @@ namespace ast {
         };
 
         struct AssignStatement : IStatement {
-            Identifier id;
+            Identifier* id;
             IExpression* exp;
         public:
-            AssignStatement(Identifier& id, IExpression* exp, const Location& loc) : IStatement(loc), id(id), exp(exp) {}
+            AssignStatement(Identifier* id, IExpression* exp, const Location& loc) : IStatement(loc), id(id), exp(exp) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct ArrayAssignStatement : IStatement {
-            Identifier id;
+            Identifier* id;
             IExpression* arrExp;
             IExpression* exp;
 
-            ArrayAssignStatement(Identifier& id, IExpression* arrExp, IExpression* exp, const Location& loc) :
+            ArrayAssignStatement(Identifier* id, IExpression* arrExp, IExpression* exp, const Location& loc) :
                     IStatement(loc), id(id), arrExp(arrExp), exp(exp) {}
 
             DEFINE_PRINT_ACCEPT
@@ -320,10 +320,10 @@ namespace ast {
 
         struct CallExpression : IExpression {
             IExpression* obj;
-            Identifier method;
+            Identifier* method;
             ArgumentsList* args;
 
-            CallExpression(IExpression* obj, Identifier& method, ArgumentsList* args, const Location& loc) :
+            CallExpression(IExpression* obj, Identifier* method, ArgumentsList* args, const Location& loc) :
                     IExpression(loc), obj(obj), method(method), args(args) {}
 
             DEFINE_PRINT_ACCEPT
@@ -349,12 +349,12 @@ namespace ast {
         };
 
         struct IdExpression : IExpression {
-            Identifier id;
+            Identifier* id;
             bool isThis = false;
 
 //            explicit IdExpression(const std::string& s, const Location& loc) : IExpression(loc), isThis(true) {}
-            explicit IdExpression(const Identifier& id, const Location& loc) : IExpression(loc), id(id) {
-                if (id.name == "this") {
+            explicit IdExpression(Identifier* id, const Location& loc) : IExpression(loc), id(id) {
+                if (id->name == "this") {
                     isThis = true;
                 }
             }
@@ -375,9 +375,9 @@ namespace ast {
         };
 
         struct NewObjectExpression : IExpression {
-            Identifier id;
+            Identifier* id;
 
-            explicit NewObjectExpression(Identifier& id, const Location& loc) : IExpression(loc), id(id) {}
+            explicit NewObjectExpression(Identifier* id, const Location& loc) : IExpression(loc), id(id) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT

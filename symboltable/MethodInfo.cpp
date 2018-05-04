@@ -10,7 +10,7 @@ namespace symboltable {
     (vars).emplace_back(std::make_pair(symbol, variableInfo));
 
 #define ADD_VARINFO_OR_THROW(var)\
-    auto* symbol = getIntern((var)->id.name);\
+    auto* symbol = getIntern((var)->id->name);\
     auto search = vars.find(symbol);\
     if (search != vars.end()) {\
         throw VariableAlreadyDefinedError(symbol, search->second->getLoc(), (var)->getLoc());\
