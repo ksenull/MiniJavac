@@ -9,7 +9,7 @@ namespace symboltable {
     void Table::BuildFromAst(const ast::nodes::Program* program) {
         auto* symbol = getIntern(program->mainClass->name.name);
 
-        auto* classInfo = new ClassInfo(program->mainClass->loc);
+        auto* classInfo = new ClassInfo(program->mainClass->getLoc());
         classInfo->BuildFromAst(program->mainClass);
 
         classesTable.emplace(std::make_pair(symbol, classInfo));
@@ -19,10 +19,10 @@ namespace symboltable {
                 symbol = getIntern(cl->id.name);
                 auto search = classesTable.find(symbol);
                 if (search != classesTable.end()) {
-                    throw DuplicateClassError(symbol, search->second->loc, cl->loc);
+                    throw DuplicateClassError(symbol, search->second->getLoc(), cl->getLoc());
                 }
 
-                classInfo = new ClassInfo(cl->loc);
+                classInfo = new ClassInfo(cl->getLoc());
                 classInfo->BuildFromAst(cl);
 
                 classesTable.emplace(std::make_pair(symbol, classInfo));
@@ -40,7 +40,7 @@ namespace symboltable {
             auto* symbol = getIntern(node->base.name);
             auto search = classesTable.find(symbol);
             if (search == classesTable.end()) {
-                throw CantFindSymbolError(symbol, node->loc);
+                throw CantFindSymbolError(symbol, node->getLoc());
             }
         }
     }

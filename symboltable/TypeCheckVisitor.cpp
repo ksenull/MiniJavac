@@ -57,7 +57,7 @@ namespace symboltable {
             Symbol* objSymbol = getIntern(node->type->id.name);
             auto* search = symbolTable.getClassInfo(objSymbol);
             if (search == nullptr) {
-                throw CantFindSymbolError(objSymbol, node->loc);
+                throw CantFindSymbolError(objSymbol, node->getLoc());
             }
         }
     }
@@ -80,7 +80,7 @@ namespace symboltable {
             Symbol* retSymbol = getIntern(node->returnType->id.name);
             ClassInfo* classInfo = symbolTable.getClassInfo(retSymbol);
             if (classInfo == nullptr) {
-                throw CantFindSymbolError(retSymbol, node->loc);
+                throw CantFindSymbolError(retSymbol, node->getLoc());
             }
         }
 
@@ -89,7 +89,7 @@ namespace symboltable {
             auto&& retExpType = getExpressionType(node->returnExp);
             auto&& correctType = TypeInfo(node->returnType);
             if (!retExpType.first || !(retExpType.second == correctType)) {
-                throw TypeError("Return expression", correctType, node->returnExp->loc);
+                throw TypeError("Return expression", correctType, node->returnExp->getLoc());
             }
         }
 
@@ -141,7 +141,7 @@ namespace symboltable {
         auto&& typeLeft = getIdType(node->id);
         auto&& typeRight = getExpressionType(node->exp);
         if (!typeLeft.first || !typeRight.first || !(typeRight.second == typeLeft.second)) {
-            throw ExpressionTypeError(getIntern(node->id.name), typeLeft.second, typeRight.second, node->loc);
+            throw ExpressionTypeError(getIntern(node->id.name), typeLeft.second, typeRight.second, node->getLoc());
         }
 
         node->exp->accept(this);
@@ -198,7 +198,7 @@ namespace symboltable {
         auto&& type = getExpressionType(node->arr);
         auto correctType = TypeInfo(VT_IntArray);
         if (!type.first || !(type.second == correctType)) {
-            throw TypeError("Array expression", correctType, node->loc);
+            throw TypeError("Array expression", correctType, node->getLoc());
         }
 
         node->arr->accept(this);
@@ -221,35 +221,35 @@ namespace symboltable {
                     auto* methodInfo = curClassInfo->getMethodInfo(curMethod);
                     varInfo = methodInfo->getVariableInfo(idSymbol);
                     if (varInfo == nullptr) {
-                        throw CantFindSymbolError(idSymbol, node->obj->loc);
+                        throw CantFindSymbolError(idSymbol, node->obj->getLoc());
                     }
                 }
                 if (varInfo->getType().type != VT_Object) {
-                    throw TypeError("Object of call", TypeInfo(VT_Object), node->loc);
+                    throw TypeError("Object of call", TypeInfo(VT_Object), node->getLoc());
                 }
                 classSymbol = varInfo->getType().classname;
             }
             classInfo = symbolTable.getClassInfo(classSymbol); // classInfo for next check
             if (classInfo == nullptr) {
-                throw CantFindSymbolError(classSymbol, node->obj->loc);
+                throw CantFindSymbolError(classSymbol, node->obj->getLoc());
             }
         }
         else if (auto* newObjExp = dynamic_cast<const AN::NewObjectExpression*>(node->obj)) {
             classSymbol = getIntern(newObjExp->id.name);
             classInfo = symbolTable.getClassInfo(classSymbol);
             if (classInfo == nullptr) {
-                throw CantFindSymbolError(classSymbol, node->obj->loc);
+                throw CantFindSymbolError(classSymbol, node->obj->getLoc());
             }
         }
         else {
-            throw TypeError("Object of call", TypeInfo(VT_Object), node->loc);
+            throw TypeError("Object of call", TypeInfo(VT_Object), node->getLoc());
         }
 
         // check that the class has such method
         auto* methodSymbol = getIntern(node->method.name);
         auto* methodInfo = classInfo->getMethodInfo(methodSymbol);
         if (methodInfo == nullptr) {
-            throw CantFindSymbolError(methodSymbol, node->loc);
+            throw CantFindSymbolError(methodSymbol, node->getLoc());
         }
 
         // check if args are compatible with signature
@@ -257,7 +257,7 @@ namespace symboltable {
         size_t correctArgsCount = correctArgsList.size();
         size_t argsCount = node->args->nodes.size();
         if (correctArgsCount != argsCount) {
-            throw MethodCantbeAppliedError(methodSymbol, methodInfo, node->loc);
+            throw MethodCantbeAppliedError(methodSymbol, methodInfo, node->getLoc());
         }
         for (int i = 0; i < argsCount; i++) { // arg - expression
             auto* arg =node->args->nodes[i];
@@ -295,7 +295,7 @@ namespace symboltable {
             auto* methodInfo = curClassInfo->getMethodInfo(curMethod);
             varInfo = methodInfo->getVariableInfo(idSymbol);
             if (varInfo == nullptr) {
-                throw CantFindSymbolError(idSymbol, node->loc);
+                throw CantFindSymbolError(idSymbol, node->getLoc());
             }
         }
     }
@@ -310,7 +310,7 @@ namespace symboltable {
         auto* symbol = getIntern(node->id.name);
         auto* classInfo = symbolTable.getClassInfo(symbol);
         if (classInfo == nullptr) {
-            throw CantFindSymbolError(symbol, node->loc);
+            throw CantFindSymbolError(symbol, node->getLoc());
         }
     }
 
@@ -332,7 +332,7 @@ namespace symboltable {
             }
 
             if (visited.find(baseSymbol) != visited.end()) {
-                throw CyclicInheritanceError(baseSymbol, baseInfo->loc, classDeclaration->loc);
+                throw CyclicInheritanceError(baseSymbol, baseInfo->getLoc(), classDeclaration->getLoc());
             }
             visited.emplace(baseSymbol);
 
@@ -345,14 +345,14 @@ namespace symboltable {
     void TypeCheckVisitor::checkBooleanConvertibility(const AN::IExpression* exp) const {
         auto&& expType = getExpressionType(exp);
         if (!expType.first || !expType.second.isBool()) {
-            throw TypeError("Condition", expType.second, exp->loc);
+            throw TypeError("Condition", expType.second, exp->getLoc());
         }
     }
 
     void TypeCheckVisitor::checkIfInt(const AN::IExpression* exp) const {
         auto&& type = getExpressionType(exp);
         if (!type.first || !type.second.isInt()) {
-            throw TypeError(getIntern("Expression "), TypeInfo(VT_Int), exp->loc);
+            throw TypeError(getIntern("Expression "), TypeInfo(VT_Int), exp->getLoc());
         }
     }
 

@@ -137,7 +137,7 @@ MainClass:
     ;
 
 ClassDeclarationList:
-    %empty { $$ = new ClassDeclarationList(); }
+    %empty { $$ = new ClassDeclarationList(LOCATION(@$)); }
     |
     ClassDeclarationList ClassDeclaration {
         $1->nodes.emplace_back($2);
@@ -158,7 +158,7 @@ ClassDeclaration:
     ;
 
 VariableDeclarationStatementList:
-    %empty { $$ = new VariableDeclarationStatementList(); }
+    %empty { $$ = new VariableDeclarationStatementList(LOCATION(@$)); }
     |
     VariableDeclarationStatementList[l] VariableDeclarationStatement[v] {
              $1->nodes.emplace_back($2);
@@ -185,7 +185,7 @@ Void:
     ;
 
 MethodDeclarationList:
-    %empty { $$ = new MethodDeclarationList(); }
+    %empty { $$ = new MethodDeclarationList(LOCATION(@$)); }
     |
     MethodDeclarationList[l] MethodDeclaration[m] {
             $1->nodes.emplace_back($2);
@@ -215,13 +215,13 @@ MethodDeclaration:
     ;
 
 ArgumentDeclarationList:
-    %empty { $$ = new ArgumentDeclarationList(); }
+    %empty { $$ = new ArgumentDeclarationList(LOCATION(@$)); }
     |
     NonEmptyArgumentDeclarationList { $$ = $1; }
     ;
 
 NonEmptyArgumentDeclarationList:
-    VariableDeclaration { $$ = new ArgumentDeclarationList($1); }
+    VariableDeclaration { $$ = new ArgumentDeclarationList($1, LOCATION(@$)); }
     |
     VariableDeclaration COMMA NonEmptyArgumentDeclarationList {
         $3->nodes.emplace_back($1);
@@ -230,7 +230,7 @@ NonEmptyArgumentDeclarationList:
     ;
 
 StatementList:
-    %empty { $$ =  new CStatementList(); }
+    %empty { $$ =  new CStatementList(LOCATION(@$)); }
     |
     StatementList[sl] Statement[s] {
         $1->nodes.emplace_back($2);
@@ -268,13 +268,13 @@ Statement:
 
 
 ArgumentsList:
-    %empty { $$ = new ArgumentsList(); }
+    %empty { $$ = new ArgumentsList(LOCATION(@$)); }
     |
     NonEmptyArgumentsList { $$ = $1; }
     ;
 
 NonEmptyArgumentsList:
-    Expression[e] { $$ = new ArgumentsList($e); }
+    Expression[e] { $$ = new ArgumentsList($e, LOCATION(@$)); }
     |
     ArgumentsList[l] COMMA Expression[e] {
         $1->nodes.emplace_back($3);

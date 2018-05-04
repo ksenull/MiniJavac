@@ -24,7 +24,7 @@ namespace ast {
 
 #define DEFINE_IRTRANSLATE_ACCEPT \
         ir::translate::ISubtreeWrapper* accept(const IVisitor<ir::translate::ISubtreeWrapper*>* visitor) const { \
-            visitor->visit(this); \
+            return visitor->visit(this); \
         }
 
         struct Type : INode {
@@ -66,6 +66,7 @@ namespace ast {
 //        };
 
         struct CStatementList : INodeList {
+            CStatementList(const Location& _loc) : INodeList(_loc) {}
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
@@ -80,8 +81,8 @@ namespace ast {
         };
 
         struct ArgumentDeclarationList : INodeList { // list of VariableDeclarations
-            ArgumentDeclarationList() = default;
-            explicit ArgumentDeclarationList(VariableDeclaration* var) {
+            ArgumentDeclarationList(const Location& _loc) : INodeList(_loc) {}
+            explicit ArgumentDeclarationList(VariableDeclaration* var, const Location& _loc) : INodeList(_loc) {
                     nodes = {var};
             };
             DEFINE_PRINT_ACCEPT
@@ -89,8 +90,8 @@ namespace ast {
         };
 
         struct ArgumentsList : INodeList { // list of expressions
-            ArgumentsList() = default;
-            explicit ArgumentsList(IExpression* exp) {
+            ArgumentsList(const Location& _loc) : INodeList(_loc) {}
+            explicit ArgumentsList(IExpression* exp, const Location& loc) : INodeList(loc) {
                     nodes = {exp};
             };
             DEFINE_PRINT_ACCEPT
@@ -108,6 +109,7 @@ namespace ast {
 
         struct VariableDeclarationStatementList : INodeList { //TODO нельзя  ли заменить на statemetntsList
         public:
+            VariableDeclarationStatementList(const Location& _loc) : INodeList(_loc) {}
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
@@ -133,6 +135,7 @@ namespace ast {
         };
 
         struct MethodDeclarationList : INodeList {
+            MethodDeclarationList(const Location& _loc) : INodeList(_loc) {}
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
@@ -157,6 +160,7 @@ namespace ast {
         };
 
         struct ClassDeclarationList : INodeList {
+            ClassDeclarationList(const Location& _loc) : INodeList(_loc) {}
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };

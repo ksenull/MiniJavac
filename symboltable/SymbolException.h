@@ -67,7 +67,7 @@ namespace symboltable {
                 BaseException(loc, "Method " + methodName->name + "() cannot be applied. Operands type mismatch: "
                                                + loc.str()) {}
         MethodCantbeAppliedError(Symbol* methodName, MethodInfo* methodInfo) :
-                MethodCantbeAppliedError(methodName, methodInfo, methodInfo->loc) {}
+                MethodCantbeAppliedError(methodName, methodInfo, methodInfo->getLoc()) {}
     };
 
 }

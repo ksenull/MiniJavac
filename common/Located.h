@@ -31,10 +31,10 @@ namespace common {
         }
     };
 
-    struct Located {
-        Location loc{};
-
-        Located() = default;
-        Located(const Location& loc) : loc(loc) {};
+    class Located {
+        Location loc;
+    public:
+        Location getLoc() const { return loc; }
+        Located(const Location& _loc) : loc(_loc) {};
     };
 }

@@ -32,7 +32,8 @@ namespace ast {
         struct INodeList : public INode {
             using Iterator = std::vector<INode*>::iterator;
 
-            INodeList() = default;
+//            INodeList() = default;
+            INodeList(const Location& _loc) : INode(_loc) {}
 
             std::vector<INode*> nodes;
         };

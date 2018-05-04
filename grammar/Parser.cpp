@@ -706,7 +706,7 @@ namespace Grammar {
 
   case 4:
 #line 140 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< ClassDeclarationList* > () = new ClassDeclarationList(); }
+    { yylhs.value.as< ClassDeclarationList* > () = new ClassDeclarationList(LOCATION(yylhs.location)); }
 #line 711 "Parser.cpp" // lalr1.cc:859
     break;
 
@@ -733,7 +733,7 @@ namespace Grammar {
 
   case 8:
 #line 161 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< VariableDeclarationStatementList* > () = new VariableDeclarationStatementList(); }
+    { yylhs.value.as< VariableDeclarationStatementList* > () = new VariableDeclarationStatementList(LOCATION(yylhs.location)); }
 #line 738 "Parser.cpp" // lalr1.cc:859
     break;
 
@@ -784,7 +784,7 @@ namespace Grammar {
 
   case 16:
 #line 188 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< MethodDeclarationList* > () = new MethodDeclarationList(); }
+    { yylhs.value.as< MethodDeclarationList* > () = new MethodDeclarationList(LOCATION(yylhs.location)); }
 #line 789 "Parser.cpp" // lalr1.cc:859
     break;
 
@@ -817,7 +817,7 @@ namespace Grammar {
 
   case 21:
 #line 218 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< ArgumentDeclarationList* > () = new ArgumentDeclarationList(); }
+    { yylhs.value.as< ArgumentDeclarationList* > () = new ArgumentDeclarationList(LOCATION(yylhs.location)); }
 #line 822 "Parser.cpp" // lalr1.cc:859
     break;
 
@@ -829,7 +829,7 @@ namespace Grammar {
 
   case 23:
 #line 224 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< ArgumentDeclarationList* > () = new ArgumentDeclarationList(yystack_[0].value.as< VariableDeclaration* > ()); }
+    { yylhs.value.as< ArgumentDeclarationList* > () = new ArgumentDeclarationList(yystack_[0].value.as< VariableDeclaration* > (), LOCATION(yylhs.location)); }
 #line 834 "Parser.cpp" // lalr1.cc:859
     break;
 
@@ -844,7 +844,7 @@ namespace Grammar {
 
   case 25:
 #line 233 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< CStatementList* > () =  new CStatementList(); }
+    { yylhs.value.as< CStatementList* > () =  new CStatementList(LOCATION(yylhs.location)); }
 #line 849 "Parser.cpp" // lalr1.cc:859
     break;
 
@@ -910,7 +910,7 @@ namespace Grammar {
 
   case 35:
 #line 271 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< ArgumentsList* > () = new ArgumentsList(); }
+    { yylhs.value.as< ArgumentsList* > () = new ArgumentsList(LOCATION(yylhs.location)); }
 #line 915 "Parser.cpp" // lalr1.cc:859
     break;
 
@@ -922,7 +922,7 @@ namespace Grammar {
 
   case 37:
 #line 277 "parser.bison" // lalr1.cc:859
-    { yylhs.value.as< ArgumentsList* > () = new ArgumentsList(yystack_[0].value.as< IExpression* > ()); }
+    { yylhs.value.as< ArgumentsList* > () = new ArgumentsList(yystack_[0].value.as< IExpression* > (), LOCATION(yylhs.location)); }
 #line 927 "Parser.cpp" // lalr1.cc:859
     break;
 

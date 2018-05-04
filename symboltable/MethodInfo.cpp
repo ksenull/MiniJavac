@@ -13,9 +13,9 @@ namespace symboltable {
     auto* symbol = getIntern((var)->id.name);\
     auto search = vars.find(symbol);\
     if (search != vars.end()) {\
-        throw VariableAlreadyDefinedError(symbol, search->second->loc, (var)->loc);\
+        throw VariableAlreadyDefinedError(symbol, search->second->getLoc(), (var)->getLoc());\
     }\
-    VariableInfo* variableInfo = new VariableInfo((var)->loc);\
+    VariableInfo* variableInfo = new VariableInfo((var)->getLoc());\
     variableInfo->BuildFromAst(var);\
     vars.emplace(std::make_pair(symbol, variableInfo));
 

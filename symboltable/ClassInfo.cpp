@@ -10,7 +10,7 @@ namespace symboltable {
         if (auto* nested = dynamic_cast<ast::nodes::NestedStatement*>(mainClass->st)) {
             for (auto* st : nested->statementList->nodes) {
                 if (auto* varDecl = dynamic_cast<ast::nodes::VariableDeclarationStatement*>(st)) {
-                    VariableInfo* variableInfo = new VariableInfo(varDecl->var->loc);
+                    VariableInfo* variableInfo = new VariableInfo(varDecl->var->getLoc());
                     variableInfo->BuildFromAst(varDecl->var);
 
                     auto* symbol = getIntern(varDecl->var->id.name);
@@ -20,7 +20,7 @@ namespace symboltable {
         }
         // TODO
 
-        MethodInfo* methodInfo = new MethodInfo(mainClass->loc);
+        MethodInfo* methodInfo = new MethodInfo(mainClass->getLoc());
         methodInfo->BuildFromAst(mainClass);
         auto* symbol = getIntern("main");
         methods.emplace(std::make_pair(symbol, methodInfo));
@@ -41,10 +41,10 @@ namespace symboltable {
                 auto* symbol = getIntern(var->id.name);
                 auto search = vars.find(symbol);
                 if (search != vars.end()) {
-                    throw VariableAlreadyDefinedError(symbol, search->second->loc, var->loc);
+                    throw VariableAlreadyDefinedError(symbol, search->second->getLoc(), var->getLoc());
                 }
 
-                VariableInfo* variableInfo = new VariableInfo(var->loc);
+                VariableInfo* variableInfo = new VariableInfo(var->getLoc());
                 variableInfo->BuildFromAst(var);
 
                 vars.emplace(std::make_pair(symbol, variableInfo));
@@ -56,10 +56,10 @@ namespace symboltable {
                 auto* symbol = getIntern(method->id.name);
                 auto search = methods.find(symbol); // overloads aren't supported
                 if (search != methods.end()) {
-                    throw MethodAlreadyDefinedError(symbol, search->second->loc, method->loc);
+                    throw MethodAlreadyDefinedError(symbol, search->second->getLoc(), method->getLoc());
                 }
 
-                MethodInfo* methodInfo = new MethodInfo(method->loc);
+                MethodInfo* methodInfo = new MethodInfo(method->getLoc());
                 methodInfo->BuildFromAst(method);
 
                 methods.emplace(std::make_pair(symbol, methodInfo));

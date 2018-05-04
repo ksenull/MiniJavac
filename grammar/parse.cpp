@@ -10,7 +10,8 @@ namespace Grammar {
 
     Program ParseCin() {
         Scanner scanner(&std::cin);
-        Program result;
+        Location emptyLoc(0, 0, 0, 0);
+        Program result(nullptr, nullptr, emptyLoc);
         Parser parser(scanner, result);
         parser.parse();
         return result;
@@ -18,7 +19,8 @@ namespace Grammar {
 
     Program Parse(std::istream& input) {
         Scanner scanner(&input);
-        Program result;
+        Location emptyLoc(0, 0, 0, 0);
+        Program result(nullptr, nullptr, emptyLoc);
         Parser parser(scanner, result);
         parser.parse();
         return result;
@@ -26,7 +28,8 @@ namespace Grammar {
 
     Program Parse(std::istream* input) {
         Scanner scanner(input);
-        Program result;
+        Location emptyLoc(0, 0, 0, 0);
+        Program result(nullptr, nullptr, emptyLoc);
         Parser parser(scanner, result);
         parser.parse();
         return result;

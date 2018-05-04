@@ -9,7 +9,7 @@ namespace symboltable {
     class ClassInfo : public IInfo {
     public:
 
-        explicit ClassInfo(const common::Location&)  : IInfo(loc) {};
+        explicit ClassInfo(const common::Location& loc)  : IInfo(loc) {};
         ~ClassInfo();
         void BuildFromAst(ast::nodes::MainClass*);
         void BuildFromAst(ast::nodes::ClassDeclaration*);
