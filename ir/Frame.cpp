@@ -1,7 +1,7 @@
 //
 // Created by ksenull on 5/2/18.
 //
-#include "IFrame.h"
+#include "Frame.h"
 #include "../common/Exception.h"
 
 using BaseException = common::MiniJavacException;

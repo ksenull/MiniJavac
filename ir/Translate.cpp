@@ -2,9 +2,10 @@
 // Created by ksenull on 5/2/18.
 //
 #include "Translate.h"
-#include "IFrame.h"
+#include "Frame.h"
 #include "translate/NodeConverter.h"
 #include "../ast/nodes/Nodes.h"
+#include "translate/CodeFragment.h"
 
 namespace ir {
     namespace translate {
@@ -13,7 +14,7 @@ namespace ir {
         namespace IRT = tree;
         using namespace symboltable;
 
-        tree::IStatement* translate::Translator::getIRT(AST::ClassDeclaration* classDeclaration,
+        void translate::CTranslator::AddCode(AST::ClassDeclaration* classDeclaration,
                                                        AST::MethodDeclaration* methodDeclaration) {
             auto* classSymbol = getIntern(classDeclaration->id->name);
             auto* methodSymbol = getIntern(methodDeclaration->id->name);
@@ -24,7 +25,21 @@ namespace ir {
             auto* frame = new Frame(table, classInfo, methodInfo);
 
             IRTranslateVisitor visitor(table, classSymbol, frame);
-            return methodDeclaration->accept(&visitor)->ToStm();
+            auto* body = methodDeclaration->accept(&visitor)->ToStm();
+
+            auto* code = new CCodeFragment(frame, body);
+            if (root == nullptr) {
+                root = code;
+                current = root;
+            }
+            else {
+                current->SetNext(code);
+                current = current->GetNext();
+            }
+        }
+
+        void CTranslator::AddCode(ast::nodes::MainClass *mainClass) {
+
         }
     }
 }

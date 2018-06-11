@@ -10,9 +10,16 @@ set(SYMBOLTABLE  ../symboltable/Table.h ../symboltable/Table.cpp
         ../symboltable/VariableInfo.h ../symboltable/VariableInfo.cpp
         ../symboltable/TypeCheckVisitor.h ../symboltable/TypeCheckVisitor.cpp)
 set(ACCESS Access.h Temp.h)
-set(FRAME IFrame.h ITypeSpec.h X86TypeSpec.cpp Frame.cpp)
+set(FRAME Frame.h ITypeSpec.h X86TypeSpec.cpp Frame.cpp)
 set(TREE tree/Expressions.h tree/Statements.h tree/IVisitor.h tree/PrintVisitor.h tree/PrintVisitor.cpp)
-set(TRANSLATE translate/TranslateVisitor.h translate/TranslateVisitor.cpp translate/NodeConverter.h translate/NodeConverter.cpp Translate.h Translate.cpp)
+set(TRANSLATE
+        translate/TranslateVisitor.h
+        translate/TranslateVisitor.cpp
+        translate/NodeConverter.h
+        translate/NodeConverter.cpp
+        Translate.h
+        Translate.cpp
+        translate/CodeFragment.h)
 set(AST ../ast/nodes/INode.h ../ast/nodes/Nodes.h ../ast/IVisitor.h)
 set(SOURCE_FILES main.cpp ${PARSE} ${SYMBOLTABLE} ${ACCESS} ${FRAME} ${TREE} ${TRANSLATE} ${AST} Temp.cpp)
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-#include <gvc.h>
+#include <graphviz/gvc.h>
 
 namespace ast {
     namespace visualize {

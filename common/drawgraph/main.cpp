@@ -3,7 +3,7 @@
 
 #include "GraphV.h"
 
-static const std::string PathPrefix = "/home/ksenull/workspace/test/minijavac_17/ir/";
+static const std::string PathPrefix = "/home/stas/CLionProjects/minijavac_17/ir/";
 
 int main() {
     ast::visualize::Graph graph{};

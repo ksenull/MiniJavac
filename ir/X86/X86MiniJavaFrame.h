@@ -1,7 +1,7 @@
 #pragma once
 
 #include <map>
-#include "../IFrame.h"
+#include "../Frame.h"
 #include "X86TypeSpec.h"
 
 namespace ir {

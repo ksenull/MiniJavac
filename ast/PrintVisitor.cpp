@@ -9,7 +9,7 @@
 
 namespace ast {
 
-    std::string declareNodeId(const nodes::INode* node, const std::string& idStr) {
+    std::string declareNodeId(const void* node, const std::string& idStr) {
         std::stringstream ss;
         
         ss << node;
@@ -26,10 +26,7 @@ namespace ast {
     fout << nodeId << "[label=\"" << label << "\"];" << std::endl;
 
     void PrintVisitor::visit(const nodes::Identifier* id) const {
-        std::stringstream s;
-        s << id;
-        s.ignore(2);
-        std::string nodeId = "id_" + id->name + "_" + s.str();
+        auto&& nodeId = declareNodeId(id, "id");
 
         fout << nodeId << ";" << std::endl;
         SET_NODE_LABEL("Id " + id->name)

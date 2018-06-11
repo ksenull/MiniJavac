@@ -1,18 +1,26 @@
 #pragma once
 
 #include "translate/TranslateVisitor.h"
+#include "translate/CodeFragment.h"
 
 namespace ir {
     namespace translate {
 
-        class Translator {
+        class CTranslator {
         public:
-            explicit Translator(symboltable::Table* table) : table(table) {}
+            explicit CTranslator(symboltable::Table* table) : table(table), root(nullptr), current(nullptr) {}
 
-            tree::IStatement* getIRT(ast::nodes::ClassDeclaration* classDeclaration, ast::nodes::MethodDeclaration* methodDeclaration);
+//            void AddCode(ast::nodes::MainClass* mainClass);
 
+            void AddCode(ast::nodes::ClassDeclaration* classDeclaration, ast::nodes::MethodDeclaration* methodDeclaration);
+
+            tree::IStatement* GetRootIRT() {
+                return root->GetBody();
+            }
         private:
             symboltable::Table* table;
+            CCodeFragment* root;
+            CCodeFragment* current;
         };
     }
 }

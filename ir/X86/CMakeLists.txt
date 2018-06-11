@@ -7,7 +7,7 @@ set(SYMBOLTABLE  ../../symboltable/Table.h ../../symboltable/Table.cpp
         ../../symboltable/MethodInfo.h ../../symboltable/MethodInfo.cpp
         ../../symboltable/VariableInfo.h ../../symboltable/VariableInfo.cpp)
 set(ACCESS ../Access.h ../Temp.h)
-set(FRAME ../IFrame.h X86MiniJavaFrame.h FrameBuilder.h FrameBuilder.cpp X86MiniJavaFrame.cpp ../ITypeSpec.h X86TypeSpec.h ../X86TypeSpec.cpp)
+set(FRAME ../Frame.h X86MiniJavaFrame.h FrameBuilder.h FrameBuilder.cpp X86MiniJavaFrame.cpp ../ITypeSpec.h X86TypeSpec.h ../X86TypeSpec.cpp)
 set(SOURCE_FILES main.cpp ${PARSE} ${SYMBOLTABLE} ${ACCESS} ${FRAME})
 
 add_executable(X86 ${SOURCE_FILES})

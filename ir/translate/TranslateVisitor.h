@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../ast/IVisitor.h"
-#include "../IFrame.h"
+#include "../Frame.h"
 
 namespace ir {
     namespace translate {
@@ -11,7 +11,7 @@ namespace ir {
 
         class IRTranslateVisitor : public ast::IVisitor<ISubtreeWrapper*> {
         public:
-            IRTranslateVisitor(symboltable::Table* table, symboltable::Symbol* classSymbol, IFrame* frame) :
+            IRTranslateVisitor(symboltable::Table* table, symboltable::Symbol* classSymbol, Frame* frame) :
                     table(table), classSymbol(classSymbol), frame(frame) {
                classInfo = table->getClassInfo(classSymbol);
             }

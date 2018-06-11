@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../IFrame.h"
+#include "../Frame.h"
 #include "../../symboltable/Table.h"
 namespace ir {
     namespace AN = ast::nodes;

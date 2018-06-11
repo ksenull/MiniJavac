@@ -46,7 +46,7 @@ namespace ast {
         }
 
         void Graph::addEdge(const Node& from, const Node& to) {
-            auto edge = agedge(graph,  from.node,  to.node, "-", 1);
+            auto edge = agedge(graph, from.node, to.node, const_cast<char *>("-"), 1);
         }
 
         void Graph::savePng(const std::string& filename) {

@@ -9,7 +9,7 @@
 #include "Translate.h"
 #include "tree/PrintVisitor.h"
 
-static const std::string PathPrefix = "/home/ksenull/workspace/test/minijavac_17/";
+static const std::string PathPrefix = "/home/stas/CLionProjects/minijavac_17/";
 
 int main() {
     std::filebuf fb;
@@ -25,13 +25,17 @@ int main() {
             std::cerr << e.msg << std::endl;
         }
 
-        ir::translate::Translator translator(&table);
-        auto* classDeclaration = dynamic_cast<ast::nodes::ClassDeclaration*>(program.classDeclarationList->nodes[0]);
-        auto* methodDeclaration = dynamic_cast<ast::nodes::MethodDeclaration*>(classDeclaration->methods->nodes[0]);
-        auto* irt = translator.getIRT(classDeclaration, methodDeclaration);
-
+        ir::translate::CTranslator translator(&table);
+//        translator.AddCode(program.mainClass);
+        for (auto* classNode : program.classDeclarationList->nodes) {
+            auto* classDeclaration = dynamic_cast<ast::nodes::ClassDeclaration*>(classNode);
+            for (auto* methodNode : classDeclaration->methods->nodes) {
+                auto* methodDeclaration = dynamic_cast<ast::nodes::MethodDeclaration*>(methodNode);
+                translator.AddCode(classDeclaration, methodDeclaration);
+            }
+        }
         ir::tree::PrintVisitor visitor(PathPrefix + "ir/graph.dot");
-        irt->accept(&visitor);
+        translator.GetRootIRT()->accept(&visitor);
         visitor.finish();
     }
 
