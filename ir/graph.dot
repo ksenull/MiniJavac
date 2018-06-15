@@ -1,0 +1,8 @@
+digraph G {
+EXP_0x6b5a60 -> CALL_0x6b5a00 -> EXP_0x6b59e0 -> CALL_0x6b5980 -> SEQ_0x6b5940;
+SEQ_0x6b5940[label="SEQ"];
+CALL_0x6b5980[label="CALL: obj()"];
+EXP_0x6b59e0[label="EXP"];
+CALL_0x6b5a00[label="CALL: Print()"];
+EXP_0x6b5a60[label="EXP"];
+}

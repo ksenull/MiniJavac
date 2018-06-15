@@ -26,7 +26,7 @@ int main() {
         }
 
         ir::translate::CTranslator translator(&table);
-//        translator.AddCode(program.mainClass);
+        translator.AddCode(program.mainClass);
         for (auto* classNode : program.classDeclarationList->nodes) {
             auto* classDeclaration = dynamic_cast<ast::nodes::ClassDeclaration*>(classNode);
             for (auto* methodNode : classDeclaration->methods->nodes) {

@@ -19,6 +19,10 @@ namespace ast {
             void accept(const IVisitor<void>* visitor) const {
                 visitor->visit(this);
             }
+
+            ir::translate::ISubtreeWrapper* accept(const IVisitor<ir::translate::ISubtreeWrapper*>* visitor) const {
+                return visitor->visit(this);
+            }
         };
     }
 }

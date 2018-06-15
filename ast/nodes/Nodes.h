@@ -140,21 +140,26 @@ namespace ast {
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
-        struct ClassDeclaration : INode {
+        struct IClassDecl : INode {
             Identifier* id;
+
+            IClassDecl(const Location& loc, Identifier* _id) : INode(loc), id(_id) {}
+        };
+
+        struct ClassDeclaration : IClassDecl {
             Identifier* base;
             VariableDeclarationStatementList* localVars;
             MethodDeclarationList* methods;
 
-            ClassDeclaration(Identifier* id, Identifier* base,
-                             VariableDeclarationStatementList* localVars,
-                             MethodDeclarationList* methods, const Location& loc) :
-                    INode(loc), id(id), base(base), localVars(localVars), methods(methods) {}
+            ClassDeclaration(Identifier* _id, Identifier* _base,
+                             VariableDeclarationStatementList* _localVars,
+                             MethodDeclarationList* _methods, const Location& loc) :
+                    IClassDecl(loc, _id), base(_base), localVars(_localVars), methods(_methods) {}
 
             ClassDeclaration(Identifier* id,
                              VariableDeclarationStatementList* localVars,
                              MethodDeclarationList* methods, const Location& loc) :
-                    ClassDeclaration(id, {}, localVars, methods, loc) {}
+                    ClassDeclaration(id, nullptr, localVars, methods, loc) {}
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
@@ -166,13 +171,12 @@ namespace ast {
         };
 
 
-        struct MainClass : INode {
-            Identifier* name;
+        struct MainClass : IClassDecl {
             Identifier* argsName;
             IStatement* st;
         public:
-            MainClass(Identifier* name, Identifier* id, IStatement* st, const Location& loc) : INode(loc),
-                    name(name), argsName(std::move(id)), st(st) {}
+            MainClass(Identifier* _id, Identifier* _argsName, IStatement* _st, const Location& loc) :
+                    IClassDecl(loc, _id), argsName(_argsName), st(_st) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT

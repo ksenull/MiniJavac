@@ -14,6 +14,29 @@ namespace ir {
         namespace IRT = tree;
         using namespace symboltable;
 
+        void translate::CTranslator::AddCode(AST::MainClass* mainClass) {
+            auto* classSymbol = getIntern(mainClass->id->name);
+            auto* methodSymbol = getIntern("main");
+
+            auto* classInfo = table->getClassInfo(classSymbol);
+            auto* methodInfo = classInfo->getMethodInfo(methodSymbol);
+
+            auto* frame = new Frame(table, classInfo, methodInfo);
+
+            IRTranslateVisitor visitor(table, classSymbol, frame);
+            auto* body = mainClass->accept(&visitor)->ToStm();
+
+            auto* code = new CCodeFragment(frame, body);
+            if (root == nullptr) {
+                root = code;
+                current = root;
+            }
+            else {
+                current->SetNext(code);
+                current = current->GetNext();
+            }
+        }
+
         void translate::CTranslator::AddCode(AST::ClassDeclaration* classDeclaration,
                                                        AST::MethodDeclaration* methodDeclaration) {
             auto* classSymbol = getIntern(classDeclaration->id->name);
@@ -36,10 +59,6 @@ namespace ir {
                 current->SetNext(code);
                 current = current->GetNext();
             }
-        }
-
-        void CTranslator::AddCode(ast::nodes::MainClass *mainClass) {
-
         }
     }
 }

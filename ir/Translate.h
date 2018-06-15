@@ -14,6 +14,8 @@ namespace ir {
 
             void AddCode(ast::nodes::ClassDeclaration* classDeclaration, ast::nodes::MethodDeclaration* methodDeclaration);
 
+            void AddCode(ast::nodes::MainClass *mainClass);
+
             tree::IStatement* GetRootIRT() {
                 return root->GetBody();
             }
@@ -21,6 +23,8 @@ namespace ir {
             symboltable::Table* table;
             CCodeFragment* root;
             CCodeFragment* current;
+
+
         };
     }
 }

@@ -1,14 +1,15 @@
 //
 // Created by ksenull on 4/25/18.
 //
+#include <cassert>
 #include "Table.h"
 #include "SymbolException.h"
 
 namespace symboltable {
 
     void Table::BuildFromAst(const ast::nodes::Program* program) {
-        auto* symbol = getIntern(program->mainClass->name->name);
-
+        auto* symbol = getIntern(program->mainClass->id->name);
+        assert(classesTable.empty());
         auto* classInfo = new ClassInfo(program->mainClass->getLoc());
         classInfo->BuildFromAst(program->mainClass);
 

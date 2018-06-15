@@ -24,7 +24,7 @@ namespace symboltable {
     }
 
     void TypeCheckVisitor::visit(const AN::MainClass* node) const {
-        currentClass = getIntern(node->name->name);
+        currentClass = getIntern(node->id->name);
         node->st->accept(this);
     }
 

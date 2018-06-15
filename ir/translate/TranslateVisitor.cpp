@@ -1,6 +1,7 @@
 //
 // Created by ksenull on 5/1/18.
 //
+#include <cassert>
 #include "TranslateVisitor.h"
 #include "NodeConverter.h"
 #include "../../common/Exception.h"
@@ -23,7 +24,14 @@ namespace ir {
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::MainClass* node) const {
-            return nullptr;
+            auto* methodLabel = ST::getIntern(node->id->name);
+            auto* methodInfo = classInfo->getMethodInfo(methodLabel);
+//            assert( methodInfo->getLocalVarsList() == nullptr);
+
+            if (node->st != nullptr) {
+                auto* bodySubtree = node->st->accept(this);
+                return bodySubtree;
+            }
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::ClassDeclaration* node) const {
@@ -35,7 +43,19 @@ namespace ir {
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::VariableDeclarationStatementList* node) const {
-            return nullptr;
+            auto&& nodes = node->nodes;
+
+            if (nodes.size() == 1) {
+                return nodes[0]->accept(this);
+            }
+            else {
+                ISubtreeWrapper* curSeq = nodes[nodes.size() - 1]->accept(this);
+                for (unsigned long i = nodes.size() - 2; i >= 0; i--) {
+                    auto* left = nodes[i]->accept(this);
+                    curSeq = new CStmConverter(new IRT::SeqStatement(left->ToStm(), curSeq->ToStm()));
+                }
+                return curSeq;
+            }
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::VariableDeclarationStatement* node) const {
@@ -43,10 +63,21 @@ namespace ir {
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::VariableDeclaration* node) const {
-            return new CStmConverter(new IRT::MoveStatement(nullptr, nullptr));
+            switch (node->type->tt) {
+                case AN::TT_Bool:
+                case AN::TT_Int:
+                case AN::TT_Void:
+                    // already  defined in method declaration visit
+                    return nullptr;
+                case AN::TT_Array:
+                case AN::TT_Object:
+                    // could be defined only in special statements;
+                    return nullptr;
+            }
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::Type* node) const {
+            // type could appear only in definition, which are all perforemed in method translation
             return nullptr;
         }
 
@@ -64,7 +95,7 @@ namespace ir {
             auto* methodInfo = classInfo->getMethodInfo(methodLabel);
 
             for (auto&& arg : methodInfo->getArgsList()) {
-                frame->AddFormal(arg.first, *arg.second);
+                frame->AddFormal(arg.first, *arg.second); // var symbol, var info
             }
 
             for (auto&& local : methodInfo->getLocalVarsList()) {
@@ -88,6 +119,7 @@ namespace ir {
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::ArgumentDeclarationList* node) const {
+            // all arguments have already been added in method translation
             return nullptr;
         }
 
@@ -99,17 +131,18 @@ namespace ir {
             }
             else {
                 ISubtreeWrapper* curSeq = nodes[nodes.size() - 1]->accept(this);
-                for (int i = nodes.size() - 2; i == 0; i--) {
+                for (int i = nodes.size() - 2; i >= 0; i--) {
                     auto* left = nodes[i]->accept(this);
-                    if (auto* withCond = dynamic_cast<AST::IfStatement*>(nodes[i])) {
+                    if (auto* ifStm = dynamic_cast<AST::IfStatement*>(nodes[i])) {
                         Label* done = ST::getIntern("done");
-                        curSeq = new CStmConverter(new IRT::SeqStatement(new IRT::LabelStatement(*done), curSeq->ToStm()));
+                        curSeq = new CStmConverter(new IRT::SeqStatement(left->ToStm(), curSeq->ToStm()));
                     }
-                    if (auto* withCond = dynamic_cast<AST::WhileStatement*>(nodes[i])) {
+                    else if (auto* whileStm = dynamic_cast<AST::WhileStatement*>(nodes[i])) {
                         Label* done = ST::getIntern("done");
-                        curSeq = new CStmConverter(new IRT::SeqStatement(new IRT::LabelStatement(*done), curSeq->ToStm()));
+                        curSeq = new CStmConverter(new IRT::SeqStatement(left->ToStm(), curSeq->ToStm()));
                     }
-                    curSeq = new CStmConverter(new IRT::SeqStatement(left->ToStm(), curSeq->ToStm()));
+                    else
+                        curSeq = new CStmConverter(new IRT::SeqStatement(left->ToStm(), curSeq->ToStm()));
                 }
                 return curSeq;
             }
@@ -171,7 +204,8 @@ namespace ir {
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::ArrayAssignStatement* node) const {
-            return nullptr;
+            auto* source  = node->id->accept(this);
+            auto* index = node->arrExp->accept(this);
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::ArgumentsList* node) const {
@@ -231,7 +265,7 @@ namespace ir {
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::NewArrayExpression* node) const {
-            return nullptr;
+            return new CExpConverter(new IRT::EseqExpression(initStm, retExp));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::NewObjectExpression* node) const {
@@ -243,7 +277,7 @@ namespace ir {
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::Identifier* node) const {
-            return nullptr;
+            throw CantBuildIrtError();
         }
 
     }

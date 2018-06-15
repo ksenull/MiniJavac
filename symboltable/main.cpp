@@ -7,13 +7,13 @@
 #include "TypeCheckVisitor.h"
 #include "../common/Exception.h"
 
-static const std::string PathPrefix = "/home/ksenull/workspace/test/minijavac_17/";
+static const std::string PathPrefix = "/home/stas/CLionProjects/minijavac_17/";
 
 using namespace symboltable;
 
 int main() {
     std::filebuf fb;
-    if (fb.open (PathPrefix + "Samples/BinaryTree.java",std::ios::in)) {
+    if (fb.open (PathPrefix + "BadSamples/TC_1a.java",std::ios::in)) {
         std::istream in(&fb);
         auto program = Grammar::Parse(in);
 //        auto program = Grammar::ParseCin();

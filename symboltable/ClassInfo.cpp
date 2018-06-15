@@ -8,17 +8,16 @@ namespace symboltable {
     void ClassInfo::BuildFromAst(ast::nodes::MainClass* mainClass) {
         base = nullptr;
         if (auto* nested = dynamic_cast<ast::nodes::NestedStatement*>(mainClass->st)) {
-            for (auto* st : nested->statementList->nodes) {
-                if (auto* varDecl = dynamic_cast<ast::nodes::VariableDeclarationStatement*>(st)) {
-                    VariableInfo* variableInfo = new VariableInfo(varDecl->var->getLoc());
+            for (auto *st : nested->statementList->nodes) {
+                if (auto *varDecl = dynamic_cast<ast::nodes::VariableDeclarationStatement *>(st)) {
+                    VariableInfo *variableInfo = new VariableInfo(varDecl->var->getLoc());
                     variableInfo->BuildFromAst(varDecl->var);
 
-                    auto* symbol = getIntern(varDecl->var->id->name);
+                    auto *symbol = getIntern(varDecl->var->id->name);
                     vars.emplace(std::make_pair(symbol, variableInfo));
                 }
             }
         }
-        // TODO
 
         MethodInfo* methodInfo = new MethodInfo(mainClass->getLoc());
         methodInfo->BuildFromAst(mainClass);
