@@ -82,7 +82,7 @@ namespace ir {
         }
 
         tree::IStatement* CCondStmConverter::ToConditional(const Label& ifLabel, const Label& elseLabel) const {
-            return nullptr;
+            return new tree::CondJumpStatement(left, op, right, ifLabel, elseLabel);
         }
 
         tree::CondJumpStatement* CFromAndConverter::ToConditional(const Label& ifLabel, const Label& elseLabel) const {

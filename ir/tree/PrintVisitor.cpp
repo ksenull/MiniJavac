@@ -28,7 +28,14 @@ namespace ir {
         }
 
         void PrintVisitor::visit(const CExpressionList* node) const {
-
+            GET_NICE_ADDRESS
+            auto nodeId = "ExpList_" + s;
+            fout << nodeId << ";" << std::endl;
+            for (auto* exp : node->nodes) {
+                fout << nodeId << " -> ";
+                exp->accept(this);
+            }
+            SET_NODE_LABEL("ExpList")
         }
 
         void PrintVisitor::visit(const ConstExpression* node) const {
@@ -144,6 +151,14 @@ namespace ir {
         }
 
         void PrintVisitor::visit(const StatementList* node) const {
+            GET_NICE_ADDRESS
+            auto nodeId = "StmList_" + s;
+            fout << nodeId << ";" << std::endl;
+            for (auto* stm : node->nodes) {
+                fout << nodeId << " -> ";
+                stm->accept(this);
+            }
+            SET_NODE_LABEL("StmList")
         }
 
         void PrintVisitor::visit(const MoveStatement* node) const {

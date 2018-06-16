@@ -35,7 +35,7 @@ int main() {
             }
         }
         ir::tree::PrintVisitor visitor(PathPrefix + "ir/graph.dot");
-        translator.GetRootIRT()->accept(&visitor);
+        translator.GetRoot()->GetNext()->GetBody()->accept(&visitor);
         visitor.finish();
     }
 

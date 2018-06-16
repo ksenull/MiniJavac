@@ -47,7 +47,7 @@ namespace symboltable {
     }
 
     ClassInfo* Table::getClassInfo(Symbol* classSymbol) const {
-        auto&& search = classesTable.find(classSymbol);
+        auto search = classesTable.find(classSymbol);
         return (search == classesTable.end()) ? nullptr : search->second;
     }
 

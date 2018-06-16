@@ -48,7 +48,7 @@ namespace ir {
         class CCondStmConverter : public ISubtreeWrapper {
         public:
             CCondStmConverter() = default;
-            CCondStmConverter(tree::RelationalOperation op, tree::IExpression* left, tree::IExpression* right) :
+            CCondStmConverter(tree::IExpression* left, tree::RelationalOperation op, tree::IExpression* right) :
             op(op), left(left), right(right) {}
             ~CCondStmConverter() override = default;
 

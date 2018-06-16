@@ -234,8 +234,7 @@ namespace ir {
                     op = IRT::BO_And;
                     break;
                 default:
-                    return new CCondStmConverter((node->type == AST::BOT_Equal) ? IRT::RO_Eq : IRT::RO_Lt,
-                                             left, right);
+                    return new CCondStmConverter(left, (node->type == AST::BOT_Equal) ? IRT::RO_Eq : IRT::RO_Lt, right);
             }
             return new CExpConverter(new IRT::BinopExpression(left, op, right));
         }
@@ -298,7 +297,9 @@ namespace ir {
 
             auto* allocArgs = new IRT::CExpressionList();
             auto* label = ST::getIntern(node->id->name);
-            auto&& classVarsCount = table->getClassInfo(label)->getVars().size();
+            auto* classInfo = table->getClassInfo(label);
+            auto vars = classInfo->getVars();
+            unsigned long classVarsCount = vars.size();
             auto sizeExp = new IRT::ConstExpression(static_cast<int>(classVarsCount));
             allocArgs->nodes.emplace_back(sizeExp);
             auto* allocStm = new IRT::MoveStatement(addrHolder, frame->ExternalCall("newObject", allocArgs));

@@ -19,6 +19,10 @@ namespace ir {
             tree::IStatement* GetRootIRT() {
                 return root->GetBody();
             }
+
+            CCodeFragment* GetRoot() {
+                return root;
+            }
         private:
             symboltable::Table* table;
             CCodeFragment* root;
