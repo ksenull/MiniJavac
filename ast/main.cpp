@@ -4,7 +4,7 @@
 #include "../grammar/parse.h"
 #include "nodes/Nodes.h"
 
-static const std::string PathPrefix = "/home/ksenull/workspace/test/minijavac_17/";
+static const std::string PathPrefix = "C:/Users/Kseniia/CLionProjects/minijavac_17/";
 
 int main() {
     std::filebuf fb;

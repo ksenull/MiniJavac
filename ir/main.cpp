@@ -9,7 +9,7 @@
 #include "Translate.h"
 #include "tree/PrintVisitor.h"
 
-static const std::string PathPrefix = "/home/stas/CLionProjects/minijavac_17/";
+static const std::string PathPrefix = "C:/Users/Kseniia/CLionProjects/minijavac_17/";
 
 int main() {
     std::filebuf fb;

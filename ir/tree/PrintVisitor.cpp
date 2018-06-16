@@ -123,7 +123,7 @@ namespace ir {
             else {
                 fout << nodeId << ";" << std::endl;
             }
-            SET_NODE_LABEL("CALL: " + node->func.name + "()")
+            SET_NODE_LABEL("CALL: " + node->func->name + "()")
         }
 
         void PrintVisitor::visit(const EseqExpression* node) const {

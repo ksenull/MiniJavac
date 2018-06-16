@@ -26,6 +26,10 @@ namespace ir {
         virtual void AddReturnAddress() = 0;
         virtual void AddReturnType(const symboltable::TypeInfo&) = 0;
         virtual void PrettyPrint() const = 0;
+
+        virtual tree::IExpression* ExternalCall(const std::string& functionName, tree::CExpressionList* args) const = 0;
+
+        virtual unsigned GetWordSize() const = 0;
     };
 
     struct Frame : public IFrame {
@@ -54,6 +58,9 @@ namespace ir {
         virtual void AddReturnType(const symboltable::TypeInfo&);
 
         virtual void PrettyPrint() const;
+
+        virtual unsigned GetWordSize() const override;
+        virtual tree::IExpression* ExternalCall(const std::string& functionName, tree::CExpressionList* args) const override;
 
         tree::IExpression* FramePointer() const override;
         tree::IExpression* StackPointer() const override;

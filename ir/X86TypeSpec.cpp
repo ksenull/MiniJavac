@@ -7,12 +7,12 @@
 namespace ir {
     namespace ST = symboltable;
 
-    static const int WORD_SIZE = 4;
-    static const int intSize = 1 * WORD_SIZE;
-    static const int booleanSize = 1 * WORD_SIZE;
-    static const int referenceSize = 1 * WORD_SIZE;
+    static const unsigned WORD_SIZE = 4;
+    static const unsigned intSize = 1 * WORD_SIZE;
+    static const unsigned booleanSize = 1 * WORD_SIZE;
+    static const unsigned referenceSize = 1 * WORD_SIZE;
 
-    int DefaultTypeSpec::getTypeSize(ST::VariableType type) const {
+    unsigned DefaultTypeSpec::getTypeSize(ST::VariableType type) const {
         switch (type) {
             case ST::VT_Int:
                 return intSize;
@@ -27,11 +27,11 @@ namespace ir {
         }
     }
 
-    int DefaultTypeSpec::getRefSize() const {
+    unsigned DefaultTypeSpec::getRefSize() const {
         return referenceSize;
     }
 
-   int DefaultTypeSpec::getWordSize() const {
+    unsigned DefaultTypeSpec::getWordSize() const {
        return WORD_SIZE;
-   }
+    }
 }

@@ -401,7 +401,7 @@ namespace ast {
         auto&& nodeId = declareNodeId(node, "new_arr");
 
         fout << nodeId << " -> ";
-        node->exp->accept(this);
+        node->size->accept(this);
 
         SET_NODE_LABEL("new type[]");
     }

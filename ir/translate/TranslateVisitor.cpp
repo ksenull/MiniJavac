@@ -78,7 +78,7 @@ namespace ir {
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::Type* node) const {
             // type could appear only in definition, which are all perforemed in method translation
-            return nullptr;
+            throw CantBuildIrtError();
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::MethodDeclarationList* node) const {
@@ -87,7 +87,7 @@ namespace ir {
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::MethodDeclaration* node) const {
             ST::TypeInfo classType(ST::VT_Object, classSymbol);
-            ST::VariableInfo thisInfo({}, classType); // TODO save class vars somewhere
+            ST::VariableInfo thisInfo({}, classType);
             Label* label = ST::getIntern("this");
             frame->AddFormal(label, thisInfo);
 
@@ -131,7 +131,7 @@ namespace ir {
             }
             else {
                 ISubtreeWrapper* curSeq = nodes[nodes.size() - 1]->accept(this);
-                for (int i = nodes.size() - 2; i >= 0; i--) {
+                for (long i = nodes.size() - 2; i >= 0; i--) {
                     auto* left = nodes[i]->accept(this);
                     if (auto* ifStm = dynamic_cast<AST::IfStatement*>(nodes[i])) {
                         Label* done = ST::getIntern("done");
@@ -141,8 +141,12 @@ namespace ir {
                         Label* done = ST::getIntern("done");
                         curSeq = new CStmConverter(new IRT::SeqStatement(left->ToStm(), curSeq->ToStm()));
                     }
-                    else
+                    else if (auto* varDeclStm = dynamic_cast<AST::VariableDeclarationStatement*>(nodes[i])) {
+                        continue;  // all local variables were alredy added to frame in MethodDeclaration;
+                    }
+                    else {
                         curSeq = new CStmConverter(new IRT::SeqStatement(left->ToStm(), curSeq->ToStm()));
+                    }
                 }
                 return curSeq;
             }
@@ -189,12 +193,11 @@ namespace ir {
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::PrintStatement* node) const {
-            Label* print = ST::getIntern("Print");
-            auto* args = node->exp->accept(this)->ToStm();
-            return new CExpConverter(new IRT::CallExpression(
-                    *print,
-                    args
-                    ));
+            auto* label = ST::getIntern("Print");
+            auto* args = new IRT::CExpressionList();
+            auto* arg = node->exp->accept(this)->ToExp();
+            args->nodes.emplace_back(arg);
+            return new CExpConverter(new IRT::CallExpression(label, args));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::AssignStatement* node) const {
@@ -209,7 +212,8 @@ namespace ir {
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::ArgumentsList* node) const {
-            return new CStmConverter(new IRT::SeqStatement(nullptr, nullptr));
+            //arguments should be processed in CallStm
+            throw CantBuildIrtError();
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::BinopExpression* node) const {
@@ -237,7 +241,12 @@ namespace ir {
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::ArrayItemExpression* node) const {
-            return nullptr;
+            auto* arrSubtree = node->arr->accept(this);  // content of array id is an address to its memory, so we still need to obtain its value
+            auto* indexSubtree = node->ind->accept(this);
+            auto* offset = new IRT::BinopExpression(indexSubtree->ToExp(), IRT::BO_Mul, new IRT::ConstExpression(frame->GetWordSize()));
+            auto* offsetOfArrayBegin = new IRT::BinopExpression(new IRT::ConstExpression(frame->GetWordSize()), IRT::BO_Plus, offset);
+            auto* addr = new IRT::BinopExpression(arrSubtree->ToExp(), IRT::BO_Plus, offsetOfArrayBegin);
+            return new CExpConverter(new IRT::MemExpression(addr));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::ArrayLengthExpression* node) const {
@@ -245,8 +254,17 @@ namespace ir {
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::CallExpression* node) const {
-            Label*  obj = ST::getIntern("obj");
-            return new CExpConverter(new IRT::CallExpression(*obj, node->args->accept(this)->ToStm()));
+            auto* obj = node->obj->accept(this);
+
+            auto* args = new IRT::CExpressionList();
+            args->nodes.emplace_back(obj->ToExp());
+            for (auto* arg : node->args->nodes) {
+                args->nodes.emplace_back(arg->accept(this)->ToExp());
+            }
+
+            auto* methodLabel = ST::getIntern(node->method->name);
+
+            return new CExpConverter(new IRT::CallExpression(methodLabel, args));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::ConstExpression* node) const {
@@ -254,29 +272,58 @@ namespace ir {
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::BoolExpression* node) const {
-            return nullptr;
+            return new CExpConverter(new IRT::ConstExpression(node->value ? 1 : 0));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::IdExpression* node) const {
-            auto* fp = frame->FramePointer();
-            auto* offset = frame->FindLocalOrFormal(ST::getIntern(node->id->name))->getExp();
-            auto* addr = new IRT::BinopExpression(fp, IRT::BO_Plus, offset);
-            return new CExpConverter(new IRT::MemExpression(addr));
+            return node->id->accept(this);
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::NewArrayExpression* node) const {
-            return new CExpConverter(new IRT::EseqExpression(initStm, retExp));
+            auto* addrHolder = new IRT::TempExpression(new TempReg());
+            auto* allocArgs = new IRT::CExpressionList();
+            auto* sizeExp = node->size->accept(this)->ToExp();
+            auto* sizeForArrayStruct = new IRT::BinopExpression(sizeExp, IRT::BO_Plus, new IRT::ConstExpression(frame->GetWordSize()));
+            allocArgs->nodes.emplace_back(sizeExp);
+            auto* allocStm = new IRT::MoveStatement(addrHolder, frame->ExternalCall("newArray", allocArgs));
+
+            auto* initSizeStm = new IRT::MoveStatement(addrHolder, sizeExp);
+            // if it's needed to initialize it can be done there
+
+            return new CExpConverter(new IRT::EseqExpression(new IRT::SeqStatement(allocStm, initSizeStm), addrHolder));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::NewObjectExpression* node) const {
-            return nullptr;
+            auto* addrHolder = new IRT::TempExpression(new TempReg());
+
+            auto* allocArgs = new IRT::CExpressionList();
+            auto* label = ST::getIntern(node->id->name);
+            auto&& classVarsCount = table->getClassInfo(label)->getVars().size();
+            auto sizeExp = new IRT::ConstExpression(static_cast<int>(classVarsCount));
+            allocArgs->nodes.emplace_back(sizeExp);
+            auto* allocStm = new IRT::MoveStatement(addrHolder, frame->ExternalCall("newObject", allocArgs));
+
+            return new CExpConverter(new IRT::EseqExpression(allocStm, addrHolder));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::NotExpression* node) const {
-            return nullptr;
+            auto* expSubtree = node->exp->accept(this);
+            auto* one = new IRT::ConstExpression(1);
+            return new CExpConverter(new IRT::BinopExpression(expSubtree->ToExp(), IRT::BO_Xor, one));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::Identifier* node) const {
+            auto* label = ST::getIntern(node->name);
+            auto* access = frame->FindLocalOrFormal(label);
+            if (auto* inRegAccess = dynamic_cast<const CInRegAccess*>(access)) {
+                auto* temp = new IRT::TempExpression(inRegAccess->reg);
+                return new CExpConverter(temp);
+            }
+            if (auto* inFrameAccess = dynamic_cast<const CInFrameAccess*>(access)) {
+                auto* addr = new IRT::BinopExpression(frame->FramePointer(), IRT::BO_Plus,  inFrameAccess->getExp());
+                auto* mem = new IRT::MemExpression(addr);
+                return new CExpConverter(mem);
+            }
             throw CantBuildIrtError();
         }
 

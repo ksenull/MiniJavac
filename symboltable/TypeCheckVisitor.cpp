@@ -303,9 +303,9 @@ namespace symboltable {
     }
 
     void TypeCheckVisitor::visit(const AN::NewArrayExpression* node) const {
-        checkIfInt(node->exp);
+        checkIfInt(node->size);
 
-        node->exp->accept(this);
+        node->size->accept(this);
     }
 
     void TypeCheckVisitor::visit(const AN::NewObjectExpression* node) const {

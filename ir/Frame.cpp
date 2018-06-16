@@ -75,4 +75,13 @@ namespace ir {
         CInRegAccess access(RT_StackPointer, typeSpec->getWordSize(), SP->addr);
         return access.getExp();
     }
+
+    unsigned Frame::GetWordSize() const {
+        return typeSpec->getWordSize();
+    }
+
+    tree::IExpression* Frame::ExternalCall(const std::string& functionName, tree::CExpressionList* args) const {
+        auto* label = symboltable::getIntern("_" + functionName);
+        return new tree::CallExpression(label, args);
+    }
 }

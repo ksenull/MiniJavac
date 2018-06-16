@@ -369,10 +369,10 @@ namespace ast {
 
         struct NewArrayExpression : IExpression {
 //            Type* type;
-            IExpression* exp;
+            IExpression* size;
 
-            NewArrayExpression(IExpression* exp, const Location& loc) :
-                        IExpression(loc), exp(exp) {}
+            NewArrayExpression(IExpression* _size, const Location& loc) :
+                        IExpression(loc), size(_size) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT

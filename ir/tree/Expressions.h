@@ -34,12 +34,15 @@ namespace tree {
         std::vector<INode*> nodes;
     };
 
-    struct IExpression {
+    struct IExpression : public INode {
         virtual ~IExpression() = default;
         virtual void accept(const IVisitor<void>* visitor) const = 0;
     };
 
     struct CExpressionList : INodeList {
+        CExpressionList() = default;
+        ~CExpressionList() = default;
+        DEFINE_PRINT_ACCEPT
     };
 
     struct ConstExpression : IExpression {
@@ -82,13 +85,16 @@ namespace tree {
     };
 
     struct CallExpression : IExpression {
-        CallExpression(const Label& func, IStatement* args) : func(func), args(args) {}
+        CallExpression(Label* _func) : func(_func) {
+            args = new CExpressionList();
+        }
+        CallExpression(Label* _func, CExpressionList* _args) : func(_func), args(_args) {}
         
         DEFINE_PRINT_ACCEPT
 
-        Label func;
-//        CExpressionList* args;
-        IStatement* args;
+        Label* func;
+        CExpressionList* args;
+//        IStatement* args;
     };
 
     struct EseqExpression : IExpression { //stm evaluated for side effects, then e evalutes for a result
