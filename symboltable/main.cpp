@@ -7,7 +7,7 @@
 #include "TypeCheckVisitor.h"
 #include "../common/Exception.h"
 
-static const std::string PathPrefix = "/home/stas/CLionProjects/minijavac_17/";
+static const std::string PathPrefix = "C:/Users/Kseniia/CLionProjects/minijavac_17/";
 
 using namespace symboltable;
 

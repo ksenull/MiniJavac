@@ -19,7 +19,7 @@ namespace symboltable {
             }
         }
 
-        MethodInfo* methodInfo = new MethodInfo(mainClass->getLoc());
+        MethodInfo* methodInfo = new MethodInfo({}, mainClass->getLoc());
         methodInfo->BuildFromAst(mainClass);
         auto* symbol = getIntern("main");
         methods.emplace(std::make_pair(symbol, methodInfo));
@@ -58,7 +58,7 @@ namespace symboltable {
                     throw MethodAlreadyDefinedError(symbol, search->second->getLoc(), method->getLoc());
                 }
 
-                MethodInfo* methodInfo = new MethodInfo(method->getLoc());
+                MethodInfo* methodInfo = new MethodInfo(vars, method->getLoc());
                 methodInfo->BuildFromAst(method);
 
                 methods.emplace(std::make_pair(symbol, methodInfo));

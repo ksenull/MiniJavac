@@ -10,7 +10,12 @@ namespace symboltable {
     public:
         using ArgsList = std::vector<std::pair<Symbol*, VariableInfo*>>;
 
-        explicit MethodInfo(const common::Location& loc) : IInfo(loc) {}
+        explicit MethodInfo(std::unordered_map<Symbol*, VariableInfo*> classVars, const common::Location& loc) : IInfo(loc) {
+            for (auto&& classVar : classVars) {
+                vars.emplace(classVar);
+            }
+        }
+        
         void BuildFromAst(ast::nodes::MethodDeclaration* methodDeclaration);
         void BuildFromAst(ast::nodes::MainClass* main);
 
