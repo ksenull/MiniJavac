@@ -68,7 +68,7 @@ namespace ir {
         public:
             CFromAndConverter(tree::IExpression* left, tree::IExpression* right) : left(left), right(right) {}
 
-            tree::CondJumpStatement* ToConditional(const Label& ifLabel, const Label& elseLabel) const override;
+            tree::CCondJumpStatement* ToConditional(const Label& ifLabel, const Label& elseLabel) const override;
         private:
             tree::IExpression* left;
             tree::IExpression* right;
@@ -78,7 +78,7 @@ namespace ir {
         public:
             CFromOrConverter(tree::IExpression* left, tree::IExpression* right) : left(left), right(right) {}
 
-            tree::CondJumpStatement* ToConditional(const Label& ifLabel, const Label& elseLabel) const override;
+            tree::CCondJumpStatement* ToConditional(const Label& ifLabel, const Label& elseLabel) const override;
         private:
             tree::IExpression* left;
             tree::IExpression* right;

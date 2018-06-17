@@ -5,21 +5,21 @@ namespace ir {
     namespace tree {
 
         struct CExpressionList;
-        struct ConstExpression;
-        struct NameExpression;
-        struct TempExpression;
-        struct BinopExpression;
-        struct MemExpression;
-        struct CallExpression;
-        struct EseqExpression;
+        struct CConstExpression;
+        struct CNameExpression;
+        struct CTempExpression;
+        struct CBinopExpression;
+        struct CMemExpression;
+        struct CCallExpression;
+        struct CEseqExpression;
 
-        struct StatementList;
-        struct MoveStatement;
-        struct ExpStatement;
-        struct JumpStatement;
-        struct CondJumpStatement;
-        struct SeqStatement;
-        struct LabelStatement;
+        struct CStatementList;
+        struct CMoveStatement;
+        struct CExpStatement;
+        struct CJumpStatement;
+        struct CCondJumpStatement;
+        struct CSeqStatement;
+        struct CLabelStatement;
 
 
         template<typename T>
@@ -28,21 +28,21 @@ namespace ir {
 #define DECLARE_IVISIT(NODE) virtual T visit(const NODE* node) const = 0;
 
             DECLARE_IVISIT(CExpressionList);
-            DECLARE_IVISIT(ConstExpression);
-            DECLARE_IVISIT(NameExpression);
-            DECLARE_IVISIT(TempExpression);
-            DECLARE_IVISIT(BinopExpression);
-            DECLARE_IVISIT(MemExpression);
-            DECLARE_IVISIT(CallExpression);
-            DECLARE_IVISIT(EseqExpression);
+            DECLARE_IVISIT(CConstExpression);
+            DECLARE_IVISIT(CNameExpression);
+            DECLARE_IVISIT(CTempExpression);
+            DECLARE_IVISIT(CBinopExpression);
+            DECLARE_IVISIT(CMemExpression);
+            DECLARE_IVISIT(CCallExpression);
+            DECLARE_IVISIT(CEseqExpression);
 
-            DECLARE_IVISIT(StatementList);
-            DECLARE_IVISIT(MoveStatement);
-            DECLARE_IVISIT(ExpStatement);
-            DECLARE_IVISIT(JumpStatement);
-            DECLARE_IVISIT(CondJumpStatement);
-            DECLARE_IVISIT(SeqStatement);
-            DECLARE_IVISIT(LabelStatement);
+            DECLARE_IVISIT(CStatementList);
+            DECLARE_IVISIT(CMoveStatement);
+            DECLARE_IVISIT(CExpStatement);
+            DECLARE_IVISIT(CJumpStatement);
+            DECLARE_IVISIT(CCondJumpStatement);
+            DECLARE_IVISIT(CSeqStatement);
+            DECLARE_IVISIT(CLabelStatement);
 
 #undef DECLARE_IVISIT
         };

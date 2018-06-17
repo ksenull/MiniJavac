@@ -18,21 +18,21 @@ namespace ir {
 
 #define DECLARE_PRINT_VISIT(NODE)  void visit(const NODE* node) const;
             DECLARE_PRINT_VISIT(CExpressionList);
-            DECLARE_PRINT_VISIT(ConstExpression);
-            DECLARE_PRINT_VISIT(NameExpression);
-            DECLARE_PRINT_VISIT(TempExpression);
-            DECLARE_PRINT_VISIT(BinopExpression);
-            DECLARE_PRINT_VISIT(MemExpression);
-            DECLARE_PRINT_VISIT(CallExpression);
-            DECLARE_PRINT_VISIT(EseqExpression);
+            DECLARE_PRINT_VISIT(CConstExpression);
+            DECLARE_PRINT_VISIT(CNameExpression);
+            DECLARE_PRINT_VISIT(CTempExpression);
+            DECLARE_PRINT_VISIT(CBinopExpression);
+            DECLARE_PRINT_VISIT(CMemExpression);
+            DECLARE_PRINT_VISIT(CCallExpression);
+            DECLARE_PRINT_VISIT(CEseqExpression);
 
-            DECLARE_PRINT_VISIT(StatementList);
-            DECLARE_PRINT_VISIT(MoveStatement);
-            DECLARE_PRINT_VISIT(ExpStatement);
-            DECLARE_PRINT_VISIT(JumpStatement);
-            DECLARE_PRINT_VISIT(CondJumpStatement);
-            DECLARE_PRINT_VISIT(SeqStatement);
-            DECLARE_PRINT_VISIT(LabelStatement);
+            DECLARE_PRINT_VISIT(CStatementList);
+            DECLARE_PRINT_VISIT(CMoveStatement);
+            DECLARE_PRINT_VISIT(CExpStatement);
+            DECLARE_PRINT_VISIT(CJumpStatement);
+            DECLARE_PRINT_VISIT(CCondJumpStatement);
+            DECLARE_PRINT_VISIT(CSeqStatement);
+            DECLARE_PRINT_VISIT(CLabelStatement);
 #undef DECLARE_PRINT_VISIT
         private:
             mutable std::ofstream fout;

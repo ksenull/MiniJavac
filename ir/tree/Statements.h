@@ -14,11 +14,11 @@ namespace tree {
         virtual void accept(const IVisitor<void>* visitor) const = 0;
     };
 
-    struct StatementList : INodeList {
+    struct CStatementList : INodeList {
     };
 
-    struct MoveStatement : IStatement {
-        MoveStatement(IExpression* target, IExpression* source) : target(target),
+    struct CMoveStatement : IStatement {
+        CMoveStatement(IExpression* target, IExpression* source) : target(target),
                                                                   source(source) {}
         DEFINE_PRINT_ACCEPT
 
@@ -26,22 +26,22 @@ namespace tree {
         IExpression* source;
     };
 
-    struct ExpStatement : IStatement { // evaluates e and discards the result
-        explicit ExpStatement(IExpression* exp) : exp(exp) {}
+    struct CExpStatement : IStatement { // evaluates e and discards the result
+        explicit CExpStatement(IExpression* exp) : exp(exp) {}
         DEFINE_PRINT_ACCEPT
 
         IExpression* exp;
     };
 
-    struct JumpStatement : IStatement {
-        explicit JumpStatement(const Label& target) : target(target) {}
+    struct CJumpStatement : IStatement {
+        explicit CJumpStatement(const Label& target) : target(target) {}
         DEFINE_PRINT_ACCEPT
 
         Label target;
     };
 
-    struct CondJumpStatement : IStatement {
-        CondJumpStatement(IExpression* left, RelationalOperation op, IExpression* right,
+    struct CCondJumpStatement : IStatement {
+        CCondJumpStatement(IExpression* left, RelationalOperation op, IExpression* right,
         const Label& ifTarget, const Label& elseTarget) : left(left), op(op), right(right),
                                                           ifTarget(ifTarget), elseTarget(elseTarget) {}
         DEFINE_PRINT_ACCEPT
@@ -53,16 +53,16 @@ namespace tree {
         Label elseTarget;
     };
 
-    struct SeqStatement : IStatement {
-        SeqStatement(IStatement* left, IStatement* right) : left(left), right(right) {}
+    struct CSeqStatement : IStatement {
+        CSeqStatement(IStatement* left, IStatement* right) : left(left), right(right) {}
         DEFINE_PRINT_ACCEPT
 
         IStatement* left;
         IStatement* right;
     };
 
-    struct LabelStatement : IStatement { // like label in asm
-        LabelStatement(const Label& label) : label(label) {}
+    struct CLabelStatement : IStatement { // like label in asm
+        CLabelStatement(const Label& label) : label(label) {}
         DEFINE_PRINT_ACCEPT
 
         Label label;

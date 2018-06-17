@@ -52,7 +52,7 @@ namespace ir {
                 ISubtreeWrapper* curSeq = nodes[nodes.size() - 1]->accept(this);
                 for (unsigned long i = nodes.size() - 2; i >= 0; i--) {
                     auto* left = nodes[i]->accept(this);
-                    curSeq = new CStmConverter(new IRT::SeqStatement(left->ToStm(), curSeq->ToStm()));
+                    curSeq = new CStmConverter(new IRT::CSeqStatement(left->ToStm(), curSeq->ToStm()));
                 }
                 return curSeq;
             }
@@ -108,7 +108,7 @@ namespace ir {
                 if (node->returnExp != nullptr) {
                     auto* returnExpSubtree = node->returnExp->accept(this);
 
-                    return new CStmConverter(new IRT::SeqStatement(bodySubtree->ToStm(), new IRT::MoveStatement(
+                    return new CStmConverter(new IRT::CSeqStatement(bodySubtree->ToStm(), new IRT::CMoveStatement(
                             frame->ReturnValue()->getExp(),
                             returnExpSubtree->ToExp())));
                 }
@@ -135,17 +135,17 @@ namespace ir {
                     auto* left = nodes[i]->accept(this);
                     if (auto* ifStm = dynamic_cast<AST::IfStatement*>(nodes[i])) {
                         Label* done = ST::getIntern("done");
-                        curSeq = new CStmConverter(new IRT::SeqStatement(left->ToStm(), curSeq->ToStm()));
+                        curSeq = new CStmConverter(new IRT::CSeqStatement(left->ToStm(), curSeq->ToStm()));
                     }
                     else if (auto* whileStm = dynamic_cast<AST::WhileStatement*>(nodes[i])) {
                         Label* done = ST::getIntern("done");
-                        curSeq = new CStmConverter(new IRT::SeqStatement(left->ToStm(), curSeq->ToStm()));
+                        curSeq = new CStmConverter(new IRT::CSeqStatement(left->ToStm(), curSeq->ToStm()));
                     }
                     else if (auto* varDeclStm = dynamic_cast<AST::VariableDeclarationStatement*>(nodes[i])) {
                         continue;  // all local variables were alredy added to frame in MethodDeclaration;
                     }
                     else {
-                        curSeq = new CStmConverter(new IRT::SeqStatement(left->ToStm(), curSeq->ToStm()));
+                        curSeq = new CStmConverter(new IRT::CSeqStatement(left->ToStm(), curSeq->ToStm()));
                     }
                 }
                 return curSeq;
@@ -162,18 +162,18 @@ namespace ir {
             Label* ifFalse = ST::getIntern("ifFalse");
             Label* done = ST::getIntern("done");
 
-            auto* ifTrueStm = new IRT::SeqStatement(node->ifStatement->accept(this)->ToStm(), new IRT::JumpStatement(*done));
+            auto* ifTrueStm = new IRT::CSeqStatement(node->ifStatement->accept(this)->ToStm(), new IRT::CJumpStatement(*done));
             auto* ifFalseStm = node->elseStatement->accept(this)->ToStm();
-            auto* right = new IRT::SeqStatement(
-                    new IRT::SeqStatement(
-                            new IRT::LabelStatement(*ifTrue),
+            auto* right = new IRT::CSeqStatement(
+                    new IRT::CSeqStatement(
+                            new IRT::CLabelStatement(*ifTrue),
                             ifTrueStm
-                    ), new IRT::SeqStatement(
-                            new IRT::LabelStatement(*ifFalse),
+                    ), new IRT::CSeqStatement(
+                            new IRT::CLabelStatement(*ifFalse),
                             ifFalseStm
                     ));
             auto* left = cond->ToConditional(*ifTrue, *ifFalse);
-            return new CStmConverter(new IRT::SeqStatement(left, right));
+            return new CStmConverter(new IRT::CSeqStatement(left, right));
 
         }
 
@@ -181,15 +181,15 @@ namespace ir {
             auto* loopLabel = ST::getIntern("loop");
             auto* bodyLabel = ST::getIntern("body");
             auto* doneLabel = ST::getIntern("done");
-            auto* loopPartStm = new IRT::SeqStatement(
-                new IRT::LabelStatement(*loopLabel),
+            auto* loopPartStm = new IRT::CSeqStatement(
+                new IRT::CLabelStatement(*loopLabel),
                 node->condition->accept(this)->ToConditional(*doneLabel, *bodyLabel)
             );
-            auto* bodyPartStm = new IRT::SeqStatement(
-                    new IRT::LabelStatement(*bodyLabel),
+            auto* bodyPartStm = new IRT::CSeqStatement(
+                    new IRT::CLabelStatement(*bodyLabel),
                     node->statement->accept(this)->ToStm()
             );
-            return new CStmConverter(new IRT::SeqStatement(loopPartStm, bodyPartStm));
+            return new CStmConverter(new IRT::CSeqStatement(loopPartStm, bodyPartStm));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::PrintStatement* node) const {
@@ -197,13 +197,13 @@ namespace ir {
             auto* args = new IRT::CExpressionList();
             auto* arg = node->exp->accept(this)->ToExp();
             args->nodes.emplace_back(arg);
-            return new CExpConverter(new IRT::CallExpression(label, args));
+            return new CExpConverter(new IRT::CCallExpression(label, args));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::AssignStatement* node) const {
             auto* source = node->exp->accept(this);
             auto* target = AST::IdExpression(node->id, {}).accept(this);
-            return new CStmConverter(new IRT::MoveStatement(target->ToExp(), source->ToExp()));
+            return new CStmConverter(new IRT::CMoveStatement(target->ToExp(), source->ToExp()));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::ArrayAssignStatement* node) const {
@@ -236,16 +236,16 @@ namespace ir {
                 default:
                     return new CCondStmConverter(left, (node->type == AST::BOT_Equal) ? IRT::RO_Eq : IRT::RO_Lt, right);
             }
-            return new CExpConverter(new IRT::BinopExpression(left, op, right));
+            return new CExpConverter(new IRT::CBinopExpression(left, op, right));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::ArrayItemExpression* node) const {
             auto* arrSubtree = node->arr->accept(this);  // content of array id is an address to its memory, so we still need to obtain its value
             auto* indexSubtree = node->ind->accept(this);
-            auto* offset = new IRT::BinopExpression(indexSubtree->ToExp(), IRT::BO_Mul, new IRT::ConstExpression(frame->GetWordSize()));
-            auto* offsetOfArrayBegin = new IRT::BinopExpression(new IRT::ConstExpression(frame->GetWordSize()), IRT::BO_Plus, offset);
-            auto* addr = new IRT::BinopExpression(arrSubtree->ToExp(), IRT::BO_Plus, offsetOfArrayBegin);
-            return new CExpConverter(new IRT::MemExpression(addr));
+            auto* offset = new IRT::CBinopExpression(indexSubtree->ToExp(), IRT::BO_Mul, new IRT::CConstExpression(frame->GetWordSize()));
+            auto* offsetOfArrayBegin = new IRT::CBinopExpression(new IRT::CConstExpression(frame->GetWordSize()), IRT::BO_Plus, offset);
+            auto* addr = new IRT::CBinopExpression(arrSubtree->ToExp(), IRT::BO_Plus, offsetOfArrayBegin);
+            return new CExpConverter(new IRT::CMemExpression(addr));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::ArrayLengthExpression* node) const {
@@ -263,15 +263,15 @@ namespace ir {
 
             auto* methodLabel = ST::getIntern(node->method->name);
 
-            return new CExpConverter(new IRT::CallExpression(methodLabel, args));
+            return new CExpConverter(new IRT::CCallExpression(methodLabel, args));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::ConstExpression* node) const {
-            return new CExpConverter(new IRT::ConstExpression(node->value));
+            return new CExpConverter(new IRT::CConstExpression(node->value));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::BoolExpression* node) const {
-            return new CExpConverter(new IRT::ConstExpression(node->value ? 1 : 0));
+            return new CExpConverter(new IRT::CConstExpression(node->value ? 1 : 0));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::IdExpression* node) const {
@@ -279,50 +279,50 @@ namespace ir {
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::NewArrayExpression* node) const {
-            auto* addrHolder = new IRT::TempExpression(new TempReg());
+            auto* addrHolder = new IRT::CTempExpression(new TempReg());
             auto* allocArgs = new IRT::CExpressionList();
             auto* sizeExp = node->size->accept(this)->ToExp();
-            auto* sizeForArrayStruct = new IRT::BinopExpression(sizeExp, IRT::BO_Plus, new IRT::ConstExpression(frame->GetWordSize()));
+            auto* sizeForArrayStruct = new IRT::CBinopExpression(sizeExp, IRT::BO_Plus, new IRT::CConstExpression(frame->GetWordSize()));
             allocArgs->nodes.emplace_back(sizeExp);
-            auto* allocStm = new IRT::MoveStatement(addrHolder, frame->ExternalCall("newArray", allocArgs));
+            auto* allocStm = new IRT::CMoveStatement(addrHolder, frame->ExternalCall("newArray", allocArgs));
 
-            auto* initSizeStm = new IRT::MoveStatement(addrHolder, sizeExp);
+            auto* initSizeStm = new IRT::CMoveStatement(addrHolder, sizeExp);
             // if it's needed to initialize it can be done there
 
-            return new CExpConverter(new IRT::EseqExpression(new IRT::SeqStatement(allocStm, initSizeStm), addrHolder));
+            return new CExpConverter(new IRT::CEseqExpression(new IRT::CSeqStatement(allocStm, initSizeStm), addrHolder));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::NewObjectExpression* node) const {
-            auto* addrHolder = new IRT::TempExpression(new TempReg());
+            auto* addrHolder = new IRT::CTempExpression(new TempReg());
 
             auto* allocArgs = new IRT::CExpressionList();
             auto* label = ST::getIntern(node->id->name);
             auto* classInfo = table->getClassInfo(label);
             auto vars = classInfo->getVars();
             unsigned long classVarsCount = vars.size();
-            auto sizeExp = new IRT::ConstExpression(static_cast<int>(classVarsCount));
+            auto sizeExp = new IRT::CConstExpression(static_cast<int>(classVarsCount));
             allocArgs->nodes.emplace_back(sizeExp);
-            auto* allocStm = new IRT::MoveStatement(addrHolder, frame->ExternalCall("newObject", allocArgs));
+            auto* allocStm = new IRT::CMoveStatement(addrHolder, frame->ExternalCall("newObject", allocArgs));
 
-            return new CExpConverter(new IRT::EseqExpression(allocStm, addrHolder));
+            return new CExpConverter(new IRT::CEseqExpression(allocStm, addrHolder));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::NotExpression* node) const {
             auto* expSubtree = node->exp->accept(this);
-            auto* one = new IRT::ConstExpression(1);
-            return new CExpConverter(new IRT::BinopExpression(expSubtree->ToExp(), IRT::BO_Xor, one));
+            auto* one = new IRT::CConstExpression(1);
+            return new CExpConverter(new IRT::CBinopExpression(expSubtree->ToExp(), IRT::BO_Xor, one));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::Identifier* node) const {
             auto* label = ST::getIntern(node->name);
             auto* access = frame->FindLocalOrFormal(label);
             if (auto* inRegAccess = dynamic_cast<const CInRegAccess*>(access)) {
-                auto* temp = new IRT::TempExpression(inRegAccess->reg);
+                auto* temp = new IRT::CTempExpression(inRegAccess->reg);
                 return new CExpConverter(temp);
             }
             if (auto* inFrameAccess = dynamic_cast<const CInFrameAccess*>(access)) {
-                auto* addr = new IRT::BinopExpression(frame->FramePointer(), IRT::BO_Plus,  inFrameAccess->getExp());
-                auto* mem = new IRT::MemExpression(addr);
+                auto* addr = new IRT::CBinopExpression(frame->FramePointer(), IRT::BO_Plus,  inFrameAccess->getExp());
+                auto* mem = new IRT::CMemExpression(addr);
                 return new CExpConverter(mem);
             }
             throw CantBuildIrtError();

@@ -53,7 +53,7 @@ namespace ir {
         ~CInRegAccess() = default;
 
         tree::IExpression* getExp() const override {
-            return new tree::TempExpression(reg);
+            return new tree::CTempExpression(reg);
         }
 
         IReg* reg;
@@ -74,7 +74,7 @@ namespace ir {
         ~CInFrameAccess() = default;
 
         tree::IExpression* getExp() const override {
-            return new tree::ConstExpression(offset);
+            return new tree::CConstExpression(offset);
         }
     private:
         const RecordType recType;

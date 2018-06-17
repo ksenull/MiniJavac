@@ -38,7 +38,7 @@ namespace ir {
             SET_NODE_LABEL("ExpList")
         }
 
-        void PrintVisitor::visit(const ConstExpression* node) const {
+        void PrintVisitor::visit(const CConstExpression* node) const {
             GET_NICE_ADDRESS
             auto nodeId = "CONST_" + s;
             fout << nodeId << ";" << std::endl;
@@ -47,21 +47,21 @@ namespace ir {
             SET_NODE_LABEL(itoass.str())
         }
 
-        void PrintVisitor::visit(const NameExpression* node) const {
+        void PrintVisitor::visit(const CNameExpression* node) const {
             GET_NICE_ADDRESS
             auto nodeId = "NAME_" + s;
             fout << nodeId << ";" << std::endl;
             SET_NODE_LABEL("NAME " + node->label.name)
         }
 
-        void PrintVisitor::visit(const TempExpression* node) const {
+        void PrintVisitor::visit(const CTempExpression* node) const {
             GET_NICE_ADDRESS
             auto nodeId = "TEMP_" + s;
             fout << nodeId << ";" << std::endl;
             SET_NODE_LABEL("TEMP") //TODO num and values
         }
 
-        void PrintVisitor::visit(const BinopExpression* node) const {
+        void PrintVisitor::visit(const CBinopExpression* node) const {
             GET_NICE_ADDRESS
             auto nodeId = "BINOP_" + s;
             if (node->left == nullptr && node->right == nullptr) {
@@ -107,7 +107,7 @@ namespace ir {
             }
         }
 
-        void PrintVisitor::visit(const MemExpression* node) const {
+        void PrintVisitor::visit(const CMemExpression* node) const {
             GET_NICE_ADDRESS
             auto nodeId = "MEM_" + s;
             if (node->addr == nullptr) {
@@ -120,7 +120,7 @@ namespace ir {
             SET_NODE_LABEL("MEM")
         }
 
-        void PrintVisitor::visit(const CallExpression* node) const {
+        void PrintVisitor::visit(const CCallExpression* node) const {
             GET_NICE_ADDRESS
             auto nodeId = "CALL_" + s;
             if (node->args != nullptr) {
@@ -133,7 +133,7 @@ namespace ir {
             SET_NODE_LABEL("CALL: " + node->func->name + "()")
         }
 
-        void PrintVisitor::visit(const EseqExpression* node) const {
+        void PrintVisitor::visit(const CEseqExpression* node) const {
             GET_NICE_ADDRESS
             auto nodeId = "ESEQ_" + s;
             if (node->stm == nullptr && node->exp == nullptr) {
@@ -150,7 +150,7 @@ namespace ir {
             SET_NODE_LABEL("ESEQ")
         }
 
-        void PrintVisitor::visit(const StatementList* node) const {
+        void PrintVisitor::visit(const CStatementList* node) const {
             GET_NICE_ADDRESS
             auto nodeId = "StmList_" + s;
             fout << nodeId << ";" << std::endl;
@@ -161,7 +161,7 @@ namespace ir {
             SET_NODE_LABEL("StmList")
         }
 
-        void PrintVisitor::visit(const MoveStatement* node) const {
+        void PrintVisitor::visit(const CMoveStatement* node) const {
             GET_NICE_ADDRESS
             auto nodeId = "MOVE_" + s;
             if (node->source == nullptr && node->target == nullptr) {
@@ -178,7 +178,7 @@ namespace ir {
             SET_NODE_LABEL("MOVE")
         }
 
-        void PrintVisitor::visit(const ExpStatement* node) const {
+        void PrintVisitor::visit(const CExpStatement* node) const {
             GET_NICE_ADDRESS
             auto nodeId = "EXP_" + s;
             if (node->exp != nullptr) {
@@ -191,14 +191,14 @@ namespace ir {
             SET_NODE_LABEL("EXP")
         }
 
-        void PrintVisitor::visit(const JumpStatement* node) const {
+        void PrintVisitor::visit(const CJumpStatement* node) const {
             GET_NICE_ADDRESS
             auto nodeId = "JUMP_" + s;
             fout << nodeId << ";"  << std::endl;
             SET_NODE_LABEL("JUMP " + node->target.name)
         }
 
-        void PrintVisitor::visit(const CondJumpStatement* node) const {
+        void PrintVisitor::visit(const CCondJumpStatement* node) const {
             GET_NICE_ADDRESS
             auto nodeId = "CJUMP_" + s;
             if (node->left == nullptr && node->right == nullptr) {
@@ -213,10 +213,10 @@ namespace ir {
                 node->right->accept(this);
             }
             fout << nodeId << " -> ";
-            LabelStatement(node->ifTarget).accept(this);
+            CLabelStatement(node->ifTarget).accept(this);
 
             fout << nodeId << " -> ";
-            LabelStatement(node->elseTarget).accept(this);
+            CLabelStatement(node->elseTarget).accept(this);
             
             switch (node->op) {
                 case RO_Eq:
@@ -245,7 +245,7 @@ namespace ir {
             }
         }
 
-        void PrintVisitor::visit(const SeqStatement* node) const {
+        void PrintVisitor::visit(const CSeqStatement* node) const {
             GET_NICE_ADDRESS
             auto nodeId = "SEQ_" + s;
             if (node->left == nullptr && node->right == nullptr) {
@@ -262,7 +262,7 @@ namespace ir {
             SET_NODE_LABEL("SEQ")
         }
 
-        void PrintVisitor::visit(const LabelStatement* node) const {
+        void PrintVisitor::visit(const CLabelStatement* node) const {
             GET_NICE_ADDRESS
             auto nodeId = "LABEL_" + s;
             fout << nodeId << ";" << std::endl;

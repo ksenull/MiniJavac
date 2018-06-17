@@ -82,6 +82,6 @@ namespace ir {
 
     tree::IExpression* Frame::ExternalCall(const std::string& functionName, tree::CExpressionList* args) const {
         auto* label = symboltable::getIntern("_" + functionName);
-        return new tree::CallExpression(label, args);
+        return new tree::CCallExpression(label, args);
     }
 }

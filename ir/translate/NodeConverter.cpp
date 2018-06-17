@@ -26,17 +26,17 @@ namespace ir {
         }
 
         IStatement* CExpConverter::ToStm() const {
-            return new ExpStatement(exp);
+            return new CExpStatement(exp);
         }
 
         IStatement* CExpConverter::ToConditional(const Label& ifLabel, const Label& elseLabel) const {
-            if (auto* constExp = dynamic_cast<ConstExpression*>(exp)) {
-                return new CondJumpStatement(constExp, RO_Le, new ConstExpression(0), ifLabel, elseLabel);
+            if (auto* constExp = dynamic_cast<CConstExpression*>(exp)) {
+                return new CCondJumpStatement(constExp, RO_Le, new CConstExpression(0), ifLabel, elseLabel);
             }
-            if (auto* nameExp = dynamic_cast<NameExpression*>(exp)) {
-                return new CondJumpStatement(nameExp, RO_Ne, new NameExpression(""), ifLabel, elseLabel);
+            if (auto* nameExp = dynamic_cast<CNameExpression*>(exp)) {
+                return new CCondJumpStatement(nameExp, RO_Ne, new CNameExpression(""), ifLabel, elseLabel);
             }
-            if (auto* tempExp = dynamic_cast<TempExpression*>(exp)) {
+            if (auto* tempExp = dynamic_cast<CTempExpression*>(exp)) {
                 throw ConverterError(exp);
             }
 //            if (auto* binopExp) {
@@ -57,7 +57,7 @@ namespace ir {
         
 
         tree::IExpression* CStmConverter::ToExp() const {
-            return new EseqExpression(stm, new ConstExpression(0));
+            return new CEseqExpression(stm, new CConstExpression(0));
         }
 
         tree::IStatement* CStmConverter::ToStm() const {
@@ -65,7 +65,7 @@ namespace ir {
         }
 
         tree::IStatement* CStmConverter::ToConditional(const Label& ifLabel, const Label& elseLabel) const {
-            if (auto* cond = dynamic_cast<CondJumpStatement*>(stm)) {
+            if (auto* cond = dynamic_cast<CCondJumpStatement*>(stm)) {
                 return cond;
             }
             return nullptr;
@@ -82,14 +82,14 @@ namespace ir {
         }
 
         tree::IStatement* CCondStmConverter::ToConditional(const Label& ifLabel, const Label& elseLabel) const {
-            return new tree::CondJumpStatement(left, op, right, ifLabel, elseLabel);
+            return new tree::CCondJumpStatement(left, op, right, ifLabel, elseLabel);
         }
 
-        tree::CondJumpStatement* CFromAndConverter::ToConditional(const Label& ifLabel, const Label& elseLabel) const {
+        tree::CCondJumpStatement* CFromAndConverter::ToConditional(const Label& ifLabel, const Label& elseLabel) const {
             return nullptr;
         }
 
-        tree::CondJumpStatement* CFromOrConverter::ToConditional(const Label& ifLabel, const Label& elseLabel) const {
+        tree::CCondJumpStatement* CFromOrConverter::ToConditional(const Label& ifLabel, const Label& elseLabel) const {
             return nullptr;
         }
     }

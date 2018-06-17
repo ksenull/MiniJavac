@@ -45,30 +45,30 @@ namespace tree {
         DEFINE_PRINT_ACCEPT
     };
 
-    struct ConstExpression : IExpression {
-        explicit ConstExpression(int i) : i(i) {}
+    struct CConstExpression : IExpression {
+        explicit CConstExpression(int i) : i(i) {}
         DEFINE_PRINT_ACCEPT
 
         int i;
     };
 
-    struct NameExpression : IExpression {
-        explicit NameExpression(const Label& label) : label(label) {}
-        explicit NameExpression(const std::string& str) : label(str) {}
+    struct CNameExpression : IExpression {
+        explicit CNameExpression(const Label& label) : label(label) {}
+        explicit CNameExpression(const std::string& str) : label(str) {}
         DEFINE_PRINT_ACCEPT
 
         Label label;
     };
 
-    struct TempExpression : IExpression {
-        explicit TempExpression(IReg* reg) : reg(reg) {}
+    struct CTempExpression : IExpression {
+        explicit CTempExpression(IReg* reg) : reg(reg) {}
         DEFINE_PRINT_ACCEPT
 
         IReg* reg;
     };
 
-    struct BinopExpression : IExpression {
-        BinopExpression(IExpression* left, BinaryOperation op, IExpression* right) :
+    struct CBinopExpression : IExpression {
+        CBinopExpression(IExpression* left, BinaryOperation op, IExpression* right) :
         left(left), op(op), right(right) {}
         DEFINE_PRINT_ACCEPT
 
@@ -77,18 +77,18 @@ namespace tree {
         IExpression* right;
     };
 
-    struct MemExpression : IExpression { // content of wordSize bytes from addr
-        explicit MemExpression(IExpression* addr) : addr(addr) {}
+    struct CMemExpression : IExpression { // content of wordSize bytes from addr
+        explicit CMemExpression(IExpression* addr) : addr(addr) {}
         DEFINE_PRINT_ACCEPT
 
         IExpression* addr;
     };
 
-    struct CallExpression : IExpression {
-        CallExpression(Label* _func) : func(_func) {
+    struct CCallExpression : IExpression {
+        CCallExpression(Label* _func) : func(_func) {
             args = new CExpressionList();
         }
-        CallExpression(Label* _func, CExpressionList* _args) : func(_func), args(_args) {}
+        CCallExpression(Label* _func, CExpressionList* _args) : func(_func), args(_args) {}
         
         DEFINE_PRINT_ACCEPT
 
@@ -97,8 +97,8 @@ namespace tree {
 //        IStatement* args;
     };
 
-    struct EseqExpression : IExpression { //stm evaluated for side effects, then e evalutes for a result
-        EseqExpression(IStatement* stm, IExpression* exp) : stm(stm), exp(exp) {}
+    struct CEseqExpression : IExpression { //stm evaluated for side effects, then e evalutes for a result
+        CEseqExpression(IStatement* stm, IExpression* exp) : stm(stm), exp(exp) {}
         DEFINE_PRINT_ACCEPT
 
         IStatement* stm;
