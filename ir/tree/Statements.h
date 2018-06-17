@@ -15,6 +15,10 @@ namespace tree {
     };
 
     struct CStatementList : INodeList {
+        CStatementList() = default;
+        ~CStatementList() = default;
+        explicit CStatementList(const std::vector<INode*> _nodes) : INodeList(_nodes) {};
+        DEFINE_PRINT_ACCEPT
     };
 
     struct CMoveStatement : IStatement {

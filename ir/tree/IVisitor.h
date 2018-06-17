@@ -4,6 +4,10 @@ namespace ir {
 
     namespace tree {
 
+        struct INode;
+        struct IExpression;
+        struct IStatement;
+
         struct CExpressionList;
         struct CConstExpression;
         struct CNameExpression;

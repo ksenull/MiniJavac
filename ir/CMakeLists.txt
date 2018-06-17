@@ -21,7 +21,11 @@ set(TRANSLATE
         Translate.cpp
         translate/CodeFragment.h)
 set(AST ../ast/nodes/INode.h ../ast/nodes/Nodes.h ../ast/IVisitor.h)
-set(SOURCE_FILES main.cpp ${PARSE} ${SYMBOLTABLE} ${ACCESS} ${FRAME} ${TREE} ${TRANSLATE} ${AST} Temp.cpp)
+set(CANON canonize/Reorder.cpp canonize/Reorder.h
+        canonize/Linearize.cpp canonize/Linearize.h
+        #canonize/FunctionalVisitor.h canonize/FunctionalVisitor.cpp canonize/BlocksPermutator.h
+        canonize/TraceSchedule.cpp)
+set(SOURCE_FILES main.cpp ${PARSE} ${SYMBOLTABLE} ${ACCESS} ${FRAME} ${TREE} ${TRANSLATE} ${AST} ${CANON} Temp.cpp)
 
 add_executable(IR ${SOURCE_FILES})
 

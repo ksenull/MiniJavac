@@ -8,6 +8,8 @@
 
 #include "Translate.h"
 #include "tree/PrintVisitor.h"
+#include "canonize/Linearize.h"
+#include "canonize/TraceSchedule.h"
 
 static const std::string PathPrefix = "C:/Users/Kseniia/CLionProjects/minijavac_17/";
 
@@ -34,9 +36,18 @@ int main() {
                 translator.AddCode(classDeclaration, methodDeclaration);
             }
         }
-        ir::tree::PrintVisitor visitor(PathPrefix + "ir/graph.dot");
-        translator.GetRoot()->GetNext()->GetBody()->accept(&visitor);
-        visitor.finish();
+//        ir::tree::PrintVisitor visitor(PathPrefix + "ir/graph.dot");
+//        translator.GetRoot()->GetNext()->GetBody()->accept(&visitor);
+//        visitor.finish();
+        ir::tree::CNaiveJumpBlockScheduler scheduler;
+        ir::translate::CCodeFragment* cur = translator.GetRoot();
+        while (cur) {
+            auto stms = ir::tree::Linearize(cur->GetBody());
+            stms = scheduler.schedule(stms);
+            std::cout << stms.nodes.size() << std::endl;
+            cur = cur->GetNext();
+        }
+
     }
 
     return 0;

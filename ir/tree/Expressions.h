@@ -30,6 +30,7 @@ namespace tree {
 
     struct INodeList : public INode {
         INodeList() = default;
+        explicit INodeList(const std::vector<INode*>& _nodes) : nodes(_nodes) {}
 
         std::vector<INode*> nodes;
     };
@@ -42,6 +43,8 @@ namespace tree {
     struct CExpressionList : INodeList {
         CExpressionList() = default;
         ~CExpressionList() = default;
+        /* implicit */ CExpressionList(const std::vector<INode*>& _nodes) : INodeList(_nodes) {};
+
         DEFINE_PRINT_ACCEPT
     };
 
