@@ -5,10 +5,10 @@
 
 namespace ir {
     namespace tree {
-        CExpressionList ExtractExpressions(INode* node);
+        CExpressionList* ExtractExpressions(INode* node);
 
-        IStatement* ProcessStm(IStatement* stmt, CExpressionList& expsExtracted);
+        IStatement* ProcessStm(IStatement* stmt, CExpressionList* expsExtracted);
 
-        IExpression* ProcessExp(IExpression* expr, CExpressionList& expsExtracted);
+        IExpression* ProcessExp(IExpression* expr, CExpressionList* expsExtracted);
     }
 }

@@ -20,6 +20,7 @@ namespace ir {
             }
             CCodeFragment* GetNext() const { return next; }
             tree::IStatement* const GetBody() const { return body; }
+            IFrame* GetFrame() const { return frame; };
         private:
             IFrame* frame;
             tree::IStatement* body;

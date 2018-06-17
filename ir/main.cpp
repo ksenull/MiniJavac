@@ -36,18 +36,21 @@ int main() {
                 translator.AddCode(classDeclaration, methodDeclaration);
             }
         }
-//        ir::tree::PrintVisitor visitor(PathPrefix + "ir/graph.dot");
+        ir::tree::PrintVisitor visitor(PathPrefix + "ir/graph.dot");
 //        translator.GetRoot()->GetNext()->GetBody()->accept(&visitor);
-//        visitor.finish();
+
         ir::tree::CNaiveJumpBlockScheduler scheduler;
         ir::translate::CCodeFragment* cur = translator.GetRoot();
         while (cur) {
             auto stms = ir::tree::Linearize(cur->GetBody());
             stms = scheduler.schedule(stms);
-            std::cout << stms.nodes.size() << std::endl;
+//            for (auto* stm : stms.nodes) {
+//                if (stm != nullptr)
+//                    stm->accept(&visitor);
+//            }
             cur = cur->GetNext();
         }
-
+        visitor.finish();
     }
 
     return 0;

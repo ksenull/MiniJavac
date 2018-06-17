@@ -38,7 +38,7 @@ namespace tree {
     };
 
     struct CJumpStatement : IStatement {
-        explicit CJumpStatement(const Label& target) : target(target) {}
+        explicit CJumpStatement(const Label& _target) : target(_target) {}
         DEFINE_PRINT_ACCEPT
 
         Label target;
