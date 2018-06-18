@@ -29,7 +29,7 @@ namespace codegen {
         };
 
         struct CInRegisterOperand : public ILoadedOperand {
-            explicit CInRegisterOperand() : temp(nullptr) {}
+            explicit CInRegisterOperand() : temp(new CTempExpression(new ir::TempReg())) {}
             explicit CInRegisterOperand(CTempExpression* _temp) : temp(_temp) {}
 
             static std::string Prefix(bool asSource);

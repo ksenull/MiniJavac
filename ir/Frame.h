@@ -35,8 +35,8 @@ namespace ir {
     struct Frame : public IFrame {
         Frame(symboltable::Table* table, symboltable::ClassInfo* classInfo,
               symboltable::MethodInfo* methodInfo) : table(table), classInfo(classInfo), methodInfo(methodInfo) {
-            FP = new SpecialReg(0);
-            SP = new SpecialReg(0);
+            FP = new SpecialReg(SpecialReg::SRT_FP, 0);
+            SP = new SpecialReg(SpecialReg::SRT_SP, 0);
         }
 
         virtual void AddFormal(Label* varName, const symboltable::VariableInfo& var);

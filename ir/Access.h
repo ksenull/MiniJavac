@@ -38,9 +38,7 @@ namespace ir {
 
     class CInRegAccess : public IAccess {
     public:
-        CInRegAccess(RecordType type, int size, int initialValue) : recType(type), size(size) {
-            reg = new SpecialReg(initialValue);
-        }
+        CInRegAccess(RecordType type, int size, SpecialReg* _reg) : recType(type), size(size), reg(_reg) { }
         CInRegAccess(RecordType type, int size) : recType(type), size(size) {
             reg = new TempReg();
         }

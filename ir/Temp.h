@@ -21,8 +21,15 @@ namespace ir {
 
     class SpecialReg : public IReg {
     public:
-        explicit SpecialReg(int addr) : addr(addr) {}
+        enum Type {
+            SRT_FP,
+            SRT_SP,
+            SRT_RV
+        };
+        explicit SpecialReg(Type _type, int _addr) : type(_type), addr(_addr) {}
+//        explicit SpecialReg(int addr) : addr(addr) {}
         int addr;
+        Type type;
     };
 
 

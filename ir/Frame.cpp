@@ -67,12 +67,12 @@ namespace ir {
     }
 
     tree::IExpression* Frame::FramePointer() const {
-        CInRegAccess access(RT_FramePointer, typeSpec->getWordSize(), FP->addr);
+        CInRegAccess access(RT_FramePointer, typeSpec->getWordSize(), FP);
         return access.getExp();
     }
 
     tree::IExpression* Frame::StackPointer() const {
-        CInRegAccess access(RT_StackPointer, typeSpec->getWordSize(), SP->addr);
+        CInRegAccess access(RT_StackPointer, typeSpec->getWordSize(), SP);
         return access.getExp();
     }
 
