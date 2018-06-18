@@ -21,9 +21,9 @@ namespace codegen {
 
         void CInRegisterOperand::Use(CInstruction& instruction, OperandUsage usage) const {
             bool asSource = !(usage & WriteUsage);
-            auto& list = (asSource) ? instruction.src : instruction.dst;
-            auto id = list.size();
-            list.emplace_back(temp);
+//            auto& list = (asSource) ? instruction.src : instruction.dst;
+//            auto id = list.size();
+//            list.emplace_back(temp);
             if (usage == ReadWriteUsage) {
                 instruction.src.emplace_back(temp);
             }
@@ -33,7 +33,7 @@ namespace codegen {
             else if (auto* specialReg = dynamic_cast<ir::SpecialReg*>(temp->reg)) {
                 instruction.assem += specialReg->str();
             }
-            else instruction.assem += std::to_string(id);
+//            else instruction.assem += std::to_string(id);
         }
 
         ILoadedOperand* CInRegisterOperand::ToLoadedOperand(CInstructionList&) const {
