@@ -27,6 +27,9 @@ namespace ir {
             SRT_RV
         };
         explicit SpecialReg(Type _type, int _addr) : type(_type), addr(_addr) {}
+
+        std::string str();
+
 //        explicit SpecialReg(int addr) : addr(addr) {}
         int addr;
         Type type;

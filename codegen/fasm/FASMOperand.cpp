@@ -27,7 +27,13 @@ namespace codegen {
             if (usage == ReadWriteUsage) {
                 instruction.src.emplace_back(temp);
             }
-            instruction.assem += std::to_string(temp->reg.);
+            if (auto* tempReg = dynamic_cast<ir::TempReg*>(temp->reg)) {
+                instruction.assem += "t" + std::to_string(tempReg->num);
+            }
+            else if (auto* specialReg = dynamic_cast<ir::SpecialReg*>(temp->reg)) {
+                instruction.assem += specialReg->str();
+            }
+            else instruction.assem += std::to_string(id);
         }
 
         ILoadedOperand* CInRegisterOperand::ToLoadedOperand(CInstructionList&) const {
