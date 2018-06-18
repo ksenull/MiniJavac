@@ -47,6 +47,7 @@ int main() {
             auto stms = ir::tree::Linearize(cur->GetBody());
             stms = scheduler.schedule(stms);
 //            std::cout << stms.nodes.size() << std::endl;
+            std::cout << "------" << cur->GetName() << "---------" <<std::endl;
 
             auto instructions = codegen.Gen(cur->GetFrame(), stms);
             for (const auto& instr : instructions) {

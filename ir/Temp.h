@@ -27,4 +27,14 @@ namespace ir {
 
 
     using Label = symboltable::Symbol;
+
+    class SpecialLabel : public Label {
+    public:
+        SpecialLabel(std::string _name) : Label(std::move(_name) + "__" + std::to_string(counter)) {
+            counter++;
+        }
+
+    private:
+        static int counter;
+    };
 }

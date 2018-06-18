@@ -34,13 +34,8 @@ namespace codegen {
                 return *this;
             }
 
-            CInstruction Build() const {
-                // TODO: checks?
-                return instr;
-            }
-
             operator CInstruction() const {
-                return Build();
+                return instr;
             }
 
         private:

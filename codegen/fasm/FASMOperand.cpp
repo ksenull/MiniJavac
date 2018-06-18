@@ -27,7 +27,7 @@ namespace codegen {
             if (usage == ReadWriteUsage) {
                 instruction.src.emplace_back(temp);
             }
-            instruction.assem += Prefix(asSource) + std::to_string(id);
+            instruction.assem += std::to_string(id);
         }
 
         ILoadedOperand* CInRegisterOperand::ToLoadedOperand(CInstructionList&) const {

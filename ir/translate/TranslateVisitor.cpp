@@ -158,9 +158,9 @@ namespace ir {
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::IfStatement* node) const {
             auto* cond = node->condition->accept(this);
-            Label* ifTrue = ST::getIntern("ifTrue");
-            Label* ifFalse = ST::getIntern("ifFalse");
-            Label* done = ST::getIntern("done");
+            Label* ifTrue = new SpecialLabel("THEN");
+            Label* ifFalse = new SpecialLabel("ELSE");
+            Label* done = new SpecialLabel("DONE");
 
             auto* ifTrueStm = new IRT::CSeqStatement(node->ifStatement->accept(this)->ToStm(), new IRT::CJumpStatement(*done));
             auto* ifFalseStm = node->elseStatement->accept(this)->ToStm();
@@ -178,9 +178,9 @@ namespace ir {
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::WhileStatement* node) const {
-            auto* loopLabel = ST::getIntern("loop");
-            auto* bodyLabel = ST::getIntern("body");
-            auto* doneLabel = ST::getIntern("done");
+            auto* loopLabel = new SpecialLabel("LOOP");
+            auto* bodyLabel = new SpecialLabel("BODY");
+            auto* doneLabel = new SpecialLabel("DONE");
             auto* loopPartStm = new IRT::CSeqStatement(
                 new IRT::CLabelStatement(*loopLabel),
                 node->condition->accept(this)->ToConditional(*doneLabel, *bodyLabel)
@@ -193,11 +193,10 @@ namespace ir {
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::PrintStatement* node) const {
-            auto* label = ST::getIntern("Print");
             auto* args = new IRT::CExpressionList();
             auto* arg = node->exp->accept(this)->ToExp();
             args->nodes.emplace_back(arg);
-            return new CExpConverter(new IRT::CCallExpression(label, args));
+            return new CExpConverter(frame->ExternalCall("printf", args));
         }
 
         ISubtreeWrapper* IRTranslateVisitor::visit(const AN::AssignStatement* node) const {

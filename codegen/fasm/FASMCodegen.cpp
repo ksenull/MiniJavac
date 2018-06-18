@@ -99,7 +99,7 @@ namespace codegen {
                     }
                 }
                 result.emplace_back(MakeInstruction("call\t" + call->func->name));
-                result.emplace_back(MakeInstruction("add\tesp," + std::to_string(frame->GetWordSize() * call->args->nodes.size())));
+                result.emplace_back(MakeInstruction("add\t\tesp," + std::to_string(frame->GetWordSize() * call->args->nodes.size())));
                 auto ret = new CInRegisterOperand();
                 result.push_back(MakeInstruction("pop").Dst(*ret));
                 return ret;
@@ -120,7 +120,7 @@ namespace codegen {
                 munchExp(exp->exp);
             }
             if (auto* jump = dynamic_cast<irt::CJumpStatement*>(stm)) {
-                result.emplace_back(MakeInstruction("jmp\t" + jump->target.name).AddJump(jump->target));
+                result.emplace_back(MakeInstruction("jmp\t\t" + jump->target.name).AddJump(jump->target));
             }
             if (auto* cond = dynamic_cast<irt::CCondJumpStatement*>(stm)) {
                 auto left = munchExp(cond->left);
@@ -139,13 +139,8 @@ namespace codegen {
 
         CInstructionList CCodegen::Gen(ir::IFrame* _frame, irt::IStatement* stmt) {
             frame = _frame;
+            result.emplace_back(MakeInstruction("---"));  // debuginfo
             munchStm(stmt);
-
-//            std::ostringstream oss;
-//            Irt::COstreamWriterVisitor commentWriter{oss};
-//            stmt.Accept(commentWriter);
-//            impl.Result.emplace_back("; " + oss.str());
-//            impl(stmt);
             return result;
         }
 

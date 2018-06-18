@@ -5,4 +5,6 @@
 
 namespace ir {
     int TempReg::counter = 0;
+
+    int SpecialLabel::counter = 0;
 }

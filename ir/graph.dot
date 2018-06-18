@@ -1,26 +1,2 @@
 digraph G {
-MOVE_0x60004d050 -> TEMP_0x60004ba80;
-TEMP_0x60004ba80[label="TEMP"];
-MOVE_0x60004d050 -> CALL_0x60004cfe0 -> ExpList_0x60004d000;
-ExpList_0x60004d000 -> CONST_0x60004bad0;
-CONST_0x60004bad0[label="0"];
-ExpList_0x60004d000[label="ExpList"];
-CALL_0x60004cfe0[label="CALL: _newObject()"];
-MOVE_0x60004d050[label="MOVE"];
-MOVE_0x60004d130 -> TEMP_0x60004cf00;
-TEMP_0x60004cf00[label="TEMP"];
-MOVE_0x60004d130 -> CALL_0x60004d1d0 -> ExpList_0x60004d1f0;
-ExpList_0x60004d1f0 -> TEMP_0x60004ba80;
-TEMP_0x60004ba80[label="TEMP"];
-ExpList_0x60004d1f0 -> CONST_0x60004bc60;
-CONST_0x60004bc60[label="10"];
-ExpList_0x60004d1f0[label="ExpList"];
-CALL_0x60004d1d0[label="CALL: ComputeFac()"];
-MOVE_0x60004d130[label="MOVE"];
-EXP_0x60004d390 -> CALL_0x60004d320 -> ExpList_0x60004d340;
-ExpList_0x60004d340 -> TEMP_0x60004cf00;
-TEMP_0x60004cf00[label="TEMP"];
-ExpList_0x60004d340[label="ExpList"];
-CALL_0x60004d320[label="CALL: Print()"];
-EXP_0x60004d390[label="EXP"];
 }

@@ -26,7 +26,7 @@ namespace ir {
             IRTranslateVisitor visitor(table, classSymbol, frame);
             auto* body = mainClass->accept(&visitor)->ToStm();
 
-            auto* code = new CCodeFragment(frame, body);
+            auto* code = new CCodeFragment(frame, body, classSymbol->name, "main");
             if (root == nullptr) {
                 root = code;
                 current = root;
@@ -50,7 +50,7 @@ namespace ir {
             IRTranslateVisitor visitor(table, classSymbol, frame);
             auto* body = methodDeclaration->accept(&visitor)->ToStm();
 
-            auto* code = new CCodeFragment(frame, body);
+            auto* code = new CCodeFragment(frame, body, classSymbol->name, methodSymbol->name);
             if (root == nullptr) {
                 root = code;
                 current = root;
