@@ -30,12 +30,12 @@ namespace ast {
         };
 
         struct INodeList : public INode {
-            using Iterator = std::vector<INode*>::iterator;
+            using Iterator = std::vector<std::shared_ptr<INode>>::iterator;
 
 //            INodeList() = default;
             INodeList(const Location& _loc) : INode(_loc) {}
 
-            std::vector<INode*> nodes;
+            std::vector<std::shared_ptr<INode>> nodes;
         };
 
 

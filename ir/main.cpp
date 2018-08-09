@@ -40,16 +40,16 @@ int main() {
 //        translator.GetRoot()->GetNext()->GetBody()->accept(&visitor);
 
         ir::tree::CNaiveJumpBlockScheduler scheduler;
-        ir::translate::CCodeFragment* cur = translator.GetRoot();
-        while (cur) {
+        ir::translate::CCodeFragment* cur = translator.GetRoot()->GetNext();
+//        while (cur) {
             auto stms = ir::tree::Linearize(cur->GetBody());
             stms = scheduler.schedule(stms);
-//            for (auto* stm : stms.nodes) {
-//                if (stm != nullptr)
-//                    stm->accept(&visitor);
-//            }
+            for (auto* stm : stms.nodes) {
+                if (stm != nullptr)
+                    stm->accept(&visitor);
+            }
             cur = cur->GetNext();
-        }
+//        }
         visitor.finish();
     }
 

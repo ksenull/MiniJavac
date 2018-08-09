@@ -305,56 +305,56 @@ namespace Grammar {
     /// An auxiliary type to compute the largest semantic type.
     union union_type
     {
+      // BOOL_VALUE
+      char dummy1[sizeof(bool)];
+
+      // INTEGER
+      char dummy2[sizeof(int)];
+
       // ArgumentDeclarationList
       // NonEmptyArgumentDeclarationList
-      char dummy1[sizeof(ArgumentDeclarationList*)];
+      char dummy3[sizeof(std::shared_ptr<ArgumentDeclarationList>)];
 
       // ArgumentsList
       // NonEmptyArgumentsList
-      char dummy2[sizeof(ArgumentsList*)];
+      char dummy4[sizeof(std::shared_ptr<ArgumentsList>)];
 
       // StatementList
-      char dummy3[sizeof(CStatementList*)];
+      char dummy5[sizeof(std::shared_ptr<CStatementList>)];
 
       // ClassDeclaration
-      char dummy4[sizeof(ClassDeclaration*)];
+      char dummy6[sizeof(std::shared_ptr<ClassDeclaration>)];
 
       // ClassDeclarationList
-      char dummy5[sizeof(ClassDeclarationList*)];
+      char dummy7[sizeof(std::shared_ptr<ClassDeclarationList>)];
 
       // Expression
-      char dummy6[sizeof(IExpression*)];
+      char dummy8[sizeof(std::shared_ptr<IExpression>)];
 
       // Statement
-      char dummy7[sizeof(IStatement*)];
+      char dummy9[sizeof(std::shared_ptr<IStatement>)];
 
       // MainClass
-      char dummy8[sizeof(MainClass*)];
+      char dummy10[sizeof(std::shared_ptr<MainClass>)];
 
       // MethodDeclaration
-      char dummy9[sizeof(MethodDeclaration*)];
+      char dummy11[sizeof(std::shared_ptr<MethodDeclaration>)];
 
       // MethodDeclarationList
-      char dummy10[sizeof(MethodDeclarationList*)];
+      char dummy12[sizeof(std::shared_ptr<MethodDeclarationList>)];
 
       // Type
       // Void
-      char dummy11[sizeof(Type*)];
+      char dummy13[sizeof(std::shared_ptr<Type>)];
 
       // VariableDeclaration
-      char dummy12[sizeof(VariableDeclaration*)];
+      char dummy14[sizeof(std::shared_ptr<VariableDeclaration>)];
 
       // VariableDeclarationStatement
-      char dummy13[sizeof(VariableDeclarationStatement*)];
+      char dummy15[sizeof(std::shared_ptr<VariableDeclarationStatement>)];
 
       // VariableDeclarationStatementList
-      char dummy14[sizeof(VariableDeclarationStatementList*)];
-
-      // BOOL_VALUE
-      char dummy15[sizeof(bool)];
-
-      // INTEGER
-      char dummy16[sizeof(int)];
+      char dummy16[sizeof(std::shared_ptr<VariableDeclarationStatementList>)];
 
       // ID
       char dummy17[sizeof(std::string)];
@@ -455,37 +455,37 @@ namespace Grammar {
 
   basic_symbol (typename Base::kind_type t, const location_type& l);
 
-  basic_symbol (typename Base::kind_type t, const ArgumentDeclarationList* v, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const ArgumentsList* v, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const CStatementList* v, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const ClassDeclaration* v, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const ClassDeclarationList* v, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const IExpression* v, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const IStatement* v, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const MainClass* v, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const MethodDeclaration* v, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const MethodDeclarationList* v, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const Type* v, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const VariableDeclaration* v, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const VariableDeclarationStatement* v, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const VariableDeclarationStatementList* v, const location_type& l);
-
   basic_symbol (typename Base::kind_type t, const bool v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const int v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const std::shared_ptr<ArgumentDeclarationList> v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const std::shared_ptr<ArgumentsList> v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const std::shared_ptr<CStatementList> v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const std::shared_ptr<ClassDeclaration> v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const std::shared_ptr<ClassDeclarationList> v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const std::shared_ptr<IExpression> v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const std::shared_ptr<IStatement> v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const std::shared_ptr<MainClass> v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const std::shared_ptr<MethodDeclaration> v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const std::shared_ptr<MethodDeclarationList> v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const std::shared_ptr<Type> v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const std::shared_ptr<VariableDeclaration> v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const std::shared_ptr<VariableDeclarationStatement> v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const std::shared_ptr<VariableDeclarationStatementList> v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const std::string v, const location_type& l);
 
@@ -997,71 +997,71 @@ namespace Grammar {
   {
       switch (other.type_get ())
     {
-      case 51: // ArgumentDeclarationList
-      case 52: // NonEmptyArgumentDeclarationList
-        value.copy< ArgumentDeclarationList* > (other.value);
-        break;
-
-      case 56: // ArgumentsList
-      case 57: // NonEmptyArgumentsList
-        value.copy< ArgumentsList* > (other.value);
-        break;
-
-      case 53: // StatementList
-        value.copy< CStatementList* > (other.value);
-        break;
-
-      case 44: // ClassDeclaration
-        value.copy< ClassDeclaration* > (other.value);
-        break;
-
-      case 43: // ClassDeclarationList
-        value.copy< ClassDeclarationList* > (other.value);
-        break;
-
-      case 58: // Expression
-        value.copy< IExpression* > (other.value);
-        break;
-
-      case 55: // Statement
-        value.copy< IStatement* > (other.value);
-        break;
-
-      case 42: // MainClass
-        value.copy< MainClass* > (other.value);
-        break;
-
-      case 50: // MethodDeclaration
-        value.copy< MethodDeclaration* > (other.value);
-        break;
-
-      case 49: // MethodDeclarationList
-        value.copy< MethodDeclarationList* > (other.value);
-        break;
-
-      case 47: // Type
-      case 48: // Void
-        value.copy< Type* > (other.value);
-        break;
-
-      case 46: // VariableDeclaration
-        value.copy< VariableDeclaration* > (other.value);
-        break;
-
-      case 54: // VariableDeclarationStatement
-        value.copy< VariableDeclarationStatement* > (other.value);
-        break;
-
-      case 45: // VariableDeclarationStatementList
-        value.copy< VariableDeclarationStatementList* > (other.value);
-        break;
-
       case 37: // BOOL_VALUE
         value.copy< bool > (other.value);
         break;
 
       case 38: // INTEGER
         value.copy< int > (other.value);
+        break;
+
+      case 51: // ArgumentDeclarationList
+      case 52: // NonEmptyArgumentDeclarationList
+        value.copy< std::shared_ptr<ArgumentDeclarationList> > (other.value);
+        break;
+
+      case 56: // ArgumentsList
+      case 57: // NonEmptyArgumentsList
+        value.copy< std::shared_ptr<ArgumentsList> > (other.value);
+        break;
+
+      case 53: // StatementList
+        value.copy< std::shared_ptr<CStatementList> > (other.value);
+        break;
+
+      case 44: // ClassDeclaration
+        value.copy< std::shared_ptr<ClassDeclaration> > (other.value);
+        break;
+
+      case 43: // ClassDeclarationList
+        value.copy< std::shared_ptr<ClassDeclarationList> > (other.value);
+        break;
+
+      case 58: // Expression
+        value.copy< std::shared_ptr<IExpression> > (other.value);
+        break;
+
+      case 55: // Statement
+        value.copy< std::shared_ptr<IStatement> > (other.value);
+        break;
+
+      case 42: // MainClass
+        value.copy< std::shared_ptr<MainClass> > (other.value);
+        break;
+
+      case 50: // MethodDeclaration
+        value.copy< std::shared_ptr<MethodDeclaration> > (other.value);
+        break;
+
+      case 49: // MethodDeclarationList
+        value.copy< std::shared_ptr<MethodDeclarationList> > (other.value);
+        break;
+
+      case 47: // Type
+      case 48: // Void
+        value.copy< std::shared_ptr<Type> > (other.value);
+        break;
+
+      case 46: // VariableDeclaration
+        value.copy< std::shared_ptr<VariableDeclaration> > (other.value);
+        break;
+
+      case 54: // VariableDeclarationStatement
+        value.copy< std::shared_ptr<VariableDeclarationStatement> > (other.value);
+        break;
+
+      case 45: // VariableDeclarationStatementList
+        value.copy< std::shared_ptr<VariableDeclarationStatementList> > (other.value);
         break;
 
       case 39: // ID
@@ -1085,71 +1085,71 @@ namespace Grammar {
     (void) v;
       switch (this->type_get ())
     {
-      case 51: // ArgumentDeclarationList
-      case 52: // NonEmptyArgumentDeclarationList
-        value.copy< ArgumentDeclarationList* > (v);
-        break;
-
-      case 56: // ArgumentsList
-      case 57: // NonEmptyArgumentsList
-        value.copy< ArgumentsList* > (v);
-        break;
-
-      case 53: // StatementList
-        value.copy< CStatementList* > (v);
-        break;
-
-      case 44: // ClassDeclaration
-        value.copy< ClassDeclaration* > (v);
-        break;
-
-      case 43: // ClassDeclarationList
-        value.copy< ClassDeclarationList* > (v);
-        break;
-
-      case 58: // Expression
-        value.copy< IExpression* > (v);
-        break;
-
-      case 55: // Statement
-        value.copy< IStatement* > (v);
-        break;
-
-      case 42: // MainClass
-        value.copy< MainClass* > (v);
-        break;
-
-      case 50: // MethodDeclaration
-        value.copy< MethodDeclaration* > (v);
-        break;
-
-      case 49: // MethodDeclarationList
-        value.copy< MethodDeclarationList* > (v);
-        break;
-
-      case 47: // Type
-      case 48: // Void
-        value.copy< Type* > (v);
-        break;
-
-      case 46: // VariableDeclaration
-        value.copy< VariableDeclaration* > (v);
-        break;
-
-      case 54: // VariableDeclarationStatement
-        value.copy< VariableDeclarationStatement* > (v);
-        break;
-
-      case 45: // VariableDeclarationStatementList
-        value.copy< VariableDeclarationStatementList* > (v);
-        break;
-
       case 37: // BOOL_VALUE
         value.copy< bool > (v);
         break;
 
       case 38: // INTEGER
         value.copy< int > (v);
+        break;
+
+      case 51: // ArgumentDeclarationList
+      case 52: // NonEmptyArgumentDeclarationList
+        value.copy< std::shared_ptr<ArgumentDeclarationList> > (v);
+        break;
+
+      case 56: // ArgumentsList
+      case 57: // NonEmptyArgumentsList
+        value.copy< std::shared_ptr<ArgumentsList> > (v);
+        break;
+
+      case 53: // StatementList
+        value.copy< std::shared_ptr<CStatementList> > (v);
+        break;
+
+      case 44: // ClassDeclaration
+        value.copy< std::shared_ptr<ClassDeclaration> > (v);
+        break;
+
+      case 43: // ClassDeclarationList
+        value.copy< std::shared_ptr<ClassDeclarationList> > (v);
+        break;
+
+      case 58: // Expression
+        value.copy< std::shared_ptr<IExpression> > (v);
+        break;
+
+      case 55: // Statement
+        value.copy< std::shared_ptr<IStatement> > (v);
+        break;
+
+      case 42: // MainClass
+        value.copy< std::shared_ptr<MainClass> > (v);
+        break;
+
+      case 50: // MethodDeclaration
+        value.copy< std::shared_ptr<MethodDeclaration> > (v);
+        break;
+
+      case 49: // MethodDeclarationList
+        value.copy< std::shared_ptr<MethodDeclarationList> > (v);
+        break;
+
+      case 47: // Type
+      case 48: // Void
+        value.copy< std::shared_ptr<Type> > (v);
+        break;
+
+      case 46: // VariableDeclaration
+        value.copy< std::shared_ptr<VariableDeclaration> > (v);
+        break;
+
+      case 54: // VariableDeclarationStatement
+        value.copy< std::shared_ptr<VariableDeclarationStatement> > (v);
+        break;
+
+      case 45: // VariableDeclarationStatementList
+        value.copy< std::shared_ptr<VariableDeclarationStatementList> > (v);
         break;
 
       case 39: // ID
@@ -1172,104 +1172,6 @@ namespace Grammar {
   {}
 
   template <typename Base>
-  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const ArgumentDeclarationList* v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
-  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const ArgumentsList* v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
-  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const CStatementList* v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
-  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const ClassDeclaration* v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
-  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const ClassDeclarationList* v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
-  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const IExpression* v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
-  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const IStatement* v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
-  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const MainClass* v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
-  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const MethodDeclaration* v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
-  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const MethodDeclarationList* v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
-  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const Type* v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
-  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const VariableDeclaration* v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
-  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const VariableDeclarationStatement* v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
-  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const VariableDeclarationStatementList* v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
   Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const bool v, const location_type& l)
     : Base (t)
     , value (v)
@@ -1278,6 +1180,104 @@ namespace Grammar {
 
   template <typename Base>
   Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const int v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::shared_ptr<ArgumentDeclarationList> v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::shared_ptr<ArgumentsList> v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::shared_ptr<CStatementList> v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::shared_ptr<ClassDeclaration> v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::shared_ptr<ClassDeclarationList> v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::shared_ptr<IExpression> v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::shared_ptr<IStatement> v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::shared_ptr<MainClass> v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::shared_ptr<MethodDeclaration> v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::shared_ptr<MethodDeclarationList> v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::shared_ptr<Type> v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::shared_ptr<VariableDeclaration> v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::shared_ptr<VariableDeclarationStatement> v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+  Parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::shared_ptr<VariableDeclarationStatementList> v, const location_type& l)
     : Base (t)
     , value (v)
     , location (l)
@@ -1316,71 +1316,71 @@ namespace Grammar {
     // Type destructor.
     switch (yytype)
     {
-      case 51: // ArgumentDeclarationList
-      case 52: // NonEmptyArgumentDeclarationList
-        value.template destroy< ArgumentDeclarationList* > ();
-        break;
-
-      case 56: // ArgumentsList
-      case 57: // NonEmptyArgumentsList
-        value.template destroy< ArgumentsList* > ();
-        break;
-
-      case 53: // StatementList
-        value.template destroy< CStatementList* > ();
-        break;
-
-      case 44: // ClassDeclaration
-        value.template destroy< ClassDeclaration* > ();
-        break;
-
-      case 43: // ClassDeclarationList
-        value.template destroy< ClassDeclarationList* > ();
-        break;
-
-      case 58: // Expression
-        value.template destroy< IExpression* > ();
-        break;
-
-      case 55: // Statement
-        value.template destroy< IStatement* > ();
-        break;
-
-      case 42: // MainClass
-        value.template destroy< MainClass* > ();
-        break;
-
-      case 50: // MethodDeclaration
-        value.template destroy< MethodDeclaration* > ();
-        break;
-
-      case 49: // MethodDeclarationList
-        value.template destroy< MethodDeclarationList* > ();
-        break;
-
-      case 47: // Type
-      case 48: // Void
-        value.template destroy< Type* > ();
-        break;
-
-      case 46: // VariableDeclaration
-        value.template destroy< VariableDeclaration* > ();
-        break;
-
-      case 54: // VariableDeclarationStatement
-        value.template destroy< VariableDeclarationStatement* > ();
-        break;
-
-      case 45: // VariableDeclarationStatementList
-        value.template destroy< VariableDeclarationStatementList* > ();
-        break;
-
       case 37: // BOOL_VALUE
         value.template destroy< bool > ();
         break;
 
       case 38: // INTEGER
         value.template destroy< int > ();
+        break;
+
+      case 51: // ArgumentDeclarationList
+      case 52: // NonEmptyArgumentDeclarationList
+        value.template destroy< std::shared_ptr<ArgumentDeclarationList> > ();
+        break;
+
+      case 56: // ArgumentsList
+      case 57: // NonEmptyArgumentsList
+        value.template destroy< std::shared_ptr<ArgumentsList> > ();
+        break;
+
+      case 53: // StatementList
+        value.template destroy< std::shared_ptr<CStatementList> > ();
+        break;
+
+      case 44: // ClassDeclaration
+        value.template destroy< std::shared_ptr<ClassDeclaration> > ();
+        break;
+
+      case 43: // ClassDeclarationList
+        value.template destroy< std::shared_ptr<ClassDeclarationList> > ();
+        break;
+
+      case 58: // Expression
+        value.template destroy< std::shared_ptr<IExpression> > ();
+        break;
+
+      case 55: // Statement
+        value.template destroy< std::shared_ptr<IStatement> > ();
+        break;
+
+      case 42: // MainClass
+        value.template destroy< std::shared_ptr<MainClass> > ();
+        break;
+
+      case 50: // MethodDeclaration
+        value.template destroy< std::shared_ptr<MethodDeclaration> > ();
+        break;
+
+      case 49: // MethodDeclarationList
+        value.template destroy< std::shared_ptr<MethodDeclarationList> > ();
+        break;
+
+      case 47: // Type
+      case 48: // Void
+        value.template destroy< std::shared_ptr<Type> > ();
+        break;
+
+      case 46: // VariableDeclaration
+        value.template destroy< std::shared_ptr<VariableDeclaration> > ();
+        break;
+
+      case 54: // VariableDeclarationStatement
+        value.template destroy< std::shared_ptr<VariableDeclarationStatement> > ();
+        break;
+
+      case 45: // VariableDeclarationStatementList
+        value.template destroy< std::shared_ptr<VariableDeclarationStatementList> > ();
         break;
 
       case 39: // ID
@@ -1410,71 +1410,71 @@ namespace Grammar {
     super_type::move(s);
       switch (this->type_get ())
     {
-      case 51: // ArgumentDeclarationList
-      case 52: // NonEmptyArgumentDeclarationList
-        value.move< ArgumentDeclarationList* > (s.value);
-        break;
-
-      case 56: // ArgumentsList
-      case 57: // NonEmptyArgumentsList
-        value.move< ArgumentsList* > (s.value);
-        break;
-
-      case 53: // StatementList
-        value.move< CStatementList* > (s.value);
-        break;
-
-      case 44: // ClassDeclaration
-        value.move< ClassDeclaration* > (s.value);
-        break;
-
-      case 43: // ClassDeclarationList
-        value.move< ClassDeclarationList* > (s.value);
-        break;
-
-      case 58: // Expression
-        value.move< IExpression* > (s.value);
-        break;
-
-      case 55: // Statement
-        value.move< IStatement* > (s.value);
-        break;
-
-      case 42: // MainClass
-        value.move< MainClass* > (s.value);
-        break;
-
-      case 50: // MethodDeclaration
-        value.move< MethodDeclaration* > (s.value);
-        break;
-
-      case 49: // MethodDeclarationList
-        value.move< MethodDeclarationList* > (s.value);
-        break;
-
-      case 47: // Type
-      case 48: // Void
-        value.move< Type* > (s.value);
-        break;
-
-      case 46: // VariableDeclaration
-        value.move< VariableDeclaration* > (s.value);
-        break;
-
-      case 54: // VariableDeclarationStatement
-        value.move< VariableDeclarationStatement* > (s.value);
-        break;
-
-      case 45: // VariableDeclarationStatementList
-        value.move< VariableDeclarationStatementList* > (s.value);
-        break;
-
       case 37: // BOOL_VALUE
         value.move< bool > (s.value);
         break;
 
       case 38: // INTEGER
         value.move< int > (s.value);
+        break;
+
+      case 51: // ArgumentDeclarationList
+      case 52: // NonEmptyArgumentDeclarationList
+        value.move< std::shared_ptr<ArgumentDeclarationList> > (s.value);
+        break;
+
+      case 56: // ArgumentsList
+      case 57: // NonEmptyArgumentsList
+        value.move< std::shared_ptr<ArgumentsList> > (s.value);
+        break;
+
+      case 53: // StatementList
+        value.move< std::shared_ptr<CStatementList> > (s.value);
+        break;
+
+      case 44: // ClassDeclaration
+        value.move< std::shared_ptr<ClassDeclaration> > (s.value);
+        break;
+
+      case 43: // ClassDeclarationList
+        value.move< std::shared_ptr<ClassDeclarationList> > (s.value);
+        break;
+
+      case 58: // Expression
+        value.move< std::shared_ptr<IExpression> > (s.value);
+        break;
+
+      case 55: // Statement
+        value.move< std::shared_ptr<IStatement> > (s.value);
+        break;
+
+      case 42: // MainClass
+        value.move< std::shared_ptr<MainClass> > (s.value);
+        break;
+
+      case 50: // MethodDeclaration
+        value.move< std::shared_ptr<MethodDeclaration> > (s.value);
+        break;
+
+      case 49: // MethodDeclarationList
+        value.move< std::shared_ptr<MethodDeclarationList> > (s.value);
+        break;
+
+      case 47: // Type
+      case 48: // Void
+        value.move< std::shared_ptr<Type> > (s.value);
+        break;
+
+      case 46: // VariableDeclaration
+        value.move< std::shared_ptr<VariableDeclaration> > (s.value);
+        break;
+
+      case 54: // VariableDeclarationStatement
+        value.move< std::shared_ptr<VariableDeclarationStatement> > (s.value);
+        break;
+
+      case 45: // VariableDeclarationStatementList
+        value.move< std::shared_ptr<VariableDeclarationStatementList> > (s.value);
         break;
 
       case 39: // ID

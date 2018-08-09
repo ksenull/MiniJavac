@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <utility>
+#include <memory>
 
 #include "INode.h"
 #include "Identifier.h"
@@ -28,12 +29,14 @@ namespace ast {
         }
 
         struct Type : INode {
-            Identifier* id;
+            std::shared_ptr<Identifier> id;
             TypeType tt;
 
-            Type(const TypeType& tt, Identifier* id, const Location& loc) : INode(loc), tt(tt), id(std::move(id)) {}
+            Type(const TypeType& _tt, std::shared_ptr<Identifier> _id, const Location& loc)
+                    : INode(loc), tt(_tt), id(std::move(_id)) {}
 
-            explicit Type(const TypeType& tt, const Location& loc) : Type(tt, nullptr, loc){}
+            explicit Type(const TypeType& _tt, const Location& _loc)
+                    : Type(_tt, nullptr, _loc){}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
@@ -47,12 +50,8 @@ namespace ast {
                     case TT_Int:
                             return "int";
                     case TT_Object:
-                        if (id->name.empty()) {
-                            return "object";
-                        }
-                        else {
-                            return id->name;
-                        }
+                        if (id->name.empty()) { return "object"; }
+                        else { return id->name; }
                     case TT_Void:
                             return "void";
                     default:
@@ -66,42 +65,47 @@ namespace ast {
 //        };
 
         struct CStatementList : INodeList {
-            CStatementList(const Location& _loc) : INodeList(_loc) {}
+            explicit CStatementList(const Location& _loc)
+                    : INodeList(_loc) {}
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct VariableDeclaration : INode {
-            Type* type;
-            Identifier* id;
-            VariableDeclaration(Type* type, Identifier* id, const Location& loc) : INode(loc), type(type), id(std::move(id)) {}
+            std::shared_ptr<Type> type;
+            std::shared_ptr<Identifier> id;
+            VariableDeclaration(std::shared_ptr<Type> _type, std::shared_ptr<Identifier> _id, const Location& _loc)
+                    : INode(_loc), type(std::move(_type)), id(std::move(_id)) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct ArgumentDeclarationList : INodeList { // list of VariableDeclarations
-            ArgumentDeclarationList(const Location& _loc) : INodeList(_loc) {}
-            explicit ArgumentDeclarationList(VariableDeclaration* var, const Location& _loc) : INodeList(_loc) {
-                    nodes = {var};
+            explicit ArgumentDeclarationList(const Location& _loc)
+                    : INodeList(_loc) {}
+            ArgumentDeclarationList(std::shared_ptr<VariableDeclaration> _var, const Location& _loc) : INodeList(_loc) {
+                    nodes.emplace_back(_var);
             };
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct ArgumentsList : INodeList { // list of expressions
-            ArgumentsList(const Location& _loc) : INodeList(_loc) {}
-            explicit ArgumentsList(IExpression* exp, const Location& loc) : INodeList(loc) {
-                    nodes = {exp};
+            explicit ArgumentsList(const Location& _loc)
+                    : INodeList(_loc) {}
+            ArgumentsList(std::shared_ptr<IExpression> _exp, const Location& _loc) : INodeList(_loc) {
+                    nodes.emplace_back(_exp);
             };
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct VariableDeclarationStatement : IStatement {
-            VariableDeclaration* var;
+            std::shared_ptr<VariableDeclaration> var;
 
-            explicit VariableDeclarationStatement(VariableDeclaration* var, const Location& loc) : IStatement(loc), var(var) {}
+            explicit VariableDeclarationStatement(std::shared_ptr<VariableDeclaration> _var, const Location& _loc)
+                    : IStatement(_loc), var(std::move(_var)) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
@@ -109,74 +113,93 @@ namespace ast {
 
         struct VariableDeclarationStatementList : INodeList { //TODO нельзя  ли заменить на statemetntsList
         public:
-            VariableDeclarationStatementList(const Location& _loc) : INodeList(_loc) {}
+            explicit VariableDeclarationStatementList(const Location& _loc)
+                    : INodeList(_loc) {}
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct MethodDeclaration : INode {
-            Identifier* id;
-            Type* returnType;
-            IExpression* returnExp;
-            ArgumentDeclarationList* args;
-            CStatementList* statementList;
+            std::shared_ptr<Identifier> id;
+            std::shared_ptr<Type> returnType;
+            std::shared_ptr<IExpression> returnExp;
+            std::shared_ptr<ArgumentDeclarationList> args;
+            std::shared_ptr<CStatementList> statementList;
 
-            MethodDeclaration(Identifier* id, Type* returnType,
-                              IExpression* retExp, ArgumentDeclarationList* args,
-                              CStatementList* statementList1, const Location& loc) :
-                    INode(loc), id(id), returnType(returnType), returnExp(retExp),
-                    args(args), statementList(statementList1) {}
-            MethodDeclaration(Identifier* id, Type* returnType,
-                              ArgumentDeclarationList* args, CStatementList* statementList1, const Location& loc) :
-                    MethodDeclaration(id, returnType , nullptr, args, statementList1, loc) {}
+            MethodDeclaration(
+                    std::shared_ptr<Identifier> _id,
+                    std::shared_ptr<Type> _returnType,
+                    std::shared_ptr<IExpression> _retExp,
+                    std::shared_ptr<ArgumentDeclarationList> _args,
+                    std::shared_ptr<CStatementList> _statementList,
+                    const Location& _loc)
+                    : INode(_loc), id(std::move(_id)), returnType(std::move(_returnType)), returnExp(std::move(_retExp)),
+                    args(std::move(_args)), statementList(std::move(_statementList)) {}
+
+            MethodDeclaration(
+                    std::shared_ptr<Identifier> _id,
+                    std::shared_ptr<Type> _returnType,
+                    std::shared_ptr<ArgumentDeclarationList> _args,
+                    std::shared_ptr<CStatementList> _statementList,
+                    const Location& _loc)
+                    : MethodDeclaration(std::move(_id), std::move(_returnType), nullptr, _args, _statementList, _loc) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct MethodDeclarationList : INodeList {
-            MethodDeclarationList(const Location& _loc) : INodeList(_loc) {}
+            explicit MethodDeclarationList(const Location& _loc)
+                    : INodeList(_loc) {}
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct IClassDecl : INode {
-            Identifier* id;
+            std::shared_ptr<Identifier> id;
 
-            IClassDecl(const Location& loc, Identifier* _id) : INode(loc), id(_id) {}
+            IClassDecl(const Location& _loc, std::shared_ptr<Identifier> _id)
+                    : INode(_loc), id(std::move(_id)) {}
         };
 
         struct ClassDeclaration : IClassDecl {
-            Identifier* base;
-            VariableDeclarationStatementList* localVars;
-            MethodDeclarationList* methods;
+            std::shared_ptr<Identifier> base;
+            std::shared_ptr<VariableDeclarationStatementList> localVars;
+            std::shared_ptr<MethodDeclarationList> methods;
 
-            ClassDeclaration(Identifier* _id, Identifier* _base,
-                             VariableDeclarationStatementList* _localVars,
-                             MethodDeclarationList* _methods, const Location& loc) :
-                    IClassDecl(loc, _id), base(_base), localVars(_localVars), methods(_methods) {}
+            ClassDeclaration(
+                    std::shared_ptr<Identifier> _id,
+                    std::shared_ptr<Identifier> _base,
+                    std::shared_ptr<VariableDeclarationStatementList> _localVars,
+                    std::shared_ptr<MethodDeclarationList> _methods,
+                    const Location& _loc)
+                    : IClassDecl(_loc, std::move(_id)), base(std::move(_base)),
+                      localVars(std::move(_localVars)), methods(std::move(_methods)) {}
 
-            ClassDeclaration(Identifier* id,
-                             VariableDeclarationStatementList* localVars,
-                             MethodDeclarationList* methods, const Location& loc) :
-                    ClassDeclaration(id, nullptr, localVars, methods, loc) {}
+            ClassDeclaration(
+                    const std::shared_ptr<Identifier>& _id,
+                    const std::shared_ptr<VariableDeclarationStatementList>& _localVars,
+                    const std::shared_ptr<MethodDeclarationList>& _methods,
+                    const Location& _loc)
+                    : ClassDeclaration(_id, nullptr, _localVars, _methods, _loc) {}
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct ClassDeclarationList : INodeList {
-            ClassDeclarationList(const Location& _loc) : INodeList(_loc) {}
+            explicit ClassDeclarationList(const Location& _loc)
+                    : INodeList(_loc) {}
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
 
         struct MainClass : IClassDecl {
-            Identifier* argsName;
-            IStatement* st;
+            std::shared_ptr<Identifier> argsName;
+            std::shared_ptr<IStatement> st;
         public:
-            MainClass(Identifier* _id, Identifier* _argsName, IStatement* _st, const Location& loc) :
-                    IClassDecl(loc, _id), argsName(_argsName), st(_st) {}
+            MainClass(std::shared_ptr<Identifier> _id, std::shared_ptr<Identifier> _argsName, std::shared_ptr<IStatement> _st, const Location& _loc)
+                    : IClassDecl(_loc, _id), argsName(std::move(_argsName)), st(std::move(_st)) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
@@ -184,79 +207,84 @@ namespace ast {
 
 
         struct Program : INode {
-            MainClass* mainClass;
-            ClassDeclarationList* classDeclarationList;
+            std::shared_ptr<MainClass> mainClass;
+            std::shared_ptr<ClassDeclarationList> classDeclarationList;
 
             Program() = default;
-
-            Program(MainClass* mainClass, ClassDeclarationList* cdl, const Location& loc) :
-                    INode(loc), mainClass(mainClass), classDeclarationList(cdl) {}
+            Program(std::shared_ptr<MainClass> _mainClass, std::shared_ptr<ClassDeclarationList> _cdl, const Location& _loc)
+                    : INode(_loc), mainClass(std::move(_mainClass)), classDeclarationList(std::move(_cdl)) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct NestedStatement : public IStatement {
-            CStatementList* statementList;
+            std::shared_ptr<CStatementList> statementList;
 
-            explicit NestedStatement(CStatementList* statementList1, const Location& loc) :
-                    IStatement(loc), statementList(statementList1) {}
+            explicit NestedStatement(std::shared_ptr<CStatementList> _statementList, const Location& _loc)
+                    : IStatement(_loc), statementList(std::move(_statementList)) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct IfStatement : IStatement {
-            IExpression* condition;
-            IStatement* ifStatement;
-            IStatement* elseStatement;
+            std::shared_ptr<IExpression> condition;
+            std::shared_ptr<IStatement> ifStatement;
+            std::shared_ptr<IStatement> elseStatement;
 
-            IfStatement(IExpression* condition, IStatement* ifStatement,
-                        IStatement* elseStatement, const Location& loc) : IStatement(loc),
-                condition(condition), ifStatement(ifStatement), elseStatement(elseStatement) {}
+            IfStatement(std::shared_ptr<IExpression> _condition, std::shared_ptr<IStatement> _ifStatement,
+                        std::shared_ptr<IStatement> _elseStatement, const Location& _loc)
+                    : IStatement(_loc), condition(_condition), ifStatement(_ifStatement), elseStatement(_elseStatement) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct WhileStatement : IStatement {
-            IExpression* condition;
-            IStatement* statement;
+            std::shared_ptr<IExpression> condition;
+            std::shared_ptr<IStatement> statement;
 
-            WhileStatement(IExpression* condition, IStatement* statement,
-                    const Location& loc) : IStatement(loc),
-                    condition(condition), statement(statement) {}
+            WhileStatement(std::shared_ptr<IExpression> _condition, std::shared_ptr<IStatement> _statement,
+                    const Location& loc)
+                    : IStatement(loc), condition(std::move(_condition)), statement(std::move(_statement)) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct PrintStatement : IStatement {
-            IExpression* exp;
+            std::shared_ptr<IExpression> exp;
 
-            explicit PrintStatement(IExpression* exp, const Location& loc) : IStatement(loc), exp(exp) {}
+            explicit PrintStatement(std::shared_ptr<IExpression> _exp, const Location& _loc)
+                    : IStatement(_loc), exp(_exp) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct AssignStatement : IStatement {
-            Identifier* id;
-            IExpression* exp;
+            std::shared_ptr<Identifier> id;
+            std::shared_ptr<IExpression> exp;
         public:
-            AssignStatement(Identifier* id, IExpression* exp, const Location& loc) : IStatement(loc), id(id), exp(exp) {}
+            AssignStatement(std::shared_ptr<Identifier> _id, std::shared_ptr<IExpression> _exp, const Location& _loc)
+                    : IStatement(_loc), id(_id), exp(_exp) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct ArrayAssignStatement : IStatement {
-            Identifier* id;
-            IExpression* arrExp;
-            IExpression* exp;
+            std::shared_ptr<Identifier> id;
+            std::shared_ptr<IExpression> arrExp;
+            std::shared_ptr<IExpression> exp;
 
-            ArrayAssignStatement(Identifier* id, IExpression* arrExp, IExpression* exp, const Location& loc) :
-                    IStatement(loc), id(id), arrExp(arrExp), exp(exp) {}
+            ArrayAssignStatement(
+                    std::shared_ptr<Identifier> _id,
+                    std::shared_ptr<IExpression> _arrExp,
+                    std::shared_ptr<IExpression> _exp,
+                    const Location& _loc)
+                    : IStatement(_loc), id(std::move(_id)), arrExp(std::move(_arrExp)), exp(std::move(_exp)) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
@@ -272,12 +300,16 @@ namespace ast {
         };
 
         struct BinopExpression : IExpression {
-            IExpression* left;
-            IExpression* right;
+            std::shared_ptr<IExpression> left;
+            std::shared_ptr<IExpression> right;
             BinOpType type;
 
-            BinopExpression(IExpression* left, IExpression* right, const BinOpType& type, const Location& loc) :
-                    IExpression(loc), left(left), right(right), type(type) {}
+            BinopExpression(
+                    std::shared_ptr<IExpression> _left,
+                    std::shared_ptr<IExpression> _right,
+                    const BinOpType& _type,
+                    const Location& _loc)
+                    : IExpression(_loc), left(std::move(_left)), right(std::move(_right)), type(_type) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
@@ -303,32 +335,34 @@ namespace ast {
         };
 
         struct ArrayItemExpression : IExpression {
-            IExpression* arr;
-            IExpression* ind;
+            std::shared_ptr<IExpression> arr;
+            std::shared_ptr<IExpression> ind;
 
-            ArrayItemExpression(IExpression* arr, IExpression* ind, const Location& loc) :
-                    IExpression(loc), arr(arr), ind(ind) {}
+            ArrayItemExpression(std::shared_ptr<IExpression> _arr, std::shared_ptr<IExpression> _ind, const Location& _loc)
+                    : IExpression(_loc), arr(std::move(_arr)), ind(std::move(_ind)) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct ArrayLengthExpression : IExpression {
-            IExpression* arr;
+            std::shared_ptr<IExpression> arr;
 
-            explicit ArrayLengthExpression(IExpression* arr, const Location& loc) : IExpression(loc), arr(arr) {}
+            explicit ArrayLengthExpression(std::shared_ptr<IExpression> _arr, const Location& _loc)
+                    : IExpression(_loc), arr(
+                    std::move(_arr)) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct CallExpression : IExpression {
-            IExpression* obj;
-            Identifier* method;
-            ArgumentsList* args;
+            std::shared_ptr<IExpression> obj;
+            std::shared_ptr<Identifier> method;
+            std::shared_ptr<ArgumentsList> args;
 
-            CallExpression(IExpression* obj, Identifier* method, ArgumentsList* args, const Location& loc) :
-                    IExpression(loc), obj(obj), method(method), args(args) {}
+            CallExpression(std::shared_ptr<IExpression> _obj, std::shared_ptr<Identifier> _method, std::shared_ptr<ArgumentsList> _args, const Location& _loc)
+                    : IExpression(_loc), obj(_obj), method(_method), args(_args) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
@@ -337,7 +371,8 @@ namespace ast {
         struct ConstExpression : IExpression {
             int value;
 
-            explicit ConstExpression(int value, const Location& loc) : IExpression(loc), value(value) {}
+            explicit ConstExpression(int value, const Location& loc)
+                    : IExpression(loc), value(value) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
@@ -346,18 +381,20 @@ namespace ast {
         struct BoolExpression : IExpression {
             bool value;
 
-            explicit BoolExpression(bool value, const Location& loc) : IExpression(loc), value(value) {}
+            explicit BoolExpression(bool value, const Location& loc)
+                    : IExpression(loc), value(value) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct IdExpression : IExpression {
-            Identifier* id;
+            std::shared_ptr<Identifier> id;
             bool isThis = false;
 
 //            explicit IdExpression(const std::string& s, const Location& loc) : IExpression(loc), isThis(true) {}
-            explicit IdExpression(Identifier* id, const Location& loc) : IExpression(loc), id(id) {
+            explicit IdExpression(std::shared_ptr<Identifier> _id, const Location& _loc)
+            : IExpression(_loc), id(_id) {
                 if (id->name == "this") {
                     isThis = true;
                 }
@@ -369,28 +406,30 @@ namespace ast {
 
         struct NewArrayExpression : IExpression {
 //            Type* type;
-            IExpression* size;
+            std::shared_ptr<IExpression> size;
 
-            NewArrayExpression(IExpression* _size, const Location& loc) :
-                        IExpression(loc), size(_size) {}
+            NewArrayExpression(std::shared_ptr<IExpression> _size, const Location& _loc)
+                    : IExpression(_loc), size(std::move(_size)) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct NewObjectExpression : IExpression {
-            Identifier* id;
+            std::shared_ptr<Identifier> id;
 
-            explicit NewObjectExpression(Identifier* id, const Location& loc) : IExpression(loc), id(id) {}
+            explicit NewObjectExpression(std::shared_ptr<Identifier> _id, const Location& _loc)
+                    : IExpression(_loc), id(std::move(_id)) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT
         };
 
         struct NotExpression : IExpression {
-            IExpression* exp;
+            std::shared_ptr<IExpression> exp;
         public:
-            explicit NotExpression(IExpression* exp, const Location& loc) : IExpression(loc), exp(exp) {}
+            explicit NotExpression(std::shared_ptr<IExpression> _exp, const Location& _loc)
+                    : IExpression(_loc), exp(_exp) {}
 
             DEFINE_PRINT_ACCEPT
             DEFINE_IRTRANSLATE_ACCEPT

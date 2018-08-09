@@ -98,23 +98,23 @@ using namespace nodes;
 %token<bool> BOOL_VALUE
 %token<int> INTEGER
 
-%type<MainClass*> MainClass;
-%type<ClassDeclarationList*> ClassDeclarationList;
-%type<ClassDeclaration*> ClassDeclaration;
-%type<Type*> Type;
-%type<Type*> Void;
-%type<MethodDeclarationList*> MethodDeclarationList;
-%type<MethodDeclaration*> MethodDeclaration;
-%type<IStatement*> Statement;
-%type<CStatementList*> StatementList;
-%type<VariableDeclarationStatement*> VariableDeclarationStatement;
-%type<VariableDeclarationStatementList*> VariableDeclarationStatementList;
-%type<VariableDeclaration*> VariableDeclaration;
-%type<ArgumentDeclarationList*> ArgumentDeclarationList;
-%type<ArgumentDeclarationList*> NonEmptyArgumentDeclarationList;
-%type<ArgumentsList*> ArgumentsList;
-%type<ArgumentsList*> NonEmptyArgumentsList;
-%type<IExpression*> Expression;
+%type<std::shared_ptr<MainClass>> MainClass;
+%type<std::shared_ptr<ClassDeclarationList>> ClassDeclarationList;
+%type<std::shared_ptr<ClassDeclaration>> ClassDeclaration;
+%type<std::shared_ptr<Type>> Type;
+%type<std::shared_ptr<Type>> Void;
+%type<std::shared_ptr<MethodDeclarationList>> MethodDeclarationList;
+%type<std::shared_ptr<MethodDeclaration>> MethodDeclaration;
+%type<std::shared_ptr<IStatement>> Statement;
+%type<std::shared_ptr<CStatementList>> StatementList;
+%type<std::shared_ptr<VariableDeclarationStatement>> VariableDeclarationStatement;
+%type<std::shared_ptr<VariableDeclarationStatementList>> VariableDeclarationStatementList;
+%type<std::shared_ptr<VariableDeclaration>> VariableDeclaration;
+%type<std::shared_ptr<ArgumentDeclarationList>> ArgumentDeclarationList;
+%type<std::shared_ptr<ArgumentDeclarationList>> NonEmptyArgumentDeclarationList;
+%type<std::shared_ptr<ArgumentsList>> ArgumentsList;
+%type<std::shared_ptr<ArgumentsList>> NonEmptyArgumentsList;
+%type<std::shared_ptr<IExpression>> Expression;
 //%type<Identifier*> Identifier
 
 %token<std::string> ID
@@ -122,8 +122,9 @@ using namespace nodes;
 %%
 
 Goal:
-    MainClass ClassDeclarationList { program = Program($1, $2, LOCATION(@$)); }
-    ;
+    MainClass ClassDeclarationList {
+        program = Program($1, $2, LOCATION(@$));
+    };
 
 MainClass:
     CLASS ID[mainClass] LBRACE
@@ -134,104 +135,199 @@ MainClass:
         LBRACE
             Statement[s]
         RBRACE
-    RBRACE { $$ = new MainClass(new Identifier($mainClass), new Identifier($id), $s, LOCATION(@$)); }
-    ;
+    RBRACE {
+        $$ = std::make_shared<MainClass>(
+            MainClass(
+                std::make_shared<Identifier>(Identifier($mainClass)),
+                std::make_shared<Identifier>(Identifier($id)),
+                $s,
+                LOCATION(@$)
+            )
+         );
+    };
 
 ClassDeclarationList:
-    %empty { $$ = new ClassDeclarationList(LOCATION(@$)); }
+    %empty {
+        $$ = std::make_shared<ClassDeclarationList>(
+            ClassDeclarationList(LOCATION(@$))
+        );
+    }
     |
     ClassDeclarationList ClassDeclaration {
         $1->nodes.emplace_back($2);
         $$ = $1;
-    }
-    ;
+    };
 
 ClassDeclaration:
     CLASS ID[id] LBRACE
         VariableDeclarationStatementList[v]
         MethodDeclarationList[m]
-    RBRACE { $$ = new ClassDeclaration(new Identifier($id), $v, $m, LOCATION(@$)); }
+    RBRACE {
+        $$ = std::make_shared<ClassDeclaration>(
+            ClassDeclaration(
+                std::make_shared<Identifier>(Identifier($id)), $v, $m, LOCATION(@$)
+            )
+        );
+    }
     |
     CLASS ID[id] EXTENDS ID[b] LBRACE
         VariableDeclarationStatementList[v]
         MethodDeclarationList[m]
-    RBRACE { $$ = new ClassDeclaration(new Identifier($id), new Identifier($b), $v, $m, LOCATION(@$)); }
-    ;
+    RBRACE {
+        $$ = std::make_shared<ClassDeclaration>(
+            ClassDeclaration(
+                std::make_shared<Identifier>(Identifier($id)),
+                std::make_shared<Identifier>(Identifier($b)),
+                $v, $m,
+                LOCATION(@$)
+            )
+        );
+    };
 
 VariableDeclarationStatementList:
-    %empty { $$ = new VariableDeclarationStatementList(LOCATION(@$)); }
+    %empty {
+        $$ = std::make_shared<VariableDeclarationStatementList>(
+            VariableDeclarationStatementList(LOCATION(@$))
+        );
+    }
     |
     VariableDeclarationStatementList[l] VariableDeclarationStatement[v] {
              $1->nodes.emplace_back($2);
              $$ = $1;
-    }
-    ;
+    };
 
 VariableDeclaration:
-    Type ID[y] { $$ = new VariableDeclaration($1, new Identifier($y), LOCATION(@$)); }
-    ;
+    Type ID[y] {
+        $$ = std::make_shared<VariableDeclaration>(
+            VariableDeclaration(
+                $1,
+                std::make_shared<Identifier>(Identifier($y)),
+                LOCATION(@$)
+            )
+        );
+    };
 
 Type:
-    INT LBRACKET RBRACKET { $$ = new Type(TT_Array, LOCATION(@$)); }
+    INT LBRACKET RBRACKET {
+        $$ = std::make_shared<Type>(
+            Type(TT_Array, LOCATION(@$))
+        );
+    }
     |
-    BOOLEAN { $$ = new Type(TT_Bool, LOCATION(@$)); }
+    BOOLEAN {
+        $$ = std::make_shared<Type>(
+            Type(TT_Bool, LOCATION(@$))
+        );
+    }
     |
-    INT { $$ = new Type(TT_Int, LOCATION(@$)); }
+    INT {
+        $$ = std::make_shared<Type>(
+            Type(TT_Int, LOCATION(@$))
+        );
+    }
     |
-    ID { $$ = new Type(TT_Object, new Identifier($1), LOCATION(@$)); }
-   ;
+    ID {
+        $$ = std::make_shared<Type>(
+            Type(
+                TT_Object,
+                std::make_shared<Identifier>(Identifier($1)),
+                LOCATION(@$)
+            )
+        );
+    };
 
 Void:
-    VOID { $$ = new Type(TT_Void, LOCATION(@$)); }
-    ;
+    VOID {
+        $$ = std::make_shared<Type>(
+            Type(TT_Void, LOCATION(@$))
+        );
+    };
 
 MethodDeclarationList:
-    %empty { $$ = new MethodDeclarationList(LOCATION(@$)); }
+    %empty {
+        $$ = std::make_shared<MethodDeclarationList>(
+            MethodDeclarationList(LOCATION(@$))
+        );
+    }
     |
     MethodDeclarationList[l] MethodDeclaration[m] {
             $1->nodes.emplace_back($2);
             $$ = $1;
-    }
-    ;
+    };
 
 MethodDeclaration:
     PUBLIC Type[rt] ID[id] LPAREN
         ArgumentDeclarationList[a]
     RPAREN LBRACE
         StatementList[s]
-    RBRACE { $$ = new MethodDeclaration(new Identifier($id), $rt, $a, $s, LOCATION(@$)); }
+    RBRACE {
+        $$ = std::make_shared<MethodDeclaration>(
+            MethodDeclaration(
+                std::make_shared<Identifier>(Identifier($id)),
+                $rt, $a, $s,
+                LOCATION(@$)
+            )
+         );
+    }
     |
     PUBLIC Void[rt] ID[id] LPAREN
         ArgumentDeclarationList[a]
     RPAREN LBRACE
         StatementList[s]
-    RBRACE { $$ = new MethodDeclaration(new Identifier($id), $rt, $a, $s, LOCATION(@$)); }
+    RBRACE {
+        $$ = std::make_shared<MethodDeclaration>(
+            MethodDeclaration(
+                std::make_shared<Identifier>(Identifier($id)),
+                $rt, $a, $s,
+                LOCATION(@$)
+            )
+        );
+    }
     |
     PUBLIC Type[rt] ID[id] LPAREN
         ArgumentDeclarationList[a]
     RPAREN LBRACE
         StatementList[s]
         RETURN Expression[e] SEMICOLON
-    RBRACE { $$ = new MethodDeclaration(new Identifier($id), $rt, $e, $a, $s, LOCATION(@$)); }
-    ;
+    RBRACE {
+        $$ = std::make_shared<MethodDeclaration>(
+            MethodDeclaration(
+                std::make_shared<Identifier>(Identifier($id)),
+                $rt, $e, $a, $s,
+                LOCATION(@$)
+            )
+        );
+    };
 
 ArgumentDeclarationList:
-    %empty { $$ = new ArgumentDeclarationList(LOCATION(@$)); }
+    %empty {
+        $$ = std::make_shared<ArgumentDeclarationList>(
+            ArgumentDeclarationList(LOCATION(@$))
+        );
+    }
     |
-    NonEmptyArgumentDeclarationList { $$ = $1; }
-    ;
+    NonEmptyArgumentDeclarationList {
+        $$ = $1;
+    };
 
 NonEmptyArgumentDeclarationList:
-    VariableDeclaration { $$ = new ArgumentDeclarationList($1, LOCATION(@$)); }
+    VariableDeclaration {
+        $$ = std::make_shared<ArgumentDeclarationList>(
+            ArgumentDeclarationList($1, LOCATION(@$))
+        );
+    }
     |
     VariableDeclaration COMMA NonEmptyArgumentDeclarationList {
         $3->nodes.emplace_back($1);
         $$ = $3;
-    }
-    ;
+    };
 
 StatementList:
-    %empty { $$ =  new CStatementList(LOCATION(@$)); }
+    %empty {
+        $$ =  std::make_shared<CStatementList>(
+            CStatementList(LOCATION(@$))
+        );
+    }
     |
     StatementList[sl] Statement[s] {
         $1->nodes.emplace_back($2);
@@ -241,42 +337,50 @@ StatementList:
     StatementList[ls] VariableDeclarationStatement[s] {
         $1->nodes.emplace_back($2);
         $$ = $1;
-    }
-    ;
+    };
 
 VariableDeclarationStatement:
-    VariableDeclaration SEMICOLON { $$ = new VariableDeclarationStatement($1, LOCATION(@$)); }
-    ;
+    VariableDeclaration SEMICOLON {
+        $$ = std::make_shared<VariableDeclarationStatement>(
+            VariableDeclarationStatement($1, LOCATION(@$))
+        );
+    };
 
 Statement:
     LBRACE
         StatementList[l]
-    RBRACE { $$ = new NestedStatement($l, LOCATION(@$)); }
+    RBRACE {
+        $$ = std::make_shared<NestedStatement>(
+            NestedStatement($l, LOCATION(@$))
+        );
+    }
     |
     IF LPAREN Expression[e] RPAREN
         Statement[is]
     ELSE
-        Statement[es] { $$ = new IfStatement($e, $is, $es, LOCATION(@$)); }
+        Statement[es] { $$ = std::make_shared<IfStatement>(IfStatement($e, $is, $es, LOCATION(@$))); }
     |
-    WHILE LPAREN Expression[e] RPAREN Statement[s] { $$ = new WhileStatement($e, $s, LOCATION(@$)); }
+    WHILE LPAREN Expression[e] RPAREN Statement[s] { $$ = std::make_shared<WhileStatement>(WhileStatement($e, $s, LOCATION(@$))); }
     |
-    PRINT LPAREN Expression[e] RPAREN SEMICOLON { $$ = new PrintStatement($e, LOCATION(@$)); }
+    PRINT LPAREN Expression[e] RPAREN SEMICOLON { $$ = std::make_shared<PrintStatement>(PrintStatement($e, LOCATION(@$))); }
     |
-    ID[id] ASSIGN Expression[e] SEMICOLON { $$ = new AssignStatement(new Identifier($id), $e, LOCATION(@$)); }
+    ID[id] ASSIGN Expression[e] SEMICOLON { $$ = std::make_shared<AssignStatement>(AssignStatement(
+        std::make_shared<Identifier>(Identifier($id)), $e, LOCATION(@$))
+    ); }
     |
-    ID[id] LBRACKET Expression[ae] RBRACKET ASSIGN Expression[e] SEMICOLON { $$ = new ArrayAssignStatement(
-    new Identifier($id), $ae, $e, LOCATION(@$)); }
+    ID[id] LBRACKET Expression[ae] RBRACKET ASSIGN Expression[e] SEMICOLON { $$ = std::make_shared<ArrayAssignStatement>(
+    ArrayAssignStatement(std::make_shared<Identifier>(Identifier($id)), $ae, $e, LOCATION(@$))); }
     ;
 
 
 ArgumentsList:
-    %empty { $$ = new ArgumentsList(LOCATION(@$)); }
+    %empty { $$ = std::make_shared<ArgumentsList>(ArgumentsList(LOCATION(@$))); }
     |
     NonEmptyArgumentsList { $$ = $1; }
     ;
 
 NonEmptyArgumentsList:
-    Expression[e] { $$ = new ArgumentsList($e, LOCATION(@$)); }
+    Expression[e] { $$ = std::make_shared<ArgumentsList>(ArgumentsList($e, LOCATION(@$))); }
     |
     ArgumentsList[l] COMMA Expression[e] {
         $1->nodes.emplace_back($3);
@@ -285,23 +389,24 @@ NonEmptyArgumentsList:
     ;
 
 Expression:
-    NOT Expression[E] { $$ = new NotExpression( $E, LOCATION(@$)); }
-	| Expression[L] PLUS Expression[R] { $$ = new BinopExpression( $L, $R, BOT_Plus, LOCATION(@$)); }
-	| Expression[L] MINUS Expression[R] { $$ = new BinopExpression( $L, $R, BOT_Minus, LOCATION(@$)); }
-	| Expression[L] MULT Expression[R] { $$ = new BinopExpression( $L, $R, BOT_Multiply, LOCATION(@$)); }
-	| Expression[L] AND Expression[R] { $$ = new BinopExpression( $L, $R, BOT_And, LOCATION(@$)); }
-	| Expression[L] EQUAL Expression[R] { $$ = new BinopExpression( $L, $R, BOT_Equal, LOCATION(@$)); }
-	| Expression[L] LESS Expression[R] { $$ = new BinopExpression( $L, $R, BOT_Less, LOCATION(@$)); }
+    NOT Expression[E] { $$ = std::make_shared<NotExpression>( $E, LOCATION(@$)); }
+	| Expression[L] PLUS Expression[R] { $$ = std::make_shared<BinopExpression>(BinopExpression($L, $R, BOT_Plus, LOCATION(@$))); }
+	| Expression[L] MINUS Expression[R] { $$ = std::make_shared<BinopExpression>(BinopExpression($L, $R, BOT_Minus, LOCATION(@$))); }
+	| Expression[L] MULT Expression[R] { $$ = std::make_shared<BinopExpression>(BinopExpression($L, $R, BOT_Multiply, LOCATION(@$))); }
+	| Expression[L] AND Expression[R] { $$ = std::make_shared<BinopExpression>(BinopExpression($L, $R, BOT_And, LOCATION(@$))); }
+	| Expression[L] EQUAL Expression[R] { $$ = std::make_shared<BinopExpression>(BinopExpression($L, $R, BOT_Equal, LOCATION(@$))); }
+	| Expression[L] LESS Expression[R] { $$ = std::make_shared<BinopExpression>(BinopExpression($L, $R, BOT_Less, LOCATION(@$))); }
 
-	| Expression[A] LBRACKET Expression[N] RBRACKET{ $$ = new ArrayItemExpression( $A, $N, LOCATION(@$)); }
-	| Expression[A] DOT LENGTH { $$ = new ArrayLengthExpression( $A, LOCATION(@$)); }
-	| Expression[O] DOT ID[M] LPAREN ArgumentsList[A] RPAREN { $$ = new CallExpression( $O, new Identifier($M), $A, LOCATION(@$)); }
-	| INTEGER { $$ = new ConstExpression( $1, LOCATION(@$)); }
-	| BOOL_VALUE { $$ = new BoolExpression( $1, LOCATION(@$)); }
-	| ID { $$ = new IdExpression( new Identifier($1), LOCATION(@$)); }
-	| THIS { $$ = new IdExpression( new Identifier("this"), LOCATION(@$)); }
-	| NEW INT[T] LBRACKET Expression[L] RBRACKET { $$ = new NewArrayExpression( $L, LOCATION(@$)); }
-	| NEW ID[T] LPAREN RPAREN { $$ = new NewObjectExpression( new Identifier($T), LOCATION(@$)); }
+	| Expression[A] LBRACKET Expression[N] RBRACKET{ $$ = std::make_shared<ArrayItemExpression>(ArrayItemExpression( $A, $N, LOCATION(@$))); }
+	| Expression[A] DOT LENGTH { $$ = std::make_shared<ArrayLengthExpression>(ArrayLengthExpression( $A, LOCATION(@$))); }
+	| Expression[O] DOT ID[M] LPAREN ArgumentsList[A] RPAREN { $$ = std::make_shared<CallExpression>(CallExpression(
+	    $O, std::make_shared<Identifier>(Identifier($M)), $A, LOCATION(@$))); }
+	| INTEGER { $$ = std::make_shared<ConstExpression>(ConstExpression( $1, LOCATION(@$))); }
+	| BOOL_VALUE { $$ = std::make_shared<BoolExpression>(BoolExpression( $1, LOCATION(@$))); }
+	| ID { $$ = std::make_shared<IdExpression>(IdExpression( std::make_shared<Identifier>(Identifier($1)), LOCATION(@$))); }
+	| THIS { $$ = std::make_shared<IdExpression>(IdExpression( std::make_shared<Identifier>(Identifier("this")), LOCATION(@$))); }
+	| NEW INT[T] LBRACKET Expression[L] RBRACKET { $$ = std::make_shared<NewArrayExpression>(NewArrayExpression( $L, LOCATION(@$))); }
+	| NEW ID[T] LPAREN RPAREN { $$ = std::make_shared<NewObjectExpression>(NewObjectExpression( std::make_shared<Identifier>(Identifier($T)), LOCATION(@$))); }
 	| LPAREN Expression[E] RPAREN { $$ = $E; }
 ;
 
