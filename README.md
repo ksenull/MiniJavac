@@ -1,4 +1,4 @@
-# MiniJava compiler (to intermidiate code representation) implemented on C++
+# MiniJava compiler (to intermediate code representation) implemented on C++
 
 1. Parsing made with the help of flex and bison. The grammar is similar to the one showed [here](http://www.cambridge.org/resources/052182060X/MCIIJ2e/grammar.htm)
 2. Syntax tree could be visualised in common/drawgraph submodule
